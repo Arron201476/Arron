@@ -1,0 +1,23 @@
+{
+  "output_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["title", "content"],
+    "properties": {
+      "title": {"type": "string", "minLength": 1},
+      "content": {"type": "string", "minLength": 1}
+    }
+  },
+  "provider_schema": {
+    "type": "object",
+    "required": ["title"],
+    "properties": {"title": {"type": "string", "minLength": 6}}
+  },
+  "valid": {"title": "Review", "content": "Strengthen the closing hook."},
+  "invalid": [
+    {"title": "Review"},
+    {"title": "Short", "content": "The artifact schema alone accepts this."},
+    {"title": "Review", "content": "Ready", "undeclared": true},
+    {"artifact": {"title": "Review", "content": "Wrong envelope"}}
+  ]
+}

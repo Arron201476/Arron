@@ -1,0 +1,782 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://content-agent.internal/schemas/v1/video-reference-creation.schema.json",
+  "title": "Video Reference Creation Capability Schemas",
+  "$defs": {
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "project_id",
+        "asset_set_id",
+        "asset_set_version_id",
+        "collection_state",
+        "user_request_message_id"
+      ],
+      "properties": {
+        "project_id": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "asset_set_id": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "asset_set_version_id": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "source_type": {
+          "const": "video_reference"
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "collection_state": {
+          "enum": [
+            "collecting",
+            "sealed"
+          ]
+        },
+        "user_request_message_id": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "user_notes": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        }
+      }
+    },
+    "extractionConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fidelity_level",
+        "timecode_precision",
+        "uncertain_content_policy"
+      ],
+      "properties": {
+        "fidelity_level": {
+          "const": "high"
+        },
+        "timecode_precision": {
+          "const": "second"
+        },
+        "uncertain_content_policy": {
+          "const": "mark"
+        }
+      }
+    },
+    "creationConfig": {
+      "$ref": "common.schema.json#/$defs/generationConfig"
+    },
+    "videoTaskInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "asset_id",
+        "asset_snapshot_id",
+        "file_name",
+        "episode_order",
+        "duration_ms",
+        "provider_variant_id"
+      ],
+      "properties": {
+        "asset_id": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "asset_snapshot_id": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "file_name": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "episode_no": {
+          "oneOf": [
+            {
+              "$ref": "common.schema.json#/$defs/positiveInteger"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "episode_order": {
+          "$ref": "common.schema.json#/$defs/positiveInteger"
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "provider_variant_id": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "known_characters": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "previous_episode_end": {
+          "type": "string"
+        },
+        "user_confirmed_facts": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "user_notes": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        }
+      }
+    },
+    "videoScriptUnit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "episode_no",
+        "episode_order",
+        "source_file_name",
+        "plot_summary",
+        "title",
+        "script_text",
+        "scenes",
+        "source_refs",
+        "continuity_delta",
+        "uncertainty_flags",
+        "extraction_completeness",
+        "source_availability"
+      ],
+      "properties": {
+        "episode_no": {
+          "oneOf": [
+            {
+              "$ref": "common.schema.json#/$defs/positiveInteger"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "episode_order": {
+          "$ref": "common.schema.json#/$defs/positiveInteger"
+        },
+        "source_file_name": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "plot_summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "title": {
+          "type": "string"
+        },
+        "script_text": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "scenes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "common.schema.json#/$defs/scriptScene"
+          }
+        },
+        "source_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "common.schema.json#/$defs/sourceRef"
+          }
+        },
+        "continuity_delta": {
+          "$ref": "common.schema.json#/$defs/continuityDelta"
+        },
+        "uncertainty_flags": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "description",
+              "source_refs"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "unclear_audio",
+                  "unclear_visual",
+                  "speaker_unknown",
+                  "overlapping_speech",
+                  "subtitle_occluded",
+                  "unconfirmed"
+                ]
+              },
+              "description": {
+                "type": "string"
+              },
+              "source_refs": {
+                "$ref": "common.schema.json#/$defs/sourceRefs"
+              }
+            }
+          }
+        },
+        "extraction_completeness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "known_gaps",
+            "review_notes"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "complete_first_pass",
+                "partial",
+                "needs_review"
+              ]
+            },
+            "known_gaps": {
+              "$ref": "common.schema.json#/$defs/stringList"
+            },
+            "review_notes": {
+              "$ref": "common.schema.json#/$defs/stringList"
+            }
+          }
+        },
+        "source_availability": {
+          "enum": [
+            "active",
+            "expired",
+            "deleted"
+          ]
+        }
+      }
+    },
+    "referenceScripts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sealed_input_snapshot_id",
+        "episode_count",
+        "unit_refs",
+        "episode_order",
+        "missing_episode_nos",
+        "failed_episode_nos",
+        "duplicate_episode_nos",
+        "completeness",
+        "continue_with_incomplete_material"
+      ],
+      "properties": {
+        "sealed_input_snapshot_id": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "episode_count": {
+          "$ref": "common.schema.json#/$defs/positiveInteger"
+        },
+        "unit_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "common.schema.json#/$defs/artifactVersionRef"
+          }
+        },
+        "episode_order": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "common.schema.json#/$defs/positiveInteger"
+          }
+        },
+        "missing_episode_nos": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/positiveInteger"
+          }
+        },
+        "failed_episode_nos": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/positiveInteger"
+          }
+        },
+        "duplicate_episode_nos": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/positiveInteger"
+          }
+        },
+        "completeness": {
+          "enum": [
+            "complete",
+            "incomplete"
+          ]
+        },
+        "continue_with_incomplete_material": {
+          "type": "boolean"
+        }
+      }
+    },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim",
+        "evidence_refs"
+      ],
+      "properties": {
+        "claim": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "common.schema.json#/$defs/sourceRef"
+          }
+        }
+      }
+    },
+    "analysisSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "summary",
+        "items"
+      ],
+      "properties": {
+        "summary": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/evidenceItem"
+          }
+        }
+      }
+    },
+    "scriptAnalysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "material_completeness",
+        "basic_information",
+        "overall_judgment",
+        "opening_strategy",
+        "hook_system",
+        "payoff_and_emotion",
+        "plot_and_emotion_curve",
+        "characters_and_relationships",
+        "episode_index",
+        "differentiation",
+        "transferable_methods",
+        "risks",
+        "optimization_actions",
+        "marketing_material_directions",
+        "final_conclusion"
+      ],
+      "properties": {
+        "material_completeness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "episode_count",
+            "missing_episode_nos",
+            "limitations"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "complete",
+                "incomplete_confirmed"
+              ]
+            },
+            "episode_count": {
+              "$ref": "common.schema.json#/$defs/positiveInteger"
+            },
+            "missing_episode_nos": {
+              "type": "array",
+              "items": {
+                "$ref": "common.schema.json#/$defs/positiveInteger"
+              }
+            },
+            "limitations": {
+              "$ref": "common.schema.json#/$defs/stringList"
+            }
+          }
+        },
+        "basic_information": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "material_type",
+            "format",
+            "genre",
+            "audience",
+            "worldview_tags",
+            "special_mechanism_tags",
+            "logline",
+            "plot_summary",
+            "worldview"
+          ],
+          "properties": {
+            "material_type": {
+              "type": "string"
+            },
+            "format": {
+              "type": "string"
+            },
+            "genre": {
+              "$ref": "common.schema.json#/$defs/stringList"
+            },
+            "audience": {
+              "type": "string"
+            },
+            "worldview_tags": {
+              "$ref": "common.schema.json#/$defs/stringList"
+            },
+            "special_mechanism_tags": {
+              "$ref": "common.schema.json#/$defs/stringList"
+            },
+            "logline": {
+              "type": "string"
+            },
+            "plot_summary": {
+              "type": "string"
+            },
+            "worldview": {
+              "type": "string"
+            }
+          }
+        },
+        "overall_judgment": {
+          "$ref": "#/$defs/analysisSection"
+        },
+        "opening_strategy": {
+          "$ref": "#/$defs/analysisSection"
+        },
+        "hook_system": {
+          "$ref": "#/$defs/analysisSection"
+        },
+        "payoff_and_emotion": {
+          "$ref": "#/$defs/analysisSection"
+        },
+        "plot_and_emotion_curve": {
+          "$ref": "#/$defs/analysisSection"
+        },
+        "characters_and_relationships": {
+          "$ref": "#/$defs/analysisSection"
+        },
+        "episode_index": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "episode_no",
+              "one_sentence_story",
+              "key_conflict",
+              "ending_hook",
+              "conversion_point",
+              "evidence_refs"
+            ],
+            "properties": {
+              "episode_no": {
+                "$ref": "common.schema.json#/$defs/positiveInteger"
+              },
+              "one_sentence_story": {
+                "type": "string"
+              },
+              "key_conflict": {
+                "type": "string"
+              },
+              "ending_hook": {
+                "type": "string"
+              },
+              "conversion_point": {
+                "type": "string"
+              },
+              "evidence_refs": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "common.schema.json#/$defs/sourceRef"
+                }
+              }
+            }
+          }
+        },
+        "differentiation": {
+          "$ref": "#/$defs/analysisSection"
+        },
+        "transferable_methods": {
+          "$ref": "#/$defs/analysisSection"
+        },
+        "risks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "risk",
+              "impact",
+              "direction",
+              "evidence_refs"
+            ],
+            "properties": {
+              "risk": {
+                "type": "string"
+              },
+              "impact": {
+                "type": "string"
+              },
+              "direction": {
+                "type": "string"
+              },
+              "evidence_refs": {
+                "$ref": "common.schema.json#/$defs/sourceRefs"
+              }
+            }
+          }
+        },
+        "optimization_actions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "priority",
+              "problem",
+              "change",
+              "expected_effect",
+              "is_suggestion"
+            ],
+            "properties": {
+              "priority": {
+                "enum": [
+                  "P0",
+                  "P1",
+                  "P2"
+                ]
+              },
+              "problem": {
+                "type": "string"
+              },
+              "change": {
+                "type": "string"
+              },
+              "expected_effect": {
+                "type": "string"
+              },
+              "is_suggestion": {
+                "const": true
+              }
+            }
+          }
+        },
+        "marketing_material_directions": {
+          "$ref": "#/$defs/analysisSection"
+        },
+        "final_conclusion": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "keep",
+            "strengthen",
+            "recommendation"
+          ],
+          "properties": {
+            "keep": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "common.schema.json#/$defs/nonEmptyString"
+              }
+            },
+            "strengthen": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "common.schema.json#/$defs/nonEmptyString"
+              }
+            },
+            "recommendation": {
+              "$ref": "common.schema.json#/$defs/nonEmptyString"
+            }
+          }
+        }
+      }
+    },
+    "adaptationOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "options",
+        "selection_instructions"
+      ],
+      "properties": {
+        "options": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "option_id",
+              "title",
+              "one_sentence_strategy",
+              "patterns_to_keep",
+              "content_to_replace",
+              "new_element_suggestions",
+              "character_and_relationship_changes",
+              "worldview_changes",
+              "event_chain_changes",
+              "pacing_hook_transfer",
+              "difference_requirements",
+              "risks",
+              "suitable_when",
+              "evidence_refs"
+            ],
+            "properties": {
+              "option_id": {
+                "$ref": "common.schema.json#/$defs/nonEmptyString"
+              },
+              "title": {
+                "$ref": "common.schema.json#/$defs/nonEmptyString"
+              },
+              "one_sentence_strategy": {
+                "type": "string"
+              },
+              "patterns_to_keep": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              },
+              "content_to_replace": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              },
+              "new_element_suggestions": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              },
+              "character_and_relationship_changes": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              },
+              "worldview_changes": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              },
+              "event_chain_changes": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              },
+              "pacing_hook_transfer": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              },
+              "difference_requirements": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              },
+              "risks": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              },
+              "suitable_when": {
+                "type": "string"
+              },
+              "evidence_refs": {
+                "$ref": "common.schema.json#/$defs/sourceRefs"
+              }
+            }
+          }
+        },
+        "selection_instructions": {
+          "type": "string"
+        }
+      }
+    },
+    "adaptationBrief": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "adaptation_goal",
+        "selected_methods",
+        "patterns_to_keep",
+        "content_to_replace",
+        "new_elements",
+        "character_and_relationship_adjustments",
+        "genre_style_worldview_direction",
+        "target_episode_count",
+        "episode_duration_minutes",
+        "forbidden_copying",
+        "user_requirements",
+        "source_labels",
+        "unresolved_questions",
+        "compliance_boundary"
+      ],
+      "properties": {
+        "adaptation_goal": {
+          "type": "string"
+        },
+        "selected_methods": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "patterns_to_keep": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "content_to_replace": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "new_elements": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "character_and_relationship_adjustments": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "genre_style_worldview_direction": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "target_episode_count": {
+          "$ref": "common.schema.json#/$defs/positiveInteger"
+        },
+        "episode_duration_minutes": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 10
+        },
+        "forbidden_copying": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "user_requirements": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "source_labels": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "unresolved_questions": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "compliance_boundary": {
+          "type": "string"
+        }
+      }
+    },
+    "storySeed": {
+      "$ref": "non-novel-to-script.schema.json#/$defs/storySeed"
+    },
+    "seriesBlueprint": {
+      "$ref": "non-novel-to-script.schema.json#/$defs/seriesBlueprint"
+    },
+    "episodeCards": {
+      "$ref": "non-novel-to-script.schema.json#/$defs/episodeCards"
+    },
+    "scriptContext": {
+      "$ref": "non-novel-to-script.schema.json#/$defs/scriptContext"
+    },
+    "scriptUnit": {
+      "$ref": "common.schema.json#/$defs/scriptUnit"
+    },
+    "scriptHandoff": {
+      "$ref": "common.schema.json#/$defs/scriptHandoff"
+    },
+    "scripts": {
+      "$ref": "common.schema.json#/$defs/scriptsAggregate"
+    }
+  }
+}

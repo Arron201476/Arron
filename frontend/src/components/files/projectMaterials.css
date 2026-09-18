@@ -1,0 +1,22 @@
+.project-material-dialog { width: min(600px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--ink); overflow: auto; }
+.project-material-dialog::backdrop { background: rgb(0 0 0 / 30%); }
+.project-material-dialog header, .project-material-dialog footer { display: flex; align-items: center; gap: 12px; }
+.project-material-dialog header { justify-content: space-between; }
+.project-material-dialog h2 { margin: 0; font-size: 16px; }
+.project-material-search { display: flex; align-items: center; gap: 8px; margin: 16px 0; padding: 0 10px; border: 1px solid var(--line); border-radius: 4px; }
+.project-material-search input { width: 100%; min-width: 0; height: 36px; background: transparent; border: 0; }
+.project-material-list { max-height: 52dvh; overflow: auto; }
+.project-material-row { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--line-soft); }
+.project-material-row label { min-width: 0; flex: 1; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.project-material-row svg, .project-material-row input { flex-shrink: 0; }
+.project-material-row label span { min-width: 0; }
+.project-material-row strong, .project-material-row small { display: block; overflow-wrap: anywhere; }
+.project-material-row strong { font-size: 13px; }
+.project-material-row small { color: var(--secondary); font-size: 11px; margin-top: 4px; }
+.project-material-dialog footer { justify-content: flex-end; margin-top: 16px; }
+.asset-file-actions { display: inline-flex; flex-shrink: 0; gap: 4px; }
+.execution-output-file { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line-soft); }
+.execution-output-file > span { min-width: 0; overflow-wrap: anywhere; font-size: 12px; }
+.execution-tool > div { min-width: 0; flex: 1; }
+.execution-citations { margin: 8px 0; padding-left: 18px; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.execution-citations a { color: var(--blue); }

@@ -1,0 +1,106 @@
+{
+  "$schema": "./manifest.schema.json",
+  "id": "script_continuation",
+  "version": "1.0.0",
+  "definition_status": "design_contract",
+  "label": "剧本续写",
+  "description": "解析已有剧本，先生成 5 个续写方向供单选，再按选定方向续写完整剧本。",
+  "kind": "domain_workflow",
+  "execution_mode": "stateful_workflow",
+  "input_binding": {"source_type": "script", "asset_role": "primary_source"},
+  "entry_policy": {
+    "explicit_invocation": true,
+    "auto_route": true,
+    "requires_user_confirmation": true,
+    "input_collection_modes": ["fixed"]
+  },
+  "routing": {
+    "explicit_aliases": ["剧本续写", "续写剧本", "script_continuation"],
+    "intent_examples": ["基于这个剧本给我五个续写方向", "续写这个剧本", "从当前结尾继续写剧本"],
+    "ambiguity_policy": "ask_user"
+  },
+  "accepted_asset_kinds": ["text", "document"],
+  "required_providers": ["content_model_provider", "document_parser"],
+  "input_schema_ref": "../../schemas/v1/script-continuation.schema.json#/$defs/input",
+  "config_schema_refs": {
+    "continuation": "../../schemas/v1/script-continuation.schema.json#/$defs/config"
+  },
+  "default_config_ref": "continuation",
+  "default_retry": {
+    "automatic_attempts": 1,
+    "user_retry_allowed": true,
+    "resume_from_cursor": false,
+    "retryable_errors": ["MODEL_TIMEOUT", "MODEL_RATE_LIMIT", "PROVIDER_TEMPORARY_FAILURE", "PROVIDER_RESPONSE_INVALID", "OUTPUT_REPAIR_FAILED"]
+  },
+  "context_policy_ref": "context.script_continuation.v1",
+  "commands": ["inspect", "start", "pause", "resume", "cancel", "retry_failed", "approve", "request_ai_revision", "regenerate_artifact", "edit_artifact"],
+  "ui": {"icon_key": "file_text", "sort_order": 40, "entry_view_key": "source_materials", "config_view_key": "script_continuation", "default_prompt": "请分析我提供的已有剧本，先给出 5 个续写方向供我选择，再按选定方向续写完整剧本。"},
+  "completion": {
+    "terminal_step_ids": ["generate_continuation_script"],
+    "required_artifacts": [
+      {"artifact_type": "continuation_script", "required_status": "confirmed", "coverage": "one"}
+    ],
+    "requires_terminal_approval": false
+  },
+  "steps": [
+    {
+      "id": "ingest_source",
+      "kind": "system",
+      "executor_ref": "runtime.ingest_source",
+      "config_ref": "continuation",
+      "required_context": ["asset_snapshot", "config_snapshot"],
+      "input_refs": [],
+      "output_refs": [
+        {"artifact_type": "source_input", "cardinality": "one", "initial_status": "pending_approval", "schema_ref": "../../schemas/v1/common.schema.json#/$defs/sourceInput"}
+      ],
+      "prompt_ref": null,
+      "rule_refs": [],
+      "approval": {"type": "transition_checkpoint", "required": true, "invalidate_on_new_version": true},
+      "next": ["generate_continuation_options"]
+    },
+    {
+      "id": "generate_continuation_options",
+      "kind": "model",
+      "executor_ref": "worker.structured_content",
+      "config_ref": "continuation",
+      "input_refs": [
+        {"artifact_type": "source_input", "cardinality": "one", "required_status": "confirmed", "version_policy": "approval_snapshot"}
+      ],
+      "output_refs": [
+        {"artifact_type": "continuation_options", "cardinality": "one", "initial_status": "pending_approval", "schema_ref": "../../schemas/v1/script-continuation.schema.json#/$defs/continuationOptions"}
+      ],
+      "prompt_ref": "../../design/prompts/script-continuation/options.v1.md",
+      "response_adapter_ref": "adapter.script_continuation_options_identity_v1",
+      "rule_refs": [],
+      "required_context": ["approval_snapshot", "config_snapshot", "user_instruction"],
+      "approval": {
+        "type": "transition_checkpoint",
+        "scope": "transition",
+        "required": true,
+        "invalidate_on_new_version": true,
+        "condition": null,
+        "allowed_actions": ["select_single_option", "request_ai_revision"]
+      },
+      "next": ["generate_continuation_script"]
+    },
+    {
+      "id": "generate_continuation_script",
+      "kind": "model",
+      "executor_ref": "worker.structured_content",
+      "config_ref": "continuation",
+      "input_refs": [
+        {"artifact_type": "source_input", "cardinality": "one", "required_status": "confirmed", "version_policy": "approval_snapshot"},
+        {"artifact_type": "continuation_options", "cardinality": "one", "required_status": "confirmed", "version_policy": "approval_snapshot"}
+      ],
+      "output_refs": [
+        {"artifact_type": "continuation_script", "cardinality": "one", "initial_status": "pending_approval", "schema_ref": "../../schemas/v1/script-continuation.schema.json#/$defs/continuationScript"}
+      ],
+      "prompt_ref": "../../design/prompts/script-continuation/script.v1.md",
+      "response_adapter_ref": "adapter.script_continuation_script_identity_v1",
+      "rule_refs": [],
+      "required_context": ["approval_snapshot", "config_snapshot", "decision_snapshot", "user_instruction"],
+      "approval": {"type": "checkpoint", "required": true, "invalidate_on_new_version": true},
+      "next": []
+    }
+  ]
+}

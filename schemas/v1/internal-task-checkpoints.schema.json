@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://content-agent.internal/schemas/v1/internal-task-checkpoints.schema.json",
+  "title": "Content Agent Internal Task Checkpoints",
+  "$defs": {
+    "episodeSplitGlobalPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "episode_skeletons",
+        "global_risks"
+      ],
+      "properties": {
+        "episode_skeletons": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "episode_id",
+              "approx_end_unit_id",
+              "core_event",
+              "character_turn",
+              "desired_hook"
+            ],
+            "properties": {
+              "episode_id": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "approx_end_unit_id": {
+                "type": "string",
+                "pattern": "^U[0-9]{6}$"
+              },
+              "core_event": {
+                "type": "string"
+              },
+              "character_turn": {
+                "type": "string"
+              },
+              "desired_hook": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "global_risks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "episodeSplitBoundaryBatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "episodes",
+        "batch_risks"
+      ],
+      "properties": {
+        "episodes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "episode_id",
+              "end_candidate_id",
+              "source_summary",
+              "core_event",
+              "character_turn",
+              "boundary_reason",
+              "hook_strength",
+              "hook_type",
+              "information_density",
+              "pacing_risk",
+              "split_confidence",
+              "requires_user_attention"
+            ],
+            "properties": {
+              "episode_id": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "end_candidate_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "source_summary": {
+                "type": "string"
+              },
+              "core_event": {
+                "type": "string"
+              },
+              "character_turn": {
+                "type": "string"
+              },
+              "boundary_reason": {
+                "type": "string"
+              },
+              "hook_strength": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "hook_type": {
+                "type": "string"
+              },
+              "information_density": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "pacing_risk": {
+                "type": "string"
+              },
+              "split_confidence": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "requires_user_attention": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "batch_risks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

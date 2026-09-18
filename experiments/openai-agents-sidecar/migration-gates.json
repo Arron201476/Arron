@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0.0",
+  "target": "openai_agents_sdk_harness",
+  "cutover_requires_user_approval": false,
+  "steps": [
+    {"id": 1, "name": "freeze_boundaries_and_baseline", "status": "completed"},
+    {"id": 2, "name": "runtime_read_tools", "status": "completed"},
+    {"id": 3, "name": "sdk_session_and_memory", "status": "completed"},
+    {"id": 4, "name": "sdk_intent_and_targeting", "status": "completed"},
+    {"id": 5, "name": "controlled_write_tools", "status": "completed"},
+    {"id": 6, "name": "skill_and_run_orchestration", "status": "completed"},
+    {"id": 7, "name": "unified_events_and_pre_cutover_regression", "status": "completed"},
+    {"id": 8, "name": "full_sdk_cutover_and_cleanup", "status": "completed"}
+  ],
+  "runtime_ownership": [
+    "projects",
+    "conversations",
+    "messages",
+    "assets",
+    "artifacts",
+    "artifact_versions",
+    "lineage",
+    "revisions",
+    "runs",
+    "steps",
+    "approvals",
+    "idempotency",
+    "authorization",
+    "project_goal_state"
+  ],
+  "sdk_ownership": [
+    "runner",
+    "session",
+    "conversation_context_selection",
+    "intent_decision",
+    "tool_selection",
+    "target_discovery",
+    "skill_selection",
+    "skill_agent_orchestration",
+    "goal_interpretation",
+    "session_compaction",
+    "artifact_revision"
+  ],
+  "regression_cases": [
+    "G1", "G2", "G3", "G4", "G5", "G6",
+    "S1", "S2", "S3", "R1", "R2", "R3", "R4", "U1"
+  ]
+}

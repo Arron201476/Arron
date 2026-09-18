@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "id": "story_review_workflow",
+  "version": "1.0.0",
+  "execution_mode": "stateful_workflow",
+  "input_binding": {"source_type": "story", "asset_role": "primary_source"},
+  "accepted_asset_kinds": ["text", "document"],
+  "required_providers": ["content_model_provider"],
+  "commands": ["inspect", "start", "pause", "resume", "cancel", "approve"],
+  "requires_user_confirmation": true,
+  "explicit_aliases": ["story review workflow", "故事评审流程"],
+  "intent_examples": ["用流程评审这个故事梗概", "评审故事并给我一份可确认的报告"],
+  "workflow_ref": "content-agent/workflow.json",
+  "ui": {
+    "icon_key": "clipboard_check",
+    "sort_order": 900,
+    "entry_view_key": "source_materials",
+    "config_view_key": "json_schema"
+  }
+}

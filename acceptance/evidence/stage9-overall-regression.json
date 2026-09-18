@@ -1,0 +1,84 @@
+{
+  "stage": 9,
+  "name": "E2E verification",
+  "scope": "internal_demo",
+  "status": "passed",
+  "completed_at": "2026-08-07T00:20:00+08:00",
+  "environment": {
+    "runtime_host": "comic-agent01",
+    "runtime_os": "linux",
+    "access": "ssh_tunnel",
+    "local_frontend": "http://127.0.0.1:8860/",
+    "local_backend_tunnel": "http://127.0.0.1:8850",
+    "windows_constraint": "WDAC blocks newly generated Go test executables; backend tests were cross-compiled and executed on the trusted Linux host"
+  },
+  "real_provider_chains": [
+    {
+      "capability_id": "non_novel_to_script",
+      "status": "completed",
+      "run_id": "run_8db56b02ddd712cb3faae7c2cdec4ed2",
+      "duration_seconds": 816,
+      "artifact_type_count": 10,
+      "candidate_count": 1,
+      "quality_issues": { "blocker": 0, "high": 0, "medium": 1, "low": 0 },
+      "evidence": "./stage9-non-novel-real-e2e.json"
+    },
+    {
+      "capability_id": "novel_to_script",
+      "status": "completed",
+      "run_id": "run_b4b499b50fb5833030bd9cace357444c",
+      "duration_seconds": 976,
+      "artifact_type_count": 9,
+      "candidate_count": 1,
+      "quality_issues": { "blocker": 0, "high": 0, "medium": 2, "low": 1 },
+      "evidence": "./stage9-novel-real-e2e.json"
+    },
+    {
+      "capability_id": "video_reference_creation",
+      "status": "completed",
+      "run_id": "run_c333a34019ae5c59cb4e19783a974a2c",
+      "duration_seconds": 1593,
+      "artifact_type_count": 13,
+      "candidate_count": 1,
+      "fixture_duration_seconds": 60.53,
+      "retry": {
+        "step": "build_story_seed",
+        "reason": "prompt output conflicted with the strict artifact schema",
+        "result": "prompt corrected and the same run resumed to completion"
+      },
+      "evidence": "./stage9-video-real-e2e.json"
+    }
+  ],
+  "regression": {
+    "capability_contracts": { "status": "passed", "manifests": 3, "steps": 34, "response_adapters": 19 },
+    "stage2_matrix": { "status": "passed", "cases": 96, "fixtures": 10, "areas": 17, "p0": 88, "p1": 8 },
+    "stage8_plan": { "status": "passed", "classified_cases": 96, "suites": 5, "environments": 3 },
+    "core_api_smoke": { "status": "passed", "passed": 7, "failed": 0, "evidence": "./stage9-core-smoke.json" },
+    "frontend_unit": { "status": "passed", "test_files": 1, "tests": 12 },
+    "frontend_build": { "status": "passed", "modules": 1784 },
+    "frontend_real_backend_browser_smoke": { "status": "passed", "case": "B7-0" },
+    "backend_packages": { "status": "passed", "passed_packages": 13, "failed_packages": 0, "execution": "linux cross-compiled test binaries on trusted host" }
+  },
+  "verified_behaviors": [
+    "general Agent chat without a Capability",
+    "Capability registry and three main-chain routing",
+    "project create, read, rename and delete impact preview",
+    "approval checkpoints, pause, resume and failed-step retry",
+    "artifact persistence, aggregation, candidate generation and quality review",
+    "frontend build, unit tests and real-backend browser smoke"
+  ],
+  "resolved_defects": [
+    "Runtime steps now read immutable configuration snapshots through the declared dependency",
+    "aggregate_scripts explicitly declares its creation configuration dependency in all three manifests",
+    "video analysis receives extracted video_script_unit content instead of only reference indexes",
+    "video story_seed uses a dedicated prompt whose output matches the strict schema",
+    "stale dependency-lineage and migration test fixtures were aligned with the current contracts"
+  ],
+  "deferred_gates": [
+    "40-episode real video load, concurrency, long-duration SSE and recovery validation",
+    "formal deployment package, migration dry run, canary and rollback",
+    "production monitoring, alerting and multi-process high availability",
+    "manual content review across a full multi-episode reference drama"
+  ],
+  "conclusion": "Stage 9 passes the agreed internal Demo exit gate. Deferred formal-release gates remain open and are not counted as passed."
+}

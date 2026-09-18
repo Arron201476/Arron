@@ -1,0 +1,7 @@
+.project-goal-summary { min-width: 0; margin-bottom: 12px; border-bottom: 1px solid #dce1e5; padding-bottom: 12px; overflow-wrap: anywhere; }
+.project-goal-summary summary { cursor: pointer; font-size: 13px; line-height: 1.5; }
+.project-goal-summary summary strong { margin-right: 8px; }
+.project-goal-summary > div { margin-top: 8px; }
+.project-goal-summary small { color: #57616b; }
+.project-goal-summary h3 { margin: 8px 0 4px; font-size: 13px; line-height: 1.5; }
+.project-goal-summary ul { margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6; }

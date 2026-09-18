@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "episode_review_workflow",
+  "version": "1.0.0",
+  "execution_mode": "stateful_workflow",
+  "input_binding": {"source_type": "story", "asset_role": "primary_source"},
+  "accepted_asset_kinds": ["text", "document"],
+  "required_providers": ["content_model_provider"],
+  "commands": ["inspect", "start", "pause", "resume", "cancel", "approve"],
+  "requires_user_confirmation": true,
+  "explicit_aliases": ["episode review workflow"],
+  "intent_examples": ["Review each episode and let me approve the reports together."],
+  "workflow_ref": "content-agent/workflow.json",
+  "ui": {"icon_key": "clipboard_check", "sort_order": 910, "entry_view_key": "source_materials", "config_view_key": "json_schema"}
+}

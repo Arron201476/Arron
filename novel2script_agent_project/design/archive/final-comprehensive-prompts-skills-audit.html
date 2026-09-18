@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>最终通盘检查：Prompts / Skills</title>
+  <style>
+    body{margin:0;background:#f6f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,"Microsoft YaHei",sans-serif;line-height:1.65}
+    main{max-width:1220px;margin:0 auto;padding:28px} h1{font-size:28px;margin:0 0 8px} h2{margin-top:34px;border-left:5px solid #2563eb;padding-left:10px}
+    .note{background:#fff;border:1px solid #dbe3f0;border-radius:14px;padding:16px;margin:14px 0;box-shadow:0 6px 18px rgba(15,23,42,.04)}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;margin:14px 0;box-shadow:0 6px 18px rgba(15,23,42,.04)}
+    th,td{border:1px solid #e5eaf3;padding:10px 12px;vertical-align:top;text-align:left} th{background:#eef4ff;font-weight:700}
+    code{background:#eef2f7;border-radius:6px;padding:1px 5px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.92em}
+    .tag{display:inline-block;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:700;background:#e5e7eb;color:#374151;white-space:nowrap}.ok{background:#dcfce7;color:#166534}.p0{background:#fee2e2;color:#991b1b}.p1{background:#fef3c7;color:#92400e}.info{background:#dbeafe;color:#1d4ed8}
+    ul,ol{margin:6px 0 6px 22px;padding:0}.small{color:#64748b;font-size:13px}.strong{font-weight:700;color:#0f172a}
+  </style>
+</head>
+<body>
+<main>
+  <h1>最终通盘检查：Prompts / Skills</h1>
+  <p class="small">本页复盘此前关于 prompts/skills 的所有核心约束，并记录本次只读检查结果。本次没有修改 prompt/skill 本体。</p>
+
+  
+  <section class="note">
+    <h2>执行状态：公共 script_generate 已修正</h2>
+    <ul>
+      <li>已新增公共 <code>prompts/script_generate.md</code>，作为小说链和非小说链共用剧本生成入口。</li>
+      <li>已将旧 <code>小说-prompts/step4_script_generate.md</code> 移入 archive，避免 active prompt 重复。</li>
+      <li>已统一小说 Step3 与非小说 Step4 的 <code>next_action</code> 为 <code>script_generate</code>。</li>
+      <li>公共 prompt 已增加 <code>source_mode</code> 和 <code>source_context</code>，支持小说/非小说不同拼参。</li>
+      <li><code>04_剧本写作技法.md</code> 标题编号跳号已修正。</li>
+    </ul>
+  </section>
+
+  <section class="note">
+    <h2>一、此前你反复强调过的审计标准</h2>
+    <ol>
+      <li><span class="strong">Skills 只是准则。</span> Skill 只能有名称、用途描述、准则；不能放输入、输出、参数、JSON、字段协议。</li>
+      <li><span class="strong">Prompts 是可执行步骤。</span> Prompt 才负责角色、任务、引用 skills、输入、执行规则、输出、禁止事项。</li>
+      <li><span class="strong">引用必须被消费。</span> Prompt 引用某个 skill，必须能在执行规则或输出 artifact 中找到实际消费路径；完全不消费就不要引用。</li>
+      <li><span class="strong">部分消费要写清边界。</span> 例如 Step3 引用转场 skill 只能消费视觉/闪回/转场策略，不能把剧本格式规则也带进规划层。</li>
+      <li><span class="strong">Skill 准则不能悬空。</span> 如果 skill 里有判断维度，prompt/artifact 要有承接字段；否则这条准则只是噪音。</li>
+      <li><span class="strong">小说链 Step1/Step2 已重排。</span> Step1 做全文理解/故事圣经，Step2 再拆集；Step1 不拆集、不重排、不生成剧本。</li>
+      <li><span class="strong">拆集策略要保守。</span> 可以识别风险，但不能为了钩子或节奏擅自改原文关键事实、乱合并、乱新增。</li>
+      <li><span class="strong">上下文靠 artifact，不靠 prompt 祈祷。</span> Step3/Step4 必须消费最新 story_bible、episode_split_final、episode_cards、context_pack、continuity_delta。</li>
+      <li><span class="strong">小说/非小说双链路，剧本生成共用。</span> 最后一段 script_generate 应是公共能力，小说和非小说只是拼参不同。</li>
+      <li><span class="strong">不依赖前端也要能跑。</span> 前端只是编辑、审批、展示；prompt/artifact 自己要足够让工程自动调度。</li>
+      <li><span class="strong">不要在 prompt/skill 里解释历史。</span> 不写“旧流程”“为什么这样改”“之前如何”等说明性文本。</li>
+      <li><span class="strong">反馈问题要分层。</span> 能靠 prompt/skill 解决的处理；需要前端、agent、审批、局部重跑的标未处理，不硬塞进 prompt/skill。</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>二、本次检查结果总览</h2>
+    <table>
+      <thead><tr><th>检查项</th><th>结果</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>Skill 顶层结构</td><td><span class="tag ok">通过</span></td><td>9 个 skill 顶层均为 <code>名称 / 用途描述 / 准则</code>。</td></tr>
+        <tr><td>Skill 是否残留输入/输出/参数/JSON</td><td><span class="tag ok">通过</span></td><td>未发现 <code>## 输入</code>、<code>## 输出</code>、<code>## 参数</code>、JSON code fence、<code>project_id</code> 等字段化残留。</td></tr>
+        <tr><td>Prompt JSON 可解析</td><td><span class="tag ok">通过</span></td><td>8 个 prompt 的输入/输出 JSON 示例均可解析。</td></tr>
+        <tr><td>Prompt 引用 skill 是否存在</td><td><span class="tag ok">通过</span></td><td>所有引用的 skill 文件都存在。</td></tr>
+        <tr><td>旧流程/解释性脏词</td><td><span class="tag ok">通过</span></td><td>未发现“旧、之前、原来、为什么”等历史解释残留。</td></tr>
+        <tr><td>前端依赖</td><td><span class="tag ok">通过</span></td><td>未发现必须依赖前端按钮/点击才能运行的 prompt 语义。</td></tr>
+        <tr><td>重复完整示例</td><td><span class="tag ok">通过</span></td><td>04/06 重复的医院走廊完整示例已清除。</td></tr>
+        <tr><td>公共剧本生成</td><td><span class="tag ok">通过</span></td><td>已新增公共 <code>prompts/script_generate.md</code>，支持 <code>source_mode</code> 和双链路上下文。</td></tr>
+        <tr><td>next_action 一致性</td><td><span class="tag ok">通过</span></td><td>小说 Step3 与非小说 Step4 均已统一输出 <code>script_generate</code>。</td></tr>
+        <tr><td>Skill 编号整洁度</td><td><span class="tag ok">通过</span></td><td><code>04_剧本写作技法.md</code> 去重后四级标题编号从 8 跳到 11，影响阅读，不影响执行。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>三、小说链检查</h2>
+    <table>
+      <thead><tr><th>步骤</th><th>当前状态</th><th>判断</th></tr></thead>
+      <tbody>
+        <tr><td>小说 Step1：story_bible</td><td>引用 <code>01</code>、<code>02</code>；输出 <code>story_bible</code>、<code>characters.speech_profile</code>、<code>climax_map</code>、<code>short_drama_assets</code>。</td><td><span class="tag ok">通过</span> Skill01/02 有明确消费出口。</td></tr>
+        <tr><td>小说 Step2：episode_split</td><td>引用 <code>03</code>、<code>07</code>；输入 <code>source_text</code>、<code>story_bible</code>；输出 <code>episode_split</code>。</td><td><span class="tag ok">通过</span> 不再直接引用 Skill01，改为消费 story_bible。</td></tr>
+        <tr><td>小说 Step3：episode_cards</td><td>引用 <code>02</code>、<code>03</code>、<code>07</code>、<code>06</code>；输出 <code>episode_cards</code>、<code>pacing_plan</code>、<code>visual_strategy</code>。</td><td><span class="tag ok">通过</span> 引用与字段基本闭环。</td></tr>
+        <tr><td>公共 script_generate</td><td>输入 <code>source_mode</code>、<code>source_context</code>、<code>episode_card</code>；输出 <code>script_unit</code>。</td><td><span class="tag ok">通过</span> 已支持小说/非小说双链路拼参。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>四、非小说链检查</h2>
+    <table>
+      <thead><tr><th>步骤</th><th>当前状态</th><th>判断</th></tr></thead>
+      <tbody>
+        <tr><td>非小说 Step1：material_bank</td><td>引用 <code>09</code>、<code>02</code>；输出 <code>material_bank</code>。</td><td><span class="tag ok">通过</span> 已不再误用小说 Skill01。</td></tr>
+        <tr><td>非小说 Step2：story_seed</td><td>引用 <code>09</code>、<code>02</code>、<code>03</code>、<code>07</code>；输出 <code>story_seed</code>。</td><td><span class="tag ok">通过</span> 素材整理、人物、结构、小程序适配都有消费出口。</td></tr>
+        <tr><td>非小说 Step3：series_blueprint</td><td>引用 <code>03</code>、<code>07</code>；输出 <code>series_blueprint</code>。</td><td><span class="tag ok">通过</span> 体量、阶段、节奏、高潮点字段闭环。</td></tr>
+        <tr><td>非小说 Step4：episode_cards</td><td>引用 <code>02</code>、<code>03</code>、<code>07</code>、<code>06</code>；输出 <code>episode_cards</code>，<code>next_action: script_generate</code>。</td><td><span class="tag ok">通过</span> 下游已接公共 <code>prompts/script_generate.md</code>，通过 <code>source_mode: non_novel</code> 拼参。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>五、Skill 重复与边界复查</h2>
+    <table>
+      <thead><tr><th>Skill</th><th>状态</th><th>剩余问题</th></tr></thead>
+      <tbody>
+        <tr><td><code>01 素材理解与故事圣经</code></td><td><span class="tag ok">通过</span></td><td>已收窄为小说 Step1；后续通过 story_bible 间接消费。</td></tr>
+        <tr><td><code>02 人物关系与声口</code></td><td><span class="tag ok">通过</span></td><td>与 05 的声口有边界：02 记录人物声口，05 执行对白写法。</td></tr>
+        <tr><td><code>03 结构规划</code></td><td><span class="tag ok">通过</span></td><td>仍是最大 skill，但职责明确：规划层。</td></tr>
+        <tr><td><code>04 剧本写作技法</code></td><td><span class="tag p1">需小修</span></td><td>已边界化，但标题编号从 8 跳到 11；还可进一步把“开场写法”改成“执行 episode_card.opening_state”。</td></tr>
+        <tr><td><code>05 对白规则</code></td><td><span class="tag ok">通过</span></td><td>对白写法归口清晰。</td></tr>
+        <tr><td><code>06 转场/闪回/连续性/格式</code></td><td><span class="tag ok">通过</span></td><td>已把对白写法改成格式边界；示例重复已移除。</td></tr>
+        <tr><td><code>07 小程序短剧适配</code></td><td><span class="tag ok">通过</span></td><td>已增加平台适配边界，不替代结构/对白/转场。</td></tr>
+        <tr><td><code>08 示例库</code></td><td><span class="tag ok">通过</span></td><td>示例集中归口。</td></tr>
+        <tr><td><code>09 非小说素材与故事种子</code></td><td><span class="tag ok">通过</span></td><td>非小说链专用，避免误用 Skill01。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="note">
+    <h2>六、最终剩余问题清单</h2>
+    <ol>
+      <li><span class="tag ok">已修</span> 公共 <code>script_generate</code> 已迁到 <code>prompts/script_generate.md</code>，并支持 <code>source_mode</code> 与双链路 <code>source_context</code>。</li>
+      <li><span class="tag ok">已修</span> 小说 Step3 与非小说 Step4 的 <code>next_action</code> 已统一为 <code>script_generate</code>。</li>
+      <li><span class="tag p1">建议修</span> <code>04_剧本写作技法.md</code> 四级标题编号跳号，做一次编号清理。</li>
+      <li><span class="tag info">暂不处理</span> 生成前配置、局部修改、人物合并、新增功能角色、手动全集切割、自动改集数/合并拆分，仍属于 agent/workflow/前端协议层。</li>
+    </ol>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,954 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://content-agent.internal/schemas/v1/common.schema.json",
+  "title": "Content Agent Common Definitions",
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "positiveInteger": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "stringList": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "generationConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_episode_count",
+        "episode_duration_minutes",
+        "preserve_existing_episode_marks",
+        "expansion_policy",
+        "user_requirements"
+      ],
+      "properties": {
+        "target_episode_count": {
+          "$ref": "#/$defs/positiveInteger"
+        },
+        "episode_duration_minutes": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 10
+        },
+        "episode_execution_mode": {
+          "enum": [
+            "continuous",
+            "review_each"
+          ],
+          "default": "continuous"
+        },
+        "preserve_existing_episode_marks": {
+          "type": "boolean"
+        },
+        "expansion_policy": {
+          "const": "confirm_if_needed"
+        },
+        "user_requirements": {
+          "$ref": "#/$defs/stringList"
+        },
+        "retention_profile": {
+          "type": "string"
+        },
+        "adaptation_freedom": {
+          "type": "string"
+        },
+        "compliance_mode": {
+          "const": "skip"
+        },
+        "policy_pack_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "assetInputRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "asset_id",
+        "asset_snapshot_id",
+        "role",
+        "order"
+      ],
+      "properties": {
+        "asset_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "asset_snapshot_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "role": {
+          "enum": [
+            "primary_source",
+            "supporting_source",
+            "reference_source"
+          ]
+        },
+        "order": {
+          "$ref": "#/$defs/positiveInteger"
+        },
+        "episode_no": {
+          "$ref": "#/$defs/positiveInteger"
+        }
+      }
+    },
+    "sourceInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_snapshot_id",
+        "source_kind",
+        "assets",
+        "user_request_message_id"
+      ],
+      "properties": {
+        "input_snapshot_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "source_kind": {
+          "enum": [
+            "novel",
+            "non_novel",
+            "video_reference"
+          ]
+        },
+        "assets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/assetInputRef"
+          }
+        },
+        "user_request_message_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "confirmed_strategy_refs": {
+          "$ref": "#/$defs/stringList"
+        }
+      }
+    },
+    "timeRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start_ms",
+        "end_ms"
+      ],
+      "properties": {
+        "start_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_type"
+      ],
+      "properties": {
+        "source_type": {
+          "enum": [
+            "asset_text_range",
+            "video_time_range",
+            "artifact_path",
+            "user_message"
+          ]
+        },
+        "asset_id": {
+          "type": "string"
+        },
+        "asset_snapshot_id": {
+          "type": "string"
+        },
+        "artifact_version_id": {
+          "type": "string"
+        },
+        "message_id": {
+          "type": "string"
+        },
+        "source_unit_id": {
+          "type": "string"
+        },
+        "range_label": {
+          "type": "string"
+        },
+        "json_pointer": {
+          "type": "string"
+        },
+        "time_range": {
+          "$ref": "#/$defs/timeRange"
+        },
+        "evidence_excerpt": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "source_type": {
+                "const": "asset_text_range"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "asset_id",
+              "asset_snapshot_id",
+              "range_label"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source_type": {
+                "const": "video_time_range"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "asset_id",
+              "asset_snapshot_id",
+              "time_range"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source_type": {
+                "const": "artifact_path"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "artifact_version_id",
+              "json_pointer"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source_type": {
+                "const": "user_message"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "message_id"
+            ]
+          }
+        }
+      ]
+    },
+    "sourceRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sourceRef"
+      },
+      "default": []
+    },
+    "traceBucket": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "claim",
+          "source_refs"
+        ],
+        "properties": {
+          "claim": {
+            "$ref": "#/$defs/nonEmptyString"
+          },
+          "source_refs": {
+            "$ref": "#/$defs/sourceRefs"
+          }
+        }
+      },
+      "default": []
+    },
+    "sourceTrace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "grounded",
+        "inferred"
+      ],
+      "properties": {
+        "grounded": {
+          "$ref": "#/$defs/traceBucket"
+        },
+        "inferred": {
+          "$ref": "#/$defs/traceBucket"
+        },
+        "claims": {
+          "$ref": "#/$defs/contentClaimList"
+        }
+      }
+    },
+    "sourceUnit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_unit_id",
+        "asset_id",
+        "asset_snapshot_id",
+        "unit_kind",
+        "parent_label",
+        "order",
+        "summary",
+        "content_hash",
+        "characters",
+        "locations",
+        "props"
+      ],
+      "properties": {
+        "source_unit_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "asset_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "asset_snapshot_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "unit_kind": {
+          "enum": [
+            "chapter_block",
+            "story_unit",
+            "document_section"
+          ]
+        },
+        "parent_label": {
+          "type": "string"
+        },
+        "order": {
+          "$ref": "#/$defs/positiveInteger"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "characters": {
+          "$ref": "#/$defs/stringList"
+        },
+        "locations": {
+          "$ref": "#/$defs/stringList"
+        },
+        "props": {
+          "$ref": "#/$defs/stringList"
+        }
+      }
+    },
+    "sourceManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest_id",
+        "manifest_version",
+        "project_id",
+        "run_input_snapshot_version_id",
+        "source_kind",
+        "units",
+        "covered_source_unit_ids",
+        "missing_or_unread_scope",
+        "truncation_risk",
+        "created_at"
+      ],
+      "properties": {
+        "manifest_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "manifest_version": {
+          "$ref": "#/$defs/positiveInteger"
+        },
+        "project_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "run_input_snapshot_version_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "source_kind": {
+          "enum": [
+            "novel",
+            "non_novel"
+          ]
+        },
+        "units": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/sourceUnit"
+          }
+        },
+        "covered_source_unit_ids": {
+          "$ref": "#/$defs/stringList"
+        },
+        "missing_or_unread_scope": {
+          "$ref": "#/$defs/stringList"
+        },
+        "truncation_risk": {
+          "type": "boolean"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "contentClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_id",
+        "category",
+        "statement",
+        "status",
+        "source_refs",
+        "confidence",
+        "locked"
+      ],
+      "properties": {
+        "claim_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "category": {
+          "enum": [
+            "character",
+            "relationship",
+            "event",
+            "world_rule",
+            "information",
+            "prop",
+            "other"
+          ]
+        },
+        "statement": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "status": {
+          "enum": [
+            "FACT",
+            "CONFIRMED_CHANGE",
+            "INFERENCE",
+            "PROPOSAL",
+            "UNKNOWN"
+          ]
+        },
+        "source_refs": {
+          "$ref": "#/$defs/sourceRefs"
+        },
+        "confidence": {
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "unknown"
+          ]
+        },
+        "locked": {
+          "type": "boolean"
+        },
+        "approval_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/nonEmptyString"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "CONFIRMED_CHANGE"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "approval_ref"
+            ],
+            "properties": {
+              "approval_ref": {
+                "$ref": "#/$defs/nonEmptyString"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "FACT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "source_refs": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "locked": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "FACT",
+                  "CONFIRMED_CHANGE"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "contentClaimList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/contentClaim"
+      }
+    },
+    "changeRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "change_request_id",
+        "project_id",
+        "run_id",
+        "requested_by",
+        "original_claim_ids",
+        "proposed_change",
+        "reason",
+        "affected_artifact_version_ids",
+        "affected_episode_nos",
+        "status",
+        "approval_request_id"
+      ],
+      "properties": {
+        "change_request_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "project_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "run_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "requested_by": {
+          "enum": [
+            "user",
+            "model"
+          ]
+        },
+        "original_claim_ids": {
+          "$ref": "#/$defs/stringList"
+        },
+        "proposed_change": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "reason": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "affected_artifact_version_ids": {
+          "$ref": "#/$defs/stringList"
+        },
+        "affected_episode_nos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/positiveInteger"
+          }
+        },
+        "status": {
+          "enum": [
+            "pending",
+            "approved",
+            "rejected"
+          ]
+        },
+        "approval_request_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "decision_snapshot_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "creativeBaselineRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_version_id",
+        "mode"
+      ],
+      "properties": {
+        "artifact_version_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "mode": {
+          "enum": [
+            "creative",
+            "format_only"
+          ]
+        }
+      }
+    },
+    "complianceResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "policy_pack_version"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "not_requested",
+            "NEEDS_POLICY"
+          ]
+        },
+        "policy_pack_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "continuityDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "new_facts",
+        "character_state_changes",
+        "relationship_changes",
+        "hooks_opened",
+        "hooks_resolved"
+      ],
+      "properties": {
+        "new_facts": {
+          "$ref": "#/$defs/stringList"
+        },
+        "character_state_changes": {
+          "$ref": "#/$defs/stringList"
+        },
+        "relationship_changes": {
+          "$ref": "#/$defs/stringList"
+        },
+        "hooks_opened": {
+          "$ref": "#/$defs/stringList"
+        },
+        "hooks_resolved": {
+          "$ref": "#/$defs/stringList"
+        }
+      }
+    },
+    "scriptBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "line_id",
+        "block_type",
+        "text"
+      ],
+      "properties": {
+        "line_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "block_type": {
+          "enum": [
+            "action",
+            "dialogue",
+            "transition",
+            "scene_note"
+          ]
+        },
+        "speaker": {
+          "type": "string"
+        },
+        "delivery": {
+          "type": "string"
+        },
+        "text": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "source_refs": {
+          "$ref": "#/$defs/sourceRefs"
+        },
+        "uncertainty": {
+          "enum": [
+            "none",
+            "unclear_audio",
+            "unclear_visual",
+            "speaker_unknown",
+            "overlapping_speech",
+            "subtitle_occluded",
+            "unconfirmed"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "block_type": {
+                "const": "dialogue"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "speaker"
+            ]
+          }
+        }
+      ]
+    },
+    "scriptScene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scene_id",
+        "heading",
+        "location",
+        "interior_exterior",
+        "time_of_day",
+        "characters",
+        "blocks",
+        "source_refs"
+      ],
+      "properties": {
+        "scene_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "heading": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "location": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "interior_exterior": {
+          "enum": [
+            "内",
+            "外",
+            "内外"
+          ]
+        },
+        "time_of_day": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "time_range": {
+          "$ref": "#/$defs/timeRange"
+        },
+        "characters": {
+          "$ref": "#/$defs/stringList"
+        },
+        "blocks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/scriptBlock"
+          }
+        },
+        "source_refs": {
+          "$ref": "#/$defs/sourceRefs"
+        }
+      }
+    },
+    "scriptUnit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "episode_no",
+        "title",
+        "script_text",
+        "scenes",
+        "source_refs"
+      ],
+      "properties": {
+        "episode_no": {
+          "$ref": "#/$defs/positiveInteger"
+        },
+        "title": {
+          "type": "string"
+        },
+        "script_text": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "scenes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/scriptScene"
+          }
+        },
+        "source_refs": {
+          "$ref": "#/$defs/sourceRefs"
+        }
+      }
+    },
+    "scriptHandoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "episode_no",
+        "script_artifact_version_id",
+        "source_refs",
+        "continuity_delta",
+        "runtime_check",
+        "critical_presentation_constraints",
+        "review_focus",
+        "self_check"
+      ],
+      "properties": {
+        "episode_no": {
+          "$ref": "#/$defs/positiveInteger"
+        },
+        "script_artifact_version_id": {
+          "type": "string"
+        },
+        "source_refs": {
+          "$ref": "#/$defs/sourceRefs"
+        },
+        "continuity_delta": {
+          "$ref": "#/$defs/continuityDelta"
+        },
+        "runtime_check": {
+          "type": "object"
+        },
+        "critical_presentation_constraints": {
+          "$ref": "#/$defs/stringList"
+        },
+        "review_focus": {
+          "$ref": "#/$defs/stringList"
+        },
+        "next_episode_must_address": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "self_check": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "format_risks",
+            "continuity_risks",
+            "source_fidelity_risks"
+          ],
+          "properties": {
+            "format_risks": {
+              "$ref": "#/$defs/stringList"
+            },
+            "continuity_risks": {
+              "$ref": "#/$defs/stringList"
+            },
+            "source_fidelity_risks": {
+              "$ref": "#/$defs/stringList"
+            }
+          }
+        }
+      }
+    },
+    "artifactVersionRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "episode_no",
+        "artifact_version_id"
+      ],
+      "properties": {
+        "episode_no": {
+          "$ref": "#/$defs/positiveInteger"
+        },
+        "artifact_version_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "scriptsAggregate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "episode_count",
+        "unit_refs",
+        "completeness",
+        "global_continuity_state",
+        "quality_flags"
+      ],
+      "properties": {
+        "episode_count": {
+          "$ref": "#/$defs/positiveInteger"
+        },
+        "unit_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/artifactVersionRef"
+          }
+        },
+        "completeness": {
+          "enum": [
+            "complete",
+            "incomplete_confirmed"
+          ]
+        },
+        "global_continuity_state": {
+          "type": "object"
+        },
+        "quality_flags": {
+          "$ref": "#/$defs/stringList"
+        }
+      }
+    }
+  }
+}

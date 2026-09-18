@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Novel2Script UI State Gallery</title>
+  <style>
+    :root {
+      --canvas: #f5f7fa;
+      --surface: #ffffff;
+      --soft: #f8fafc;
+      --text: #172033;
+      --strong: #0f172a;
+      --muted: #667085;
+      --faint: #98a2b3;
+      --line: #d9e2ec;
+      --line-soft: #e8eef5;
+      --primary: #0f766e;
+      --primary-soft: #e7f6f3;
+      --blue: #2563eb;
+      --blue-soft: #eaf2ff;
+      --warning: #b45309;
+      --warning-soft: #fff7ed;
+      --danger: #b42318;
+      --danger-soft: #fef3f2;
+      --success: #047857;
+      --success-soft: #ecfdf3;
+      --shadow: 0 18px 46px rgba(16, 24, 40, 0.08);
+      font-family: Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-size: 14px;
+      letter-spacing: 0;
+      background:
+        linear-gradient(90deg, rgba(217,226,236,.5) 1px, transparent 1px) 0 0 / 24px 24px,
+        linear-gradient(0deg, rgba(217,226,236,.45) 1px, transparent 1px) 0 0 / 24px 24px,
+        var(--canvas);
+    }
+    button, textarea, select { font: inherit; }
+    button { border: 0; background: none; cursor: default; }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: 248px minmax(920px, 1fr);
+      min-height: 100vh;
+    }
+    .gallery-nav {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 22px 16px;
+      border-right: 1px solid var(--line);
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(12px);
+      overflow: auto;
+    }
+    .gallery-nav h1 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      color: var(--strong);
+    }
+    .gallery-nav p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .gallery-nav a {
+      display: block;
+      min-height: 36px;
+      padding: 9px 10px;
+      margin-bottom: 4px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: #344054;
+      text-decoration: none;
+      font-weight: 650;
+      font-size: 13px;
+    }
+    .gallery-nav a:hover {
+      border-color: #b8e1d9;
+      background: var(--primary-soft);
+      color: #115e59;
+    }
+    .gallery-main { padding: 24px; }
+    .state {
+      margin: 0 0 34px;
+      scroll-margin-top: 18px;
+    }
+    .state-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0 0 12px;
+    }
+    .state-head h2 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      color: var(--strong);
+    }
+    .state-head p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .spec-pill {
+      display: inline-flex;
+      align-items: center;
+      height: 28px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .screen {
+      min-width: 1180px;
+      height: 720px;
+      display: grid;
+      grid-template-rows: 56px 1fr;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--canvas);
+      box-shadow: var(--shadow);
+    }
+    .topbar {
+      display: grid;
+      grid-template-columns: 272px minmax(300px, 1fr) auto;
+      align-items: center;
+      gap: 18px;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.96);
+    }
+    .brand, .project, .top-actions, .pill, .btn, .nav-row, .scene-title, .task, .chips, .composer-actions, .meta-line, .tabs, .toolbar, .status-line {
+      display: flex;
+      align-items: center;
+    }
+    .brand { gap: 10px; font-weight: 800; color: var(--strong); }
+    .logo {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: #102033;
+    }
+    .logo:before {
+      content: "";
+      width: 15px;
+      height: 15px;
+      border-left: 4px solid #2dd4bf;
+      border-top: 4px solid #7dd3fc;
+      transform: skew(-12deg);
+      border-radius: 2px;
+    }
+    .project { gap: 10px; min-width: 0; }
+    .project strong {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 15px;
+    }
+    .top-actions { gap: 8px; }
+    .pill, .btn {
+      min-height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: #344054;
+      white-space: nowrap;
+      font-size: 12px;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: var(--muted);
+    }
+    .pill.mode {
+      border-color: #bce7df;
+      background: var(--primary-soft);
+      color: #115e59;
+      font-weight: 700;
+    }
+    .btn {
+      padding: 7px 11px;
+      box-shadow: 0 1px 2px rgba(15,23,42,.05);
+      font-weight: 650;
+    }
+    .workspace {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 272px minmax(610px, 1fr) 404px;
+    }
+    .sidebar, .center, .agent { min-height: 0; background: rgba(255,255,255,.9); }
+    .sidebar, .center { border-right: 1px solid var(--line); }
+    .sidebar { display: grid; grid-template-rows: 1fr auto; }
+    .scroll { min-height: 0; overflow: auto; padding: 20px 14px; }
+    .label {
+      margin: 18px 4px 8px;
+      color: #475467;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .project-card, .progress, .panel, .bubble, .task-card, .approval, .suggestion, .rail, .doc-shell, .empty-box, .error-card, .summary-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 1px 2px rgba(15,23,42,.04);
+    }
+    .project-card { padding: 14px; }
+    .project-card strong { display: block; margin-bottom: 6px; }
+    .small, .project-card span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .nav { display: grid; gap: 4px; }
+    .nav-row {
+      display: grid;
+      grid-template-columns: 24px 1fr auto;
+      gap: 8px;
+      min-height: 42px;
+      padding: 8px 9px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: #344054;
+    }
+    .nav-row.active {
+      border-color: #b8e1d9;
+      background: var(--primary-soft);
+      color: #115e59;
+    }
+    .nav-icon {
+      width: 17px;
+      height: 17px;
+      border: 1.6px solid #50627a;
+      border-radius: 5px;
+    }
+    .nav-row.active .nav-icon {
+      border-color: var(--primary);
+      background: rgba(15,118,110,.08);
+    }
+    .nav-main {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 650;
+    }
+    .status { color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .ok { color: var(--primary); }
+    .wait { color: var(--warning); }
+    .run { color: var(--blue); }
+    .bad { color: var(--danger); }
+    .progress { margin: 16px 4px 10px; padding: 13px; }
+    .progress-head { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 700; }
+    .bar { height: 6px; overflow: hidden; border-radius: 999px; background: #e7edf4; }
+    .bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--primary), #14b8a6); }
+    .collapse { padding: 12px 16px; border-top: 1px solid var(--line); background: #fff; }
+    .center { display: grid; grid-template-rows: auto auto 1fr auto; }
+    .head { padding: 18px 20px 0; }
+    .title { display: flex; align-items: center; gap: 10px; }
+    .title h3 { margin: 0; font-size: 18px; color: var(--strong); }
+    .state-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .state-badge.wait { border-color: #fed7aa; background: var(--warning-soft); color: var(--warning); }
+    .state-badge.run { border-color: #cfe0ff; background: var(--blue-soft); color: #1d4ed8; }
+    .state-badge.ok { border-color: #b8e1d9; background: var(--primary-soft); color: #115e59; }
+    .state-badge.bad { border-color: #fecaca; background: var(--danger-soft); color: var(--danger); }
+    .tabs { gap: 22px; margin-top: 16px; border-bottom: 1px solid var(--line); }
+    .tab {
+      padding: 0 0 11px;
+      border-bottom: 2px solid transparent;
+      color: var(--muted);
+      font-weight: 800;
+    }
+    .tab.active { border-color: var(--primary); color: var(--primary); }
+    .toolbar {
+      gap: 6px;
+      padding: 10px 20px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.9);
+    }
+    .tool, .select {
+      min-height: 32px;
+      border-radius: 7px;
+      color: #344054;
+      font-weight: 750;
+    }
+    .select { padding: 7px 10px; border: 1px solid var(--line-soft); background: #fff; }
+    .tool { min-width: 32px; padding: 7px 8px; }
+    .tool.active { background: var(--primary-soft); color: #115e59; }
+    .divider { width: 1px; height: 22px; margin: 0 4px; background: var(--line); }
+    .content { min-height: 0; padding: 16px 20px 10px; overflow: hidden; }
+    .content-grid { height: 100%; min-height: 0; display: grid; grid-template-columns: 154px 1fr; gap: 16px; }
+    .content-grid.no-rail { grid-template-columns: 1fr; }
+    .rail { overflow: auto; padding: 10px; }
+    .rail-title { margin: 0 0 9px; color: var(--muted); font-size: 12px; font-weight: 800; }
+    .ep { padding: 9px; margin-bottom: 6px; border: 1px solid transparent; border-radius: 8px; }
+    .ep.active { border-color: #b8e1d9; background: var(--primary-soft); }
+    .ep-top { display: flex; justify-content: space-between; font-size: 12px; font-weight: 800; }
+    .ep p { margin: 4px 0 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .doc-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+    .doc {
+      width: min(820px, calc(100% - 56px));
+      margin: 22px auto 28px;
+      padding-bottom: 28px;
+    }
+    .doc-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .doc-head h4 { margin: 0; font-size: 19px; color: var(--strong); }
+    .doc-head span { color: var(--muted); font-size: 12px; }
+    .scene { margin: 20px 0 26px; }
+    .scene-title {
+      display: grid;
+      grid-template-columns: 92px 1fr auto;
+      overflow: hidden;
+      border: 1px solid #e7ded2;
+      border-radius: 8px;
+      background: #fbf8f4;
+    }
+    .scene-title b {
+      padding: 10px 14px;
+      border-right: 1px solid #e7ded2;
+      background: rgba(255,255,255,.55);
+      color: #475467;
+    }
+    .scene-title strong { padding: 10px 14px; }
+    .scene-tools { display: flex; gap: 8px; padding: 10px 12px; color: var(--faint); font-size: 12px; }
+    .script-p { width: min(640px,100%); margin: 14px auto 0; color: #344054; line-height: 1.78; font-size: 15px; }
+    .dialogue { width: min(370px,80%); margin: 18px auto 0; color: #344054; line-height: 1.78; text-align: center; }
+    .speaker { display: block; margin-bottom: 5px; color: var(--strong); font-weight: 800; }
+    .paren { display: block; color: var(--muted); font-size: 13px; }
+    .transition { width: min(640px,100%); margin: 16px auto 0; color: var(--primary); font-weight: 800; }
+    .selection { border-radius: 5px; background: var(--blue-soft); box-shadow: 0 0 0 2px rgba(37,99,235,.12); }
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 42px;
+      padding: 0 20px;
+      border-top: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .footer div { display: flex; align-items: center; gap: 16px; }
+    .agent { display: grid; grid-template-rows: auto 1fr auto; }
+    .agent-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 16px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .agent-head strong { font-size: 16px; color: var(--strong); }
+    .thinking {
+      padding: 5px 9px;
+      border: 1px solid #cfe0ff;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .agent-scroll {
+      min-height: 0;
+      overflow: auto;
+      padding: 16px 14px;
+      background: rgba(248,250,252,.75);
+    }
+    .msg { display: grid; grid-template-columns: 28px 1fr; gap: 10px; margin-bottom: 12px; }
+    .avatar {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      background: #102033;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .bubble {
+      padding: 11px 12px;
+      color: #344054;
+      line-height: 1.58;
+    }
+    .bubble.user {
+      grid-column: 2;
+      border-color: #cfe0ff;
+      background: #eef4ff;
+    }
+    .task-card { margin-top: 10px; padding: 11px; background: #fbfcfe; }
+    .task {
+      display: grid;
+      grid-template-columns: 18px 1fr auto;
+      gap: 8px;
+      min-height: 28px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border: 1.5px solid #c7d2df;
+      border-radius: 50%;
+    }
+    .dot.done { border-color: #667085; background: #667085; opacity: .52; }
+    .dot.run { border-color: var(--blue); border-top-color: transparent; animation: spin .9s linear infinite; }
+    .dot.bad { border-color: var(--danger); background: var(--danger); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .time { color: var(--faint); font-size: 12px; }
+    .approval, .suggestion { margin-top: 10px; padding: 12px; }
+    .approval { border-color: #f6bf7a; background: var(--warning-soft); }
+    .suggestion { border-color: #cfe0ff; background: #f8fbff; }
+    .card-title { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 7px; color: var(--strong); font-weight: 800; }
+    .range { padding: 4px 8px; border-radius: 999px; background: var(--blue-soft); color: #1d4ed8; font-size: 12px; }
+    .patch { display: grid; gap: 7px; margin-top: 10px; }
+    .patch div { padding: 9px 10px; border-radius: 8px; font-size: 13px; line-height: 1.55; }
+    .old { background: var(--danger-soft); color: var(--danger); }
+    .new { background: var(--primary-soft); color: #115e59; }
+    .actions-row { display: flex; gap: 8px; margin-top: 11px; }
+    .primary, .secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 8px;
+      font-weight: 800;
+    }
+    .primary { background: var(--primary); color: #fff; }
+    .secondary { border: 1px solid var(--line); background: #fff; color: #475467; }
+    .composer { padding: 12px 14px 14px; border-top: 1px solid var(--line); background: #fff; }
+    .chips { flex-wrap: wrap; gap: 8px; margin-bottom: 9px; }
+    .chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 280px;
+      min-height: 30px;
+      padding: 5px 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+      color: #344054;
+      font-size: 12px;
+    }
+    .chip.ref { border-color: #cfe0ff; background: #f7fbff; }
+    .chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .chip b { color: var(--faint); }
+    .input { overflow: hidden; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+    .input textarea {
+      width: 100%;
+      min-height: 74px;
+      resize: none;
+      border: 0;
+      outline: 0;
+      padding: 12px 13px 8px;
+      line-height: 1.55;
+    }
+    .input textarea::placeholder { color: var(--faint); }
+    .composer-actions {
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px 10px;
+    }
+    .mini {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      min-width: 30px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: #475467;
+      font-weight: 700;
+    }
+    .mini.plus {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+    }
+    .mini.plus::before,
+    .mini.plus::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 12px;
+      height: 1.5px;
+      border-radius: 999px;
+      background: #64748b;
+      transform: translate(-50%, -50%);
+    }
+    .mini.plus::after {
+      width: 1.5px;
+      height: 12px;
+    }
+    .send {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      min-width: 66px;
+      padding: 0 12px;
+      border-radius: 9px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .empty-box {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 34px;
+      text-align: center;
+      background: linear-gradient(180deg, #fff, #fbfcfe);
+    }
+    .empty-box strong { display: block; margin-bottom: 8px; color: var(--strong); font-size: 18px; }
+    .empty-box p { max-width: 420px; margin: 0 auto 16px; color: var(--muted); line-height: 1.65; }
+    .panel { padding: 16px; }
+    .field-grid { display: grid; gap: 12px; }
+    .field {
+      padding: 12px;
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      background: #fbfcfe;
+    }
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .field p, .field ul { margin: 0; line-height: 1.65; }
+    .artifact-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+    .artifact-card {
+      padding: 14px;
+      border: 1px solid var(--line-soft);
+      border-radius: 9px;
+      background: #fbfcfe;
+    }
+    .artifact-card h4 { margin: 0 0 8px; color: var(--strong); }
+    .artifact-card p { margin: 0; color: var(--muted); line-height: 1.6; }
+    .skeleton { display: grid; gap: 9px; margin-top: 12px; }
+    .skeleton span {
+      display: block;
+      height: 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #e8eef5, #f8fafc, #e8eef5);
+    }
+    .summary-card { padding: 16px; }
+    .summary-card h4 { margin: 0 0 8px; color: var(--strong); }
+    .summary-card p { margin: 0 0 12px; color: var(--muted); line-height: 1.6; }
+    .error-card { padding: 14px; border-color: #fecaca; background: var(--danger-soft); }
+    .error-card strong { color: var(--danger); }
+    .error-card p { margin: 8px 0 0; color: #7a271a; line-height: 1.6; }
+    .attachment-drop {
+      display: grid;
+      place-items: center;
+      min-height: 170px;
+      border: 1px dashed #b8c7d8;
+      border-radius: 12px;
+      background: #fbfcfe;
+      text-align: center;
+    }
+    .attachment-drop strong { display: block; margin-bottom: 8px; color: var(--strong); }
+    .attachment-drop p { margin: 0; color: var(--muted); line-height: 1.55; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #c7d2df; border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #98a2b3; }
+  </style>
+</head>
+<body>
+  <div class="gallery">
+    <nav class="gallery-nav" aria-label="UI 状态目录">
+      <h1>UI 状态稿</h1>
+      <p>基于方向 1 的多状态定稿候选。此文件只约束 UI/UE，不代表前后端已实现。</p>
+      <a href="#state-empty">01 空项目 / 等待输入</a>
+      <a href="#state-upload">02 上传文件后</a>
+      <a href="#state-chat">03 普通聊天</a>
+      <a href="#state-run-start">04 开始运行 / 路径已选择</a>
+      <a href="#state-novel">05A 小说链运行中</a>
+      <a href="#state-non-novel">05B 非小说链运行中</a>
+      <a href="#state-approval">06 等待确认</a>
+      <a href="#state-edit">07 剧本编辑态</a>
+      <a href="#state-revise">08 局部修改建议</a>
+      <a href="#state-complete">09 完成 / 导出前</a>
+      <a href="#state-error">10 错误 / 可重试</a>
+    </nav>
+
+    <main class="gallery-main">
+      <section class="state" id="state-empty">
+        <div class="state-head"><div><h2>01 空项目 / 等待输入</h2><p>没有 run、没有 artifact。中间区解释当前可添加的材料，右侧 Agent 是最大入口。</p></div><span class="spec-pill">No run</span></div>
+        <div class="screen">
+          <header class="topbar"><div class="brand"><div class="logo"></div><span>Novel2Script Agent</span></div><div class="project"><strong>未命名短剧项目</strong><span class="pill">未选择来源</span></div><div class="top-actions"><span class="pill">未保存</span><span class="btn">项目设置</span></div></header>
+          <div class="workspace">
+            <aside class="sidebar"><div class="scroll"><div class="label">项目工作区</div><div class="project-card"><strong>未命名短剧项目</strong><span>等待输入小说、梗概、灵感或本地文件。</span></div><div class="label">创作流程</div><div class="nav"><div class="nav-row active"><span class="nav-icon"></span><div class="nav-main">输入材料</div><div class="status">待添加</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">过程产物</div><div class="status">待生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">剧本</div><div class="status">待生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">运行记录</div><div class="status">0</div></div></div></div><div class="collapse"><button class="btn">收起侧栏</button></div></aside>
+            <section class="center"><div class="head"><div class="title"><h3>输入材料</h3><span class="state-badge">等待输入</span></div><div class="tabs"><div class="tab active">材料视图</div><div class="tab">过程产物</div></div></div><div class="toolbar"><span class="select">自动识别</span><span class="select">小说改编</span><span class="select">素材生成</span></div><div class="content"><div class="content-grid no-rail"><div class="empty-box"><div><strong>添加原文、梗概或短剧灵感</strong><p>剧本、故事圣经、素材库、分集卡会随着 Agent 执行逐步出现。普通聊天不会启动生成流程。</p><button class="primary">选择本地文件</button></div></div></div></div><div class="footer"><div><span>无产物</span><span>无运行流程</span></div><div><span>自动保存未启动</span></div></div></section>
+            <aside class="agent"><div class="agent-head"><strong>Agent 助手</strong><span class="thinking">Ready</span></div><div class="agent-scroll"><div class="msg"><div class="avatar">N</div><div class="bubble">你可以先发一段灵感、粘贴小说原文，或添加本地文件。我会先理解你的目标，再决定是否启动生成流程。</div></div></div><div class="composer"><div class="input"><textarea placeholder="输入你的指令，Enter 发送，Shift+Enter 换行"></textarea><div class="composer-actions"><div><button class="mini plus" aria-label="添加文件或引用"></button></div><button class="send">发送</button></div></div></div></aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="state" id="state-upload">
+        <div class="state-head"><div><h2>02 上传文件后</h2><p>文件显示为 chip 和输入材料预览，不能把文件名塞进输入框正文。</p></div><span class="spec-pill">Input ready</span></div>
+        <div class="screen">
+          <header class="topbar"><div class="brand"><div class="logo"></div><span>Novel2Script Agent</span></div><div class="project"><strong>宫斗复仇短剧项目</strong><span class="pill mode">待识别</span></div><div class="top-actions"><span class="pill">自动保存 10:12:08</span><span class="btn">项目设置</span></div></header>
+          <div class="workspace">
+            <aside class="sidebar"><div class="scroll"><div class="label">项目工作区</div><div class="project-card"><strong>宫斗复仇短剧项目</strong><span>已添加 2 个文件，等待用户说明目标。</span></div><div class="label">创作流程</div><div class="nav"><div class="nav-row active"><span class="nav-icon"></span><div class="nav-main">输入材料</div><div class="status ok">已添加</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">过程产物</div><div class="status">待生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">剧本</div><div class="status">待生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">运行记录</div><div class="status">0</div></div></div></div><div class="collapse"><button class="btn">收起侧栏</button></div></aside>
+            <section class="center"><div class="head"><div class="title"><h3>输入材料</h3><span class="state-badge ok">已添加</span></div><div class="tabs"><div class="tab active">文件预览</div><div class="tab">解析结果</div></div></div><div class="toolbar"><span class="select">自动识别</span><span class="select">等待用户说明</span></div><div class="content"><div class="content-grid no-rail"><div class="doc-wrap"><div class="doc"><div class="doc-head"><div><h4>本次输入</h4><span>文件解析成功，尚未启动生成流程</span></div><span>2 个文件</span></div><div class="field-grid"><div class="field"><label>文件</label><p>雾港设定集.pdf · 2.1MB；角色关系图.png · 1.4MB</p></div><div class="field"><label>文本预览</label><p>女主被废后回到宫中，利用旧案线索反杀仇人。男主身份不明，既是阻力也是潜在盟友。</p></div><div class="field"><label>等待用户补充</label><p>请说明要按小说改编，还是按素材生成短剧。</p></div></div></div></div></div></div><div class="footer"><div><span>输入材料已保存</span><span>2 个文件</span></div><div><span>未启动生成流程</span></div></div></section>
+            <aside class="agent"><div class="agent-head"><strong>Agent 助手</strong><span class="thinking">Ready</span></div><div class="agent-scroll"><div class="msg"><div class="avatar">N</div><div class="bubble">文件已添加。我还不会自动启动生成流程，除非你明确说“生成短剧”或“把这本小说改成短剧”。</div></div></div><div class="composer"><div class="chips"><div class="chip"><span>雾港设定集.pdf · 2.1MB</span><b>×</b></div><div class="chip"><span>角色关系图.png · 1.4MB</span><b>×</b></div></div><div class="input"><textarea placeholder="补充你的目标，例如：按这些素材生成 12 集短剧"></textarea><div class="composer-actions"><div><button class="mini plus" aria-label="添加文件或引用"></button></div><button class="send">发送</button></div></div></div></aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="state" id="state-chat">
+        <div class="state-head"><div><h2>03 普通聊天</h2><p>“你好”“天气如何”这类请求只回复，不创建 run，不出现分集卡确认。</p></div><span class="spec-pill">Chat only</span></div>
+        <div class="screen">
+          <header class="topbar"><div class="brand"><div class="logo"></div><span>Novel2Script Agent</span></div><div class="project"><strong>未命名短剧项目</strong><span class="pill">无活动流程</span></div><div class="top-actions"><span class="pill">Ready</span><span class="btn">项目设置</span></div></header>
+          <div class="workspace">
+            <aside class="sidebar"><div class="scroll"><div class="label">项目工作区</div><div class="project-card"><strong>未命名短剧项目</strong><span>普通聊天不会改变项目状态。</span></div><div class="label">创作流程</div><div class="nav"><div class="nav-row active"><span class="nav-icon"></span><div class="nav-main">输入材料</div><div class="status">待添加</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">过程产物</div><div class="status">待生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">剧本</div><div class="status">待生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">运行记录</div><div class="status">0</div></div></div></div><div class="collapse"><button class="btn">收起侧栏</button></div></aside>
+            <section class="center"><div class="head"><div class="title"><h3>当前内容</h3><span class="state-badge">无活动产物</span></div><div class="tabs"><div class="tab active">空视图</div></div></div><div class="toolbar"><span class="select">没有正在运行的任务</span></div><div class="content"><div class="content-grid no-rail"><div class="empty-box"><div><strong>没有活动产物</strong><p>只有当用户明确要求生成或改写时，才会创建流程和过程产物。</p></div></div></div></div><div class="footer"><div><span>无运行流程</span><span>无产物</span></div><div><span>聊天不改变工程状态</span></div></div></section>
+            <aside class="agent"><div class="agent-head"><strong>Agent 助手</strong><span class="thinking">Ready</span></div><div class="agent-scroll"><div class="msg"><div class="avatar">N</div><div class="bubble user">你好</div></div><div class="msg"><div class="avatar">N</div><div class="bubble">你好，我在。你可以继续问项目流程，也可以把小说原文、梗概或短剧灵感发给我。只有你明确要求生成或改编时，我才会启动剧本流程。</div></div></div><div class="composer"><div class="input"><textarea placeholder="输入你的指令，Enter 发送，Shift+Enter 换行"></textarea><div class="composer-actions"><div><button class="mini plus" aria-label="添加文件或引用"></button></div><button class="send">发送</button></div></div></div></aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="state" id="state-run-start">
+        <div class="state-head"><div><h2>04 开始运行 / 路径已选择</h2><p>用户明确要生成后，展示输入已保存和第一个可见产物生成中；不把内部意图识别漏给用户。</p></div><span class="spec-pill">Run starting</span></div>
+        <div class="screen">
+          <header class="topbar"><div class="brand"><div class="logo"></div><span>Novel2Script Agent</span></div><div class="project"><strong>宫斗复仇短剧项目</strong><span class="pill mode">素材生成</span></div><div class="top-actions"><span class="pill">自动保存 10:32:00</span><span class="btn">项目设置</span></div></header>
+          <div class="workspace">
+            <aside class="sidebar"><div class="scroll"><div class="label">项目工作区</div><div class="project-card"><strong>宫斗复仇短剧项目</strong><span>灵感/素材 → 素材库 → 故事种子 → 剧集蓝图 → 分集卡 → 剧本</span></div><div class="label">创作流程</div><div class="nav"><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">输入材料</div><div class="status ok">已添加</div></div><div class="nav-row active"><span class="nav-icon"></span><div class="nav-main">素材库</div><div class="status run">生成中</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">故事种子</div><div class="status">待生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">剧集蓝图</div><div class="status">待生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">分集卡</div><div class="status">待生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">剧本</div><div class="status">待生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">运行记录</div><div class="status">1</div></div></div><div class="progress"><div class="progress-head"><span>整体进度</span><span>8%</span></div><div class="bar"><span style="width:8%"></span></div><div class="small" style="margin-top:8px">正在生成第一个过程产物</div></div></div><div class="collapse"><button class="btn">收起侧栏</button></div></aside>
+            <section class="center"><div class="head"><div class="title"><h3>开始处理素材</h3><span class="state-badge run">生成中</span></div><div class="tabs"><div class="tab active">素材视图</div><div class="tab">运行记录</div></div></div><div class="toolbar"><span class="select">输入已保存</span><span class="select">素材库生成中</span></div><div class="content"><div class="content-grid no-rail"><div class="doc-wrap"><div class="doc"><div class="doc-head"><div><h4>输入材料</h4><span>已进入项目素材区</span></div><span>已保存</span></div><div class="field-grid"><div class="field"><label>输入摘要</label><p>用户提供了宫斗复仇灵感、人物关系和短剧目标。</p></div><div class="field"><label>当前可见步骤</label><p>正在整理素材库，完成后进入故事种子。</p></div><div class="field"><label>后续顺序</label><p>素材库 → 故事种子 → 剧集蓝图 → 分集卡 → 剧本。</p></div><div class="skeleton"><span style="width:92%"></span><span style="width:70%"></span></div></div></div></div></div></div><div class="footer"><div><span>流程已启动</span><span>素材生成流程</span></div><div><span>处理中</span></div></div></section>
+            <aside class="agent"><div class="agent-head"><strong>Agent 助手</strong><span class="thinking">Thinking</span></div><div class="agent-scroll"><div class="msg"><div class="avatar">N</div><div class="bubble">我会按非小说素材生成流程处理。接下来先整理素材库，再提炼故事种子。<div class="task-card"><div class="task"><span class="dot done"></span><span>理解请求</span><span class="time">已完成</span></div><div class="task"><span class="dot done"></span><span>保存输入</span><span class="time">已完成</span></div><div class="task"><span class="dot run"></span><span>整理素材库</span><span class="time">进行中</span></div><div class="task"><span class="dot"></span><span>提炼故事种子</span><span></span></div></div></div></div></div><div class="composer"><div class="input"><textarea placeholder="可以补充角色、爽点或集数要求"></textarea><div class="composer-actions"><div><button class="mini plus" aria-label="添加文件或引用"></button></div><button class="send">发送</button></div></div></div></aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="state" id="state-novel">
+        <div class="state-head"><div><h2>05A 小说链运行中</h2><p>左侧只展示小说链相关产物，非小说链产物不展开占位。</p></div><span class="spec-pill">Novel run</span></div>
+        <div class="screen">
+          <header class="topbar"><div class="brand"><div class="logo"></div><span>Novel2Script Agent</span></div><div class="project"><strong>《逆光之城》短剧项目</strong><span class="pill mode">小说改编</span></div><div class="top-actions"><span class="pill">自动保存 10:28:31</span><span class="btn">项目设置</span><span class="btn">导出</span></div></header>
+          <div class="workspace">
+            <aside class="sidebar"><div class="scroll"><div class="label">项目工作区</div><div class="project-card"><strong>《逆光之城》短剧项目</strong><span>小说原文 → 故事圣经 → 原文拆集 → 分集卡 → 剧本</span></div><div class="label">创作流程</div><div class="nav"><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">输入材料</div><div class="status ok">已生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">故事圣经</div><div class="status ok">已生成</div></div><div class="nav-row active"><span class="nav-icon"></span><div class="nav-main">原文拆集</div><div class="status run">生成中</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">分集卡</div><div class="status">待生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">剧本</div><div class="status">待生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">运行记录</div><div class="status">6</div></div></div><div class="progress"><div class="progress-head"><span>整体进度</span><span>38%</span></div><div class="bar"><span style="width:38%"></span></div><div class="small" style="margin-top:8px">预计剩余 9-14 分钟</div></div></div><div class="collapse"><button class="btn">收起侧栏</button></div></aside>
+            <section class="center"><div class="head"><div class="title"><h3>原文拆集</h3><span class="state-badge run">生成中</span></div><div class="tabs"><div class="tab active">拆集视图</div><div class="tab">故事圣经</div></div></div><div class="toolbar"><span class="select">按原文顺序</span><span class="select">保留原文引用</span></div><div class="content"><div class="content-grid"><nav class="rail"><p class="rail-title">分集目录</p><div class="ep active"><div class="ep-top">第 1 集 <span class="ok">已生成</span></div><p>归来与误判</p></div><div class="ep"><div class="ep-top">第 2 集 <span class="run">生成中</span></div><p>旧证反咬</p></div><div class="ep"><div class="ep-top">第 3 集 <span>待生成</span></div><p>医院破局</p></div></nav><div class="doc-wrap"><div class="doc"><div class="doc-head"><div><h4>原文拆集草稿</h4><span>当前生成到第 2 集</span></div><span>原文拆集 v1</span></div><div class="artifact-grid"><div class="artifact-card"><h4>第 1 集：归来与误判</h4><p>女主被迫回到旧宅，发现三年前旧案证词被藏在碎玉中。</p></div><div class="artifact-card"><h4>第 2 集：旧证反咬</h4><p>男主试探女主，贵妃借旧证制造二次陷害。</p><div class="skeleton"><span style="width:88%"></span><span style="width:64%"></span></div></div></div></div></div></div></div><div class="footer"><div><span>原文拆集 v1</span><span>故事圣经 v1</span></div><div><span>最后更新：刚刚</span></div></div></section>
+            <aside class="agent"><div class="agent-head"><strong>Agent 助手</strong><span class="thinking">Thinking</span></div><div class="agent-scroll"><div class="msg"><div class="avatar">N</div><div class="bubble">我判断这是小说改编流程，正在按原文顺序拆集。<div class="task-card"><div class="task"><span class="dot done"></span><span>理解请求</span><span class="time">10:27</span></div><div class="task"><span class="dot done"></span><span>生成故事圣经</span><span class="time">10:28</span></div><div class="task"><span class="dot run"></span><span>原文拆集</span><span class="time">进行中</span></div><div class="task"><span class="dot"></span><span>生成分集卡</span><span></span></div></div></div></div></div><div class="composer"><div class="input"><textarea placeholder="可以补充分集节奏要求"></textarea><div class="composer-actions"><div><button class="mini plus" aria-label="添加文件或引用"></button></div><button class="send">发送</button></div></div></div></aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="state" id="state-non-novel">
+        <div class="state-head"><div><h2>05B 非小说链运行中</h2><p>只展示素材库、故事种子、剧集蓝图、分集卡，不把小说链产物放进左侧。</p></div><span class="spec-pill">Non-novel run</span></div>
+        <div class="screen">
+          <header class="topbar"><div class="brand"><div class="logo"></div><span>Novel2Script Agent</span></div><div class="project"><strong>宫斗复仇短剧项目</strong><span class="pill mode">素材生成</span></div><div class="top-actions"><span class="pill">自动保存 10:34:18</span><span class="btn">项目设置</span><span class="btn">导出</span></div></header>
+          <div class="workspace">
+            <aside class="sidebar"><div class="scroll"><div class="label">项目工作区</div><div class="project-card"><strong>宫斗复仇短剧项目</strong><span>灵感/素材 → 素材库 → 故事种子 → 剧集蓝图 → 分集卡 → 剧本</span></div><div class="label">创作流程</div><div class="nav"><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">输入材料</div><div class="status ok">已生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">素材库</div><div class="status ok">已生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">故事种子</div><div class="status ok">已生成</div></div><div class="nav-row active"><span class="nav-icon"></span><div class="nav-main">剧集蓝图</div><div class="status run">生成中</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">分集卡</div><div class="status">待生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">剧本</div><div class="status">待生成</div></div></div><div class="progress"><div class="progress-head"><span>整体进度</span><span>52%</span></div><div class="bar"><span style="width:52%"></span></div><div class="small" style="margin-top:8px">预计剩余 6-10 分钟</div></div></div><div class="collapse"><button class="btn">收起侧栏</button></div></aside>
+            <section class="center"><div class="head"><div class="title"><h3>剧集蓝图</h3><span class="state-badge run">生成中</span></div><div class="tabs"><div class="tab active">结构视图</div><div class="tab">素材库</div></div></div><div class="toolbar"><span class="select">12 集</span><span class="select">小程序短剧</span><span class="select">爽点密度 high</span></div><div class="content"><div class="content-grid no-rail"><div class="doc-wrap"><div class="doc"><div class="doc-head"><div><h4>剧集蓝图草稿</h4><span>正在补齐第 2 幕和第 3 幕付费点</span></div><span>剧集蓝图 v1</span></div><div class="field-grid"><div class="field"><label>第一阶段：回宫立局</label><p>女主被迫以废妃身份回到贵妃身边，利用旧案线索设下第一层反击。</p></div><div class="field"><label>第一付费点</label><p>第 3 集末，女主当众认出碎玉主人，贵妃第一次失控。</p></div><div class="field"><label>风险提示</label><p>第 2-3 集主动选择不足，需要在分集卡阶段补女主主动设局。</p></div><div class="skeleton"><span style="width:92%"></span><span style="width:77%"></span><span style="width:64%"></span></div></div></div></div></div></div><div class="footer"><div><span>素材库 v1</span><span>故事种子 v1</span></div><div><span>蓝图生成中</span></div></div></section>
+            <aside class="agent"><div class="agent-head"><strong>Agent 助手</strong><span class="thinking">Thinking</span></div><div class="agent-scroll"><div class="msg"><div class="avatar">N</div><div class="bubble">我判断这是非小说素材生成流程。顺序是：素材库 → 故事种子 → 剧集蓝图 → 分集卡 → 剧本。<div class="task-card"><div class="task"><span class="dot done"></span><span>理解请求</span><span class="time">10:33</span></div><div class="task"><span class="dot done"></span><span>整理素材库</span><span class="time">10:34</span></div><div class="task"><span class="dot done"></span><span>提炼故事种子</span><span class="time">10:34</span></div><div class="task"><span class="dot run"></span><span>规划剧集蓝图</span><span class="time">进行中</span></div></div></div></div></div><div class="composer"><div class="input"><textarea placeholder="可以补充角色、爽点或集数要求"></textarea><div class="composer-actions"><div><button class="mini plus" aria-label="添加文件或引用"></button></div><button class="send">发送</button></div></div></div></aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="state" id="state-approval">
+        <div class="state-head"><div><h2>06 等待确认</h2><p>确认卡必须嵌在 Agent 消息中；中间展示待确认产物，不和对话割裂。</p></div><span class="spec-pill">Approval required</span></div>
+        <div class="screen">
+          <header class="topbar"><div class="brand"><div class="logo"></div><span>Novel2Script Agent</span></div><div class="project"><strong>宫斗复仇短剧项目</strong><span class="pill mode">素材生成</span></div><div class="top-actions"><span class="pill">自动保存 10:39:10</span><span class="btn">项目设置</span><span class="btn">导出</span></div></header>
+          <div class="workspace">
+            <aside class="sidebar"><div class="scroll"><div class="label">项目工作区</div><div class="project-card"><strong>宫斗复仇短剧项目</strong><span>分集卡等待确认，确认后进入剧本生成。</span></div><div class="label">创作流程</div><div class="nav"><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">输入材料</div><div class="status ok">已生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">素材库</div><div class="status ok">已生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">故事种子</div><div class="status ok">已生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">剧集蓝图</div><div class="status ok">已生成</div></div><div class="nav-row active"><span class="nav-icon"></span><div class="nav-main">分集卡</div><div class="status wait">待确认</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">剧本</div><div class="status">待生成</div></div></div><div class="progress"><div class="progress-head"><span>整体进度</span><span>68%</span></div><div class="bar"><span style="width:68%"></span></div><div class="small" style="margin-top:8px">等待确认后继续</div></div></div><div class="collapse"><button class="btn">收起侧栏</button></div></aside>
+            <section class="center"><div class="head"><div class="title"><h3>分集卡</h3><span class="state-badge wait">待确认</span></div><div class="tabs"><div class="tab active">分集视图</div><div class="tab">结构视图</div></div></div><div class="toolbar"><span class="select">v1</span><span class="select">等待用户确认</span></div><div class="content"><div class="content-grid"><nav class="rail"><p class="rail-title">分集目录</p><div class="ep active"><div class="ep-top">第 1 集 <span class="wait">待确认</span></div><p>废后回宫</p></div><div class="ep"><div class="ep-top">第 2 集 <span class="wait">待确认</span></div><p>旧证反咬</p></div><div class="ep"><div class="ep-top">第 3 集 <span class="wait">待确认</span></div><p>碎玉现身</p></div></nav><div class="doc-wrap"><div class="doc"><div class="doc-head"><div><h4>第 1 集：废后回宫</h4><span>分集卡 v1</span></div><span>待确认</span></div><div class="field-grid"><div class="field"><label>开头压力</label><p>女主以罪妃身份被押回宫，贵妃要求她在册封礼前跪满一夜。</p></div><div class="field"><label>主冲突</label><p>她必须在贵妃监视下拿回第一份旧案证据。</p></div><div class="field"><label>尾钩</label><p>碎玉主人出现，男主发现女主并非真正认罪。</p></div></div></div></div></div></div><div class="footer"><div><span>分集卡 v1</span><span>已展示 3 集</span></div><div><span>暂停在确认点</span></div></div></section>
+            <aside class="agent"><div class="agent-head"><strong>Agent 助手</strong><span class="thinking">Waiting</span></div><div class="agent-scroll"><div class="msg"><div class="avatar">N</div><div class="bubble">分集卡已经生成。生成剧本前需要你确认节奏和结构，因为后续剧本会继承集数、人物状态和尾钩。<div class="approval"><div class="card-title">请确认：分集卡 → 剧本生成</div><div class="small">确认后将基于这版分集卡生成第 1-3 集剧本草稿。你也可以直接在输入框补充修改要求。</div><div class="actions-row"><button class="primary">确认并开始生成</button><button class="secondary">暂停处理</button></div></div></div></div></div><div class="composer"><div class="input"><textarea placeholder="补充分集修改要求，或点击确认继续"></textarea><div class="composer-actions"><div><button class="mini plus" aria-label="添加文件或引用"></button></div><button class="send">发送</button></div></div></div></aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="state" id="state-edit">
+        <div class="state-head"><div><h2>07 剧本编辑态</h2><p>中间是 Word 类正文编辑器，有基础格式工具，不显示代码式行号。</p></div><span class="spec-pill">Script editor</span></div>
+        <div class="screen">
+          <header class="topbar"><div class="brand"><div class="logo"></div><span>Novel2Script Agent</span></div><div class="project"><strong>《逆光之城》短剧项目</strong><span class="pill mode">小说改编</span></div><div class="top-actions"><span class="pill">自动保存 10:43:02</span><span class="btn">项目设置</span><span class="btn">导出</span></div></header>
+          <div class="workspace">
+            <aside class="sidebar"><div class="scroll"><div class="label">项目工作区</div><div class="project-card"><strong>《逆光之城》短剧项目</strong><span>共 12 集 · 第 3 集正在编辑。</span></div><div class="label">创作流程</div><div class="nav"><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">输入材料</div><div class="status ok">已生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">过程产物</div><div class="status ok">已生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">分集卡</div><div class="status ok">已确认</div></div><div class="nav-row active"><span class="nav-icon"></span><div class="nav-main">剧本</div><div class="status ok">编辑中</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">运行记录</div><div class="status">18</div></div></div><div class="progress"><div class="progress-head"><span>整体进度</span><span>82%</span></div><div class="bar"><span style="width:82%"></span></div><div class="small" style="margin-top:8px">第 3 集草稿已生成</div></div></div><div class="collapse"><button class="btn">收起侧栏</button></div></aside>
+            <section class="center"><div class="head"><div class="title"><h3>剧本 / 第 3 集 · 破局</h3><span class="state-badge ok">已保存</span></div><div class="tabs"><div class="tab">结构视图</div><div class="tab active">脚本视图</div></div></div><div class="toolbar"><span class="select">正文</span><span class="select">思源宋体</span><span class="select">14</span><span class="divider"></span><button class="tool">B</button><button class="tool">I</button><button class="tool">U</button><button class="tool">S</button><span class="divider"></span><button class="tool">批注</button><button class="tool">查找</button></div><div class="content"><div class="content-grid"><nav class="rail"><p class="rail-title">分集目录</p><div class="ep"><div class="ep-top">第 1 集 <span class="ok">已生成</span></div><p>归来与误判</p></div><div class="ep"><div class="ep-top">第 2 集 <span class="ok">已生成</span></div><p>线索反噬</p></div><div class="ep active"><div class="ep-top">第 3 集 <span class="ok">编辑中</span></div><p>医院破局</p></div><div class="ep"><div class="ep-top">第 4 集 <span>待生成</span></div><p>公开反击</p></div></nav><div class="doc-wrap"><div class="doc"><div class="doc-head"><div><h4>第 3 集：破局</h4><span>草稿 · 可编辑</span></div><span>约 10'32"</span></div><div class="scene"><div class="scene-title"><b>场景 3-1</b><strong>INT. 城市医院 · 走廊 · 夜</strong><span class="scene-tools">标记 更多</span></div><p class="script-p">昏黄的灯光，走廊尽头传来仪器的滴答声。林岚攥着检查单，脚步停住。</p><p class="dialogue"><span class="speaker">林岚</span><span class="paren">低声自语</span>他到底隐瞒了什么……</p></div><div class="scene"><div class="scene-title"><b>场景 3-2</b><strong>INT. 医生办公室 · 夜</strong><span class="scene-tools">标记 更多</span></div><p class="script-p">医生合上病历，推了推眼镜，语气谨慎。</p><p class="dialogue"><span class="speaker">医生</span>目前的情况需要进一步观察，建议尽快住院检查。</p></div></div></div></div></div><div class="footer"><div><span>字数：1,892</span><span>场景：8</span><span>时长：约 10'32"</span></div><div><span>最后编辑：刚刚</span></div></div></section>
+            <aside class="agent"><div class="agent-head"><strong>Agent 助手</strong><span class="thinking">Ready</span></div><div class="agent-scroll"><div class="msg"><div class="avatar">N</div><div class="bubble">第 3 集剧本草稿已生成。你可以直接选中文本要求我局部修改，也可以让我检查人物声口、节奏或尾钩。</div></div></div><div class="composer"><div class="input"><textarea placeholder="例如：把医生这句改得更有压迫感"></textarea><div class="composer-actions"><div><button class="mini plus" aria-label="添加文件或引用"></button></div><button class="send">发送</button></div></div></div></aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="state" id="state-revise">
+        <div class="state-head"><div><h2>08 局部修改建议</h2><p>选中文本后，Agent 给出修改建议卡；用户接受后才写入正文。</p></div><span class="spec-pill">Patch approval</span></div>
+        <div class="screen">
+          <header class="topbar"><div class="brand"><div class="logo"></div><span>Novel2Script Agent</span></div><div class="project"><strong>《逆光之城》短剧项目</strong><span class="pill mode">小说改编</span></div><div class="top-actions"><span class="pill">自动保存 10:45:44</span><span class="btn">项目设置</span><span class="btn">导出</span></div></header>
+          <div class="workspace">
+            <aside class="sidebar"><div class="scroll"><div class="label">项目工作区</div><div class="project-card"><strong>《逆光之城》短剧项目</strong><span>当前选中第 3 集 / 场景 3-2 的对白。</span></div><div class="label">创作流程</div><div class="nav"><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">输入材料</div><div class="status ok">已生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">过程产物</div><div class="status ok">已生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">分集卡</div><div class="status ok">已确认</div></div><div class="nav-row active"><span class="nav-icon"></span><div class="nav-main">剧本</div><div class="status wait">建议待确认</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">运行记录</div><div class="status">21</div></div></div></div><div class="collapse"><button class="btn">收起侧栏</button></div></aside>
+            <section class="center"><div class="head"><div class="title"><h3>剧本 / 第 3 集 · 破局</h3><span class="state-badge wait">修改建议待确认</span></div><div class="tabs"><div class="tab">结构视图</div><div class="tab active">脚本视图</div></div></div><div class="toolbar"><span class="select">对白</span><span class="select">思源宋体</span><span class="select">14</span><span class="divider"></span><button class="tool">B</button><button class="tool">I</button><button class="tool active">批注</button><button class="tool">查找</button></div><div class="content"><div class="content-grid"><nav class="rail"><p class="rail-title">分集目录</p><div class="ep"><div class="ep-top">第 1 集 <span class="ok">已生成</span></div><p>归来与误判</p></div><div class="ep"><div class="ep-top">第 2 集 <span class="ok">已生成</span></div><p>线索反噬</p></div><div class="ep active"><div class="ep-top">第 3 集 <span class="wait">修改中</span></div><p>医院破局</p></div></nav><div class="doc-wrap"><div class="doc"><div class="doc-head"><div><h4>第 3 集：破局</h4><span>选区引用已传给 Agent</span></div><span>未写入</span></div><div class="scene"><div class="scene-title"><b>场景 3-2</b><strong>INT. 医生办公室 · 夜</strong><span class="scene-tools">标记 更多</span></div><p class="script-p">医生合上病历，推了推眼镜，语气谨慎。</p><p class="dialogue"><span class="speaker">医生</span><span class="selection">目前的情况需要进一步观察，建议尽快住院检查。</span></p><p class="transition">选区：第 3 集 / 场景 3-2 / 医生对白</p></div></div></div></div></div><div class="footer"><div><span>已选择文本</span><span>修改建议待确认</span></div><div><span>等待用户确认</span></div></div></section>
+            <aside class="agent"><div class="agent-head"><strong>Agent 助手</strong><span class="thinking">Waiting</span></div><div class="agent-scroll"><div class="msg"><div class="avatar">N</div><div class="bubble user">这句太平了，改得更有压迫感。</div></div><div class="msg"><div class="avatar">N</div><div class="bubble">已定位到第 3 集 / 场景 3-2 / 医生对白。我建议这样调整，确认后再写入正文。<div class="suggestion"><div class="card-title"><span>建议修改</span><span class="range">第 3 集 / 场景 3-2</span></div><div class="patch"><div class="old">目前的情况需要进一步观察，建议尽快住院检查。</div><div class="new">现在还不能下结论，但如果今晚离开，后面的风险就不在我们控制里了。</div></div><div class="actions-row"><button class="primary">接受修改</button><button class="secondary">拒绝修改</button></div></div></div></div></div><div class="composer"><div class="chips"><div class="chip ref"><span>引用：第 3 集 / 场景 3-2 / 医生对白</span><b>×</b></div></div><div class="input"><textarea placeholder="可以继续补充修改方向"></textarea><div class="composer-actions"><div><button class="mini plus" aria-label="添加文件或引用"></button></div><button class="send">发送</button></div></div></div></aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="state" id="state-complete">
+        <div class="state-head"><div><h2>09 完成 / 导出前</h2><p>完成后默认看剧本和质量摘要，不做营销式成功页；导出只是次级动作。</p></div><span class="spec-pill">Complete</span></div>
+        <div class="screen">
+          <header class="topbar"><div class="brand"><div class="logo"></div><span>Novel2Script Agent</span></div><div class="project"><strong>《逆光之城》短剧项目</strong><span class="pill mode">小说改编</span></div><div class="top-actions"><span class="pill">自动保存 10:51:03</span><span class="btn">项目设置</span><span class="btn">导出</span></div></header>
+          <div class="workspace">
+            <aside class="sidebar"><div class="scroll"><div class="label">项目工作区</div><div class="project-card"><strong>《逆光之城》短剧项目</strong><span>12 集短剧草稿已生成，可继续编辑或导出。</span></div><div class="label">创作流程</div><div class="nav"><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">输入材料</div><div class="status ok">已生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">过程产物</div><div class="status ok">已生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">分集卡</div><div class="status ok">已确认</div></div><div class="nav-row active"><span class="nav-icon"></span><div class="nav-main">剧本</div><div class="status ok">已完成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">运行记录</div><div class="status">32</div></div></div><div class="progress"><div class="progress-head"><span>整体进度</span><span>100%</span></div><div class="bar"><span style="width:100%"></span></div><div class="small" style="margin-top:8px">可继续要求局部修改</div></div></div><div class="collapse"><button class="btn">收起侧栏</button></div></aside>
+            <section class="center"><div class="head"><div class="title"><h3>剧本总览</h3><span class="state-badge ok">已完成</span></div><div class="tabs"><div class="tab active">剧本</div><div class="tab">质量摘要</div></div></div><div class="toolbar"><span class="select">全部 12 集</span><span class="select">按集浏览</span><span class="select">导出前检查</span></div><div class="content"><div class="content-grid"><nav class="rail"><p class="rail-title">分集目录</p><div class="ep active"><div class="ep-top">第 1 集 <span class="ok">完成</span></div><p>归来与误判</p></div><div class="ep"><div class="ep-top">第 2 集 <span class="ok">完成</span></div><p>线索反噬</p></div><div class="ep"><div class="ep-top">第 3 集 <span class="ok">完成</span></div><p>医院破局</p></div><div class="ep"><div class="ep-top">第 12 集 <span class="ok">完成</span></div><p>真相公开</p></div></nav><div class="doc-wrap"><div class="doc"><div class="doc-head"><div><h4>生成完成摘要</h4><span>剧本 v1 · 可继续编辑</span></div><span>12 集</span></div><div class="artifact-grid"><div class="summary-card"><h4>剧本</h4><p>共 12 集，预计单集 1,800-2,200 字，已按分集卡生成。</p><div class="meta-line"><span class="chip">可编辑</span><span class="chip">可导出</span></div></div><div class="summary-card"><h4>质量检查</h4><p>人物声口、尾钩、连续性已做基础检查；第 4 集建议补一个女主主动选择。</p><div class="meta-line"><span class="chip">1 条建议</span><span class="chip">非阻塞</span></div></div></div></div></div></div></div><div class="footer"><div><span>剧本 v1</span><span>质量检查 v1</span></div><div><span>准备导出前可继续编辑</span></div></div></section>
+            <aside class="agent"><div class="agent-head"><strong>Agent 助手</strong><span class="thinking">Ready</span></div><div class="agent-scroll"><div class="msg"><div class="avatar">N</div><div class="bubble">剧本草稿已生成完成。你可以继续让我做局部修改、检查节奏，或导出前做一次质量复核。<div class="task-card"><div class="task"><span class="dot done"></span><span>生成剧本</span><span class="time">10:49</span></div><div class="task"><span class="dot done"></span><span>质量检查</span><span class="time">10:50</span></div><div class="task"><span class="dot done"></span><span>保存结果</span><span class="time">10:51</span></div></div></div></div></div><div class="composer"><div class="input"><textarea placeholder="例如：导出前检查第 4 集女主是否太被动"></textarea><div class="composer-actions"><div><button class="mini plus" aria-label="添加文件或引用"></button></div><button class="send">发送</button></div></div></div></aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="state" id="state-error">
+        <div class="state-head"><div><h2>10 错误 / 可重试</h2><p>失败不清空已有产物；右侧说明原因和恢复路径，中间保留最后可用内容。</p></div><span class="spec-pill">Recoverable</span></div>
+        <div class="screen">
+          <header class="topbar"><div class="brand"><div class="logo"></div><span>Novel2Script Agent</span></div><div class="project"><strong>宫斗复仇短剧项目</strong><span class="pill mode">素材生成</span></div><div class="top-actions"><span class="pill">自动保存 10:55:20</span><span class="btn">项目设置</span><span class="btn">导出</span></div></header>
+          <div class="workspace">
+            <aside class="sidebar"><div class="scroll"><div class="label">项目工作区</div><div class="project-card"><strong>宫斗复仇短剧项目</strong><span>剧本生成失败，素材库和分集卡仍可查看。</span></div><div class="label">创作流程</div><div class="nav"><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">输入材料</div><div class="status ok">已生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">素材库</div><div class="status ok">已生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">故事种子</div><div class="status ok">已生成</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">剧集蓝图</div><div class="status ok">已生成</div></div><div class="nav-row active"><span class="nav-icon"></span><div class="nav-main">剧本</div><div class="status bad">失败</div></div><div class="nav-row"><span class="nav-icon"></span><div class="nav-main">运行记录</div><div class="status">24</div></div></div><div class="progress"><div class="progress-head"><span>整体进度</span><span>72%</span></div><div class="bar"><span style="width:72%"></span></div><div class="small" style="margin-top:8px">可从失败步骤重试</div></div></div><div class="collapse"><button class="btn">收起侧栏</button></div></aside>
+            <section class="center"><div class="head"><div class="title"><h3>最后可用产物</h3><span class="state-badge bad">剧本生成失败</span></div><div class="tabs"><div class="tab active">分集卡</div><div class="tab">运行记录</div></div></div><div class="toolbar"><span class="select">分集卡 v1</span><span class="select">可重试</span></div><div class="content"><div class="content-grid"><nav class="rail"><p class="rail-title">分集目录</p><div class="ep active"><div class="ep-top">第 1 集 <span class="ok">可用</span></div><p>废后回宫</p></div><div class="ep"><div class="ep-top">第 2 集 <span class="ok">可用</span></div><p>旧证反咬</p></div><div class="ep"><div class="ep-top">第 3 集 <span class="ok">可用</span></div><p>碎玉现身</p></div></nav><div class="doc-wrap"><div class="doc"><div class="doc-head"><div><h4>分集卡仍可查看</h4><span>失败不会清空已生成产物</span></div><span>分集卡 v1</span></div><div class="error-card"><strong>剧本生成调用失败</strong><p>系统已保留素材库、故事种子、剧集蓝图和分集卡。你可以重试剧本生成，或先调整分集卡后再生成。</p></div><div class="field-grid" style="margin-top:12px"><div class="field"><label>恢复路径</label><p>重试当前步骤；切换模型；缩短生成范围；从第 1 集开始分批生成。</p></div></div></div></div></div></div><div class="footer"><div><span>最后可用产物：分集卡 v1</span></div><div><span>等待用户选择恢复方式</span></div></div></section>
+            <aside class="agent"><div class="agent-head"><strong>Agent 助手</strong><span class="thinking">Failed</span></div><div class="agent-scroll"><div class="msg"><div class="avatar">N</div><div class="bubble">剧本生成失败，但已有产物没有丢失。建议先重试当前步骤；如果再次失败，可以改成按集分批生成。<div class="task-card"><div class="task"><span class="dot done"></span><span>整理素材库</span><span class="time">10:52</span></div><div class="task"><span class="dot done"></span><span>确认分集卡</span><span class="time">10:54</span></div><div class="task"><span class="dot bad"></span><span>生成剧本</span><span class="time">失败</span></div></div><div class="actions-row"><button class="primary">重试当前步骤</button><button class="secondary">改为分集生成</button></div></div></div></div><div class="composer"><div class="input"><textarea placeholder="也可以告诉我新的恢复方式"></textarea><div class="composer-actions"><div><button class="mini plus" aria-label="添加文件或引用"></button></div><button class="send">发送</button></div></div></div></aside>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

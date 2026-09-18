@@ -1,0 +1,30 @@
+[project]
+name = "content-agent-openai-sidecar"
+version = "0.1.0"
+description = "Isolated OpenAI Agents SDK compatibility spike for the content Agent."
+requires-python = ">=3.11"
+dependencies = [
+  "anyio>=3.6.2,<5",
+  "fastapi>=0.116,<1",
+  "openai==3.3.1",
+  "openai-agents[voice]==0.21.1",
+  "pydantic>=2.11,<3",
+  "pysqlite3-binary>=0.5.4; platform_system == 'Linux'",
+  "uvicorn>=0.35,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.4,<9",
+]
+
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

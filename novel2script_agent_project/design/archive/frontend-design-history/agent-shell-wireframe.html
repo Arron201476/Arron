@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Novel2Script Agent Shell Wireframe</title>
+<style>
+:root{
+  --bg:#f3f5f8;
+  --panel:#ffffff;
+  --line:#d9e2ef;
+  --text:#101828;
+  --muted:#667085;
+  --soft:#f8fafc;
+  --blue:#2563eb;
+  --green:#059669;
+  --amber:#d97706;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Segoe UI,Microsoft YaHei,Arial,sans-serif;font-size:14px}
+.shell{height:100vh;display:grid;grid-template-rows:52px 1fr;overflow:hidden}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--line);background:#fff}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800}.logo{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#1d4ed8,#10b981)}
+.top-actions{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}.pill{border:1px solid var(--line);border-radius:999px;padding:4px 9px;background:#fff}
+.workspace{display:grid;grid-template-columns:252px minmax(520px,1fr) 360px;height:calc(100vh - 52px);gap:0}
+.sidebar,.center,.agent{min-width:0;overflow:hidden}.sidebar{border-right:1px solid var(--line);background:#fff;display:flex;flex-direction:column}.center{background:#eef2f7;display:flex;flex-direction:column}.agent{border-left:1px solid var(--line);background:#fff;display:flex;flex-direction:column}
+.side-head{padding:14px 16px;border-bottom:1px solid var(--line)}.project-name{font-weight:800;font-size:16px}.project-meta{color:var(--muted);font-size:12px;margin-top:2px}
+.nav{padding:10px;overflow:auto}.nav-section{font-size:11px;color:#98a2b3;text-transform:uppercase;margin:14px 8px 6px}.nav-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border-radius:10px;margin-bottom:4px;color:#344054}.nav-item.active{background:#eaf1ff;color:#1d4ed8;font-weight:800}.nav-item.script{border:1px dashed #93c5fd;background:#f8fbff}.nav-item span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.badge{font-size:11px;color:#667085;background:#f2f4f7;border-radius:999px;padding:2px 7px;white-space:nowrap}
+.center-head{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:#fff;border-bottom:1px solid var(--line)}.artifact-title{font-weight:800}.artifact-sub{font-size:12px;color:var(--muted);margin-left:8px}.editor-wrap{padding:18px;overflow:auto}.editor{max-width:840px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(16,24,40,.04);overflow:hidden}.editor-toolbar{display:flex;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);background:#fbfcfe}.tab{border:1px solid var(--line);border-radius:999px;padding:5px 10px;color:#475467;background:#fff;font-size:12px}.tab.active{background:#ecfdf3;border-color:#a7f3d0;color:#047857;font-weight:700}.doc{padding:24px 34px;line-height:1.75;min-height:620px}.doc h2{margin:0 0 12px;font-size:22px}.field{border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin:12px 0;background:#fcfcfd}.field-title{font-weight:800;margin-bottom:5px}.field p{margin:0;color:#475467}.card-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.mini-card{border:1px solid #e5e7eb;border-radius:12px;padding:10px;background:#fff}.mini-card strong{display:block;margin-bottom:4px}
+.agent-head{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid var(--line)}.agent-title{font-weight:900}.agent-state{font-size:12px;color:var(--green);font-weight:700}.chat{flex:1;overflow:auto;padding:14px;background:#fbfcfe}.msg{max-width:94%;border:1px solid #e5e7eb;border-radius:14px;padding:10px 12px;margin-bottom:10px;background:#fff;line-height:1.55}.msg.user{margin-left:auto;background:#eef4ff;border-color:#bfdbfe}.msg.agent{margin-right:auto}.run-list{margin:8px 0}.run-item{display:flex;align-items:center;gap:8px;width:max-content;max-width:100%;border:1px solid #e5e7eb;background:#fff;border-radius:10px;padding:7px 10px;margin:7px 0;font-size:12px;color:#475467}.run-icon{width:18px;height:18px;border:1px solid #cbd5e1;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#475467;font-size:11px}.run-check{margin-left:auto;width:16px;height:16px;border-radius:999px;border:1px solid #10b981;color:#10b981;display:flex;align-items:center;justify-content:center;font-size:11px}.run-spinner{margin-left:auto;width:16px;height:16px;border-radius:999px;border:2px solid #bfdbfe;border-top-color:#2563eb;animation:spin .9s linear infinite}.run-item.pending{opacity:.45}.run-item.running{border-color:#bfdbfe;background:#eff6ff;color:#1d4ed8}.run-item.done{color:#475467}.approval{border:1px solid #fbbf24;background:#fffbeb;border-radius:14px;padding:10px 12px;margin:10px 0;line-height:1.55}.approval-title{font-weight:900;color:#92400e;margin-bottom:4px}.approval-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.approval-actions button,.quick button{border:1px solid #d0d5dd;background:#fff;border-radius:999px;padding:5px 9px;color:#475467;cursor:pointer}.approval-actions button.primary,.quick button.primary{background:#059669;color:#fff;border-color:#059669}.composer{border-top:1px solid var(--line);padding:12px;background:#fff}.quick{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.input{min-height:86px;border:1px solid #d0d5dd;border-radius:14px;padding:10px;color:#98a2b3;display:flex;flex-direction:column;justify-content:space-between}.input-bottom{display:flex;justify-content:space-between;align-items:center}.send{width:30px;height:30px;border-radius:999px;background:#059669;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:1100px){.workspace{grid-template-columns:220px minmax(420px,1fr) 320px}.card-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <div class="brand"><div class="logo"></div><span>Novel2Script Agent Workspace</span></div>
+    <div class="top-actions"><span class="pill">审批模式：关键点审批</span><span class="pill" id="runLabel">Run #24</span><span class="pill">未发布</span></div>
+  </div>
+  <div class="workspace">
+    <aside class="sidebar">
+      <div class="side-head">
+        <div class="project-name">宫斗 ai 版 1</div>
+        <div class="project-meta">小说改编 · 20 集 · 竖屏短剧</div>
+      </div>
+      <div class="nav">
+        <div class="nav-section">最终产物</div>
+        <div class="nav-item script"><span>剧本 Scripts</span><span class="badge">最后生成</span></div>
+        <div class="nav-section">核心 Artifacts</div>
+        <div class="nav-item active"><span>故事圣经 Story Bible</span><span class="badge">当前</span></div>
+        <div class="nav-item"><span>角色 Characters</span><span class="badge">4</span></div>
+        <div class="nav-item"><span>拆集 Episode Split</span><span class="badge">待确认</span></div>
+        <div class="nav-item"><span>分集卡 Episode Cards</span><span class="badge">规划</span></div>
+        <div class="nav-section">上下文</div>
+        <div class="nav-item"><span>原始输入 Source</span><span class="badge">已载入</span></div>
+        <div class="nav-item"><span>运行记录 Runs</span><span class="badge">24</span></div>
+        <div class="nav-item"><span>版本 / Undo</span><span class="badge">3</span></div>
+      </div>
+    </aside>
+
+    <main class="center">
+      <div class="center-head">
+        <div><span class="artifact-title" id="artifactTitle">故事圣经</span><span class="artifact-sub" id="artifactSub">由 Agent 调用 build_story_bible 生成</span></div>
+        <div class="top-actions"><span class="pill">可编辑</span><span class="pill">确认后影响下游</span></div>
+      </div>
+      <div class="editor-wrap">
+        <article class="editor">
+          <div class="editor-toolbar"><span class="tab active">结构化视图</span><span class="tab">Markdown</span><span class="tab">依赖关系</span></div>
+          <div class="doc">
+            <h2>Story Bible</h2>
+            <div class="field"><div class="field-title">故事概览</div><p>女主被权力系统排挤后，以隐藏身份和专业能力反击，最终进入更大的家族与医院权力斗争。</p></div>
+            <div class="field"><div class="field-title">核心冲突</div><p>个人清白、职业尊严、家族秘密与医院权力结构之间的冲突。</p></div>
+            <div class="card-row">
+              <div class="mini-card"><strong>角色：女主</strong><span>目标：证明自己，夺回选择权。</span></div>
+              <div class="mini-card"><strong>角色：对手</strong><span>目标：维护既得利益，压制真相。</span></div>
+              <div class="mini-card"><strong>短剧资产</strong><span>身份反转、当众打脸、专业技能爽点。</span></div>
+              <div class="mini-card"><strong>风险</strong><span>如果身份线过早揭开，后续钩子会变弱。</span></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <aside class="agent">
+      <div class="agent-head"><div class="agent-title">Agent</div><div class="agent-state" id="agentState">Ready</div></div>
+      <div class="chat" id="chat">
+        <div class="msg user">把这篇小说改成 20 集短剧，先保证剧情逻辑，再考虑爽点。</div>
+        <div class="msg agent">我判断这是小说改编。下面会模拟一次 agent 执行：先生成过程产物，再在关键点请求确认。</div>
+        <div class="run-list" id="runList"></div>
+        <div class="approval" id="approvalCard" style="display:none">
+          <div class="approval-title">审批请求：确认拆集方案</div>
+          已生成 `story_bible`、`characters`、`episode_split`。继续后会生成分集卡，影响后续剧本。
+          <div class="approval-actions"><button class="primary" data-continue>继续生成分集卡</button><button>提出修改</button><button>暂停</button><button>后续自动执行</button></div>
+        </div>
+      </div>
+      <div class="composer">
+        <div class="quick"><button class="primary" id="startRun">模拟执行</button><button id="resetRun">重置</button><button>总结当前产物</button></div>
+        <div class="input"><div>和 Agent 对话：生成、修改、解释、继续、暂停，或引用选区局部改写。</div><div class="input-bottom"><span>＋ 附件 / 引用当前 artifact</span><span class="send">↑</span></div></div>
+      </div>
+    </aside>
+  </div>
+</div>
+<script>
+const steps = [
+  { icon:'📖', text:'Reading source text', artifact:'原始输入', sub:'读取用户输入 / source_text' },
+  { icon:'🧠', text:'Building story bible', artifact:'故事圣经', sub:'过程产物：story_bible' },
+  { icon:'👤', text:'Creating character：卓婉宁', artifact:'角色', sub:'从故事圣经拎出 characters' },
+  { icon:'👤', text:'Creating character：萧景行', artifact:'角色', sub:'从故事圣经拎出 characters' },
+  { icon:'🧩', text:'Splitting episodes', artifact:'拆集方案', sub:'过程产物：episode_split' },
+  { icon:'🗂', text:'Planning episode cards', artifact:'分集卡', sub:'过程产物：episode_cards' },
+  { icon:'✍️', text:'Preparing script context', artifact:'剧本', sub:'生成前上下文：script_context' }
+];
+let timers = [];
+const runList = document.getElementById('runList');
+const state = document.getElementById('agentState');
+const title = document.getElementById('artifactTitle');
+const sub = document.getElementById('artifactSub');
+const approval = document.getElementById('approvalCard');
+const chat = document.getElementById('chat');
+const runLabel = document.getElementById('runLabel');
+function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
+function renderInitial(){
+  clearTimers();
+  runList.innerHTML = '';
+  approval.style.display = 'none';
+  state.textContent = 'Ready';
+  state.style.color = '#059669';
+  title.textContent = '故事圣经';
+  sub.textContent = '由 Agent 调用 build_story_bible 生成';
+  runLabel.textContent = 'Run #24';
+  steps.forEach((step, index)=>{
+    const el = document.createElement('div');
+    el.className = 'run-item pending';
+    el.dataset.index = index;
+    el.innerHTML = `<span class="run-icon">${step.icon}</span><span>${step.text}</span><span class="run-check" style="display:none">✓</span><span class="run-spinner" style="display:none"></span>`;
+    runList.appendChild(el);
+  });
+}
+function setArtifact(step){ title.textContent = step.artifact; sub.textContent = step.sub; }
+function run(){
+  renderInitial();
+  state.textContent = 'Running';
+  state.style.color = '#2563eb';
+  runLabel.textContent = 'Run #25';
+  steps.forEach((step, index)=>{
+    timers.push(setTimeout(()=>{
+      const el = runList.querySelector(`[data-index="${index}"]`);
+      el.className = 'run-item running';
+      el.querySelector('.run-spinner').style.display = 'flex';
+      setArtifact(step);
+      chat.scrollTop = chat.scrollHeight;
+    }, index * 850));
+    timers.push(setTimeout(()=>{
+      const el = runList.querySelector(`[data-index="${index}"]`);
+      el.className = 'run-item done';
+      el.querySelector('.run-spinner').style.display = 'none';
+      el.querySelector('.run-check').style.display = 'flex';
+      if(index === 4){
+        approval.style.display = 'block';
+        state.textContent = 'Waiting approval';
+        state.style.color = '#d97706';
+      }
+      if(index === steps.length - 1){
+        state.textContent = 'Done';
+        state.style.color = '#059669';
+      }
+      chat.scrollTop = chat.scrollHeight;
+    }, index * 850 + 520));
+  });
+}
+document.getElementById('startRun').addEventListener('click', run);
+document.getElementById('resetRun').addEventListener('click', renderInitial);
+approval.addEventListener('click', (event)=>{
+  if(event.target.matches('[data-continue]')){
+    approval.style.display = 'none';
+    state.textContent = 'Running';
+    state.style.color = '#2563eb';
+  }
+});
+renderInitial();
+</script>
+</body>
+</html>

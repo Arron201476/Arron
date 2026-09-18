@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://content-agent.internal/schemas/v1/structured-run-state.schema.json",
+  "title": "Structured Run State Snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "state_version",
+    "state",
+    "last_transition",
+    "source_refs"
+  ],
+  "properties": {
+    "state_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "state": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "last_transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["step_id", "scope_key", "artifact_type"],
+      "properties": {
+        "step_id": {"type": "string"},
+        "scope_key": {"type": "string"},
+        "artifact_type": {"type": "string"}
+      }
+    },
+    "source_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "ref", "content_hash"],
+        "properties": {
+          "kind": {"enum": ["artifact_version", "task_result_checkpoint"]},
+          "ref": {"type": "string", "minLength": 1},
+          "content_hash": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

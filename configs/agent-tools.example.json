@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0.0",
+  "mcp_servers": [
+    {
+      "id": "example-story-data",
+      "workspace_ids": ["workspace_internal_shared"],
+      "description": "Example operator-managed story data service",
+      "transport": "streamable_http",
+      "url": "https://mcp.example.invalid/mcp",
+      "header_environment": {
+        "Authorization": "EXAMPLE_STORY_MCP_AUTHORIZATION"
+      },
+      "enabled": false,
+      "allowed_tools": [
+        {
+          "name": "lookup_story_fact",
+          "description": "Read a story fact by key",
+          "access": "read",
+          "approval": "never"
+        },
+        {
+          "name": "save_story_fact",
+          "description": "Write a story fact after user approval",
+          "access": "write",
+          "approval": "always"
+        }
+      ],
+      "defer_loading": true,
+      "timeout_seconds": 10,
+      "max_retries": 0,
+      "max_result_bytes": 65536
+    }
+  ],
+  "hosted_tools": [],
+  "stdio_policy": {
+    "enabled": false,
+    "allowed_commands": [],
+    "allowed_cwds": []
+  }
+}

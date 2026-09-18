@@ -1,0 +1,8 @@
+interface:
+  display_name: "创作调研摘要"
+  short_description: "在后台整理主题与材料，生成结构化创作调研摘要"
+  default_prompt: "请在后台整理这些材料，并生成一份创作调研摘要。"
+policy:
+  allow_implicit_invocation: true
+dependencies:
+  tools: []

@@ -1,0 +1,13 @@
+.agent-tool-outcome { min-width: 0; margin-top: 8px; font-size: 12px; overflow-wrap: anywhere; }
+.agent-tool-outcome > summary { cursor: pointer; }
+.agent-tool-outcome form { display: grid; gap: 10px; max-width: 540px; margin: 8px 0; }
+.agent-tool-outcome form > label { display: grid; gap: 6px; }
+.agent-tool-outcome fieldset { display: flex; flex-wrap: wrap; gap: 8px 18px; border: 0; padding: 0; margin: 0; min-width: 0; }
+.agent-tool-outcome fieldset legend { padding: 0 0 6px; }
+.agent-tool-outcome fieldset label, .agent-tool-outcome form > .agent-outcome-ack { display: flex; align-items: flex-start; gap: 6px; }
+.agent-tool-outcome input { flex: 0 0 auto; }
+.agent-tool-outcome textarea { width: 100%; box-sizing: border-box; min-height: 84px; resize: vertical; }
+.agent-tool-outcome pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 260px; overflow: auto; font: inherit; }
+.agent-outcome-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
+.agent-outcome-heading > span { min-width: 0; }
+.agent-outcome-heading > button { flex: 0 0 auto; }

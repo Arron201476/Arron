@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>剧本编辑器复用对照</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 28px; background: #eef1f1; color: #1d2927; font-family: "Microsoft YaHei UI", sans-serif; }
+    h1 { margin: 0 0 8px; font-size: 24px; }
+    p { margin: 0 0 22px; color: #62706d; font-size: 13px; }
+    .pair { margin-bottom: 26px; }
+    .pair h2 { margin: 0 0 10px; font-size: 17px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    figure { margin: 0; overflow: hidden; border: 1px solid #d4dcda; border-radius: 7px; background: white; box-shadow: 0 3px 10px rgba(25,39,35,.07); }
+    figcaption { height: 42px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e4e9e8; font-size: 13px; font-weight: 700; }
+    figcaption span { color: #7a4646; font-size: 11px; font-weight: 500; }
+    .good figcaption span { color: #127267; }
+    img { display: block; width: 100%; aspect-ratio: 16/10; object-fit: cover; object-position: top left; }
+  </style>
+</head>
+<body>
+  <h1>剧本编辑交互复用审计</h1>
+  <p>同一视口 1440 x 900。比较编辑入口、正文形态、保存可达性和分集操作。</p>
+  <section class="pair">
+    <h2>问题定位：旧版编辑器 vs 当前改前</h2>
+    <div class="grid">
+      <figure><figcaption>旧版 Agent <span>专用剧本编辑器</span></figcaption><img src="old-project.png" /></figure>
+      <figure><figcaption>当前版改前 <span>退化为通用字段表单</span></figcaption><img src="current-script-edit-before.png" /></figure>
+    </div>
+  </section>
+  <section class="pair">
+    <h2>整改结果：旧版交互基线 vs 当前 Skill 架构适配</h2>
+    <div class="grid">
+      <figure><figcaption>旧版交互基线 <span>目录、稿纸、顶部保存</span></figcaption><img src="old-project.png" /></figure>
+      <figure class="good"><figcaption>当前版整改后 <span>保留 Skill/Run 与版本协议</span></figcaption><img src="current-script-edit-after.png" /></figure>
+    </div>
+  </section>
+</body>
+</html>

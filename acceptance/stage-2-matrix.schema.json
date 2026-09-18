@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://content-agent.internal/acceptance/stage-2-matrix.schema.json",
+  "title": "Content Agent Stage 2 Acceptance Matrix",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "status",
+    "gates",
+    "fixtures",
+    "cases"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contract_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "status": {
+      "const": "design_contract"
+    },
+    "gates": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "$ref": "#/$defs/gate"
+      }
+    },
+    "fixtures": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/fixture"
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/testCase"
+      }
+    }
+  },
+  "$defs": {
+    "gateId": {
+      "enum": [
+        "stage2_design",
+        "implementation",
+        "release"
+      ]
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "label",
+        "pass_rule"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/gateId"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pass_rule": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "owner",
+        "availability",
+        "description"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^fixture_[a-z0-9_]+$"
+        },
+        "kind": {
+          "enum": [
+            "synthetic",
+            "real",
+            "snapshot",
+            "generated"
+          ]
+        },
+        "owner": {
+          "enum": [
+            "development",
+            "product"
+          ]
+        },
+        "availability": {
+          "enum": [
+            "available",
+            "planned",
+            "provided_at_acceptance"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "testCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "area",
+        "title",
+        "priority",
+        "level",
+        "automation",
+        "required_by",
+        "fixture_ids",
+        "contract_refs",
+        "assertions"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]+-[0-9]{3}$"
+        },
+        "area": {
+          "enum": [
+            "design",
+            "shell",
+            "registry",
+            "runtime",
+            "artifact",
+            "context",
+            "asset",
+            "api",
+            "sse",
+            "frontend",
+            "novel",
+            "non_novel",
+            "video",
+            "quality_review",
+            "migration",
+            "security",
+            "nfr"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "priority": {
+          "enum": [
+            "P0",
+            "P1",
+            "P2"
+          ]
+        },
+        "level": {
+          "enum": [
+            "contract",
+            "unit",
+            "component",
+            "integration",
+            "e2e",
+            "manual"
+          ]
+        },
+        "automation": {
+          "enum": [
+            "automated",
+            "hybrid",
+            "manual"
+          ]
+        },
+        "required_by": {
+          "$ref": "#/$defs/gateId"
+        },
+        "fixture_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^fixture_[a-z0-9_]+$"
+          }
+        },
+        "contract_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^(docs|schemas|capabilities|design|acceptance)/.+"
+          }
+        },
+        "assertions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "$schema": "./manifest.schema.json",
+  "id": "story_review_workflow",
+  "version": "1.0.0",
+  "definition_status": "design_contract",
+  "label": "Story Review Workflow",
+  "description": "Review a supplied story premise and create an approval-ready report.",
+  "kind": "domain_workflow",
+  "execution_mode": "stateful_workflow",
+  "input_binding": {"source_type": "story", "asset_role": "primary_source"},
+  "entry_policy": {
+    "explicit_invocation": true,
+    "auto_route": false,
+    "requires_user_confirmation": true,
+    "input_collection_modes": ["fixed"]
+  },
+  "routing": {
+    "explicit_aliases": ["story review workflow", "故事评审流程"],
+    "intent_examples": ["用流程评审这个故事梗概"],
+    "ambiguity_policy": "ask_user"
+  },
+  "accepted_asset_kinds": ["text", "document"],
+  "required_providers": ["content_model_provider"],
+  "input_schema_ref": "../schemas/input.json#/$defs/input",
+  "config_schema_refs": {
+    "review": "../schemas/config.json#/$defs/config"
+  },
+  "default_config_ref": "review",
+  "default_retry": {
+    "automatic_attempts": 1,
+    "user_retry_allowed": true,
+    "resume_from_cursor": true,
+    "retryable_errors": ["MODEL_TIMEOUT", "MODEL_RATE_LIMIT", "PROVIDER_TEMPORARY_FAILURE"]
+  },
+  "context_policy_ref": "context.generic_skill_workflow.v1",
+  "commands": ["inspect", "start", "pause", "resume", "cancel", "approve"],
+  "ui": {
+    "icon_key": "clipboard_check",
+    "sort_order": 900,
+    "entry_view_key": "source_materials",
+    "config_view_key": "json_schema"
+  },
+  "completion": {
+    "terminal_step_ids": ["create_review"],
+    "required_artifacts": [
+      {
+        "artifact_type": "generic_document",
+        "required_status": "confirmed",
+        "coverage": "one"
+      }
+    ],
+    "requires_terminal_approval": false
+  },
+  "steps": [
+    {
+      "id": "create_review",
+      "kind": "model",
+      "executor_ref": "worker.structured_content",
+      "config_ref": "review",
+      "required_context": ["asset_snapshot", "config_snapshot"],
+      "input_refs": [],
+      "output_refs": [
+        {
+          "artifact_type": "generic_document",
+          "cardinality": "one",
+          "initial_status": "pending_approval",
+          "schema_ref": "../schemas/result.json#/$defs/result"
+        }
+      ],
+      "prompt_ref": "../prompts/review.md",
+      "rule_refs": [],
+      "approval": {
+        "type": "checkpoint",
+        "required": true,
+        "invalidate_on_new_version": true
+      },
+      "next": []
+    }
+  ]
+}

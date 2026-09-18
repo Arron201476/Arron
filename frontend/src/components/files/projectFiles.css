@@ -1,0 +1,47 @@
+.project-files-dialog { width: min(1040px, calc(100vw - 32px)); height: min(760px, calc(100dvh - 48px)); max-width: none; max-height: none; padding: 0; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: var(--paper); overflow: hidden; }
+.project-files-dialog::backdrop { background: rgba(23, 27, 30, .42); }
+.project-files-dialog[open] { display: flex; flex-direction: column; }
+.project-files-head { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.project-files-head h2 { flex: 1; margin: 0; font-size: 16px; line-height: 24px; }
+.project-files-body { display: grid; grid-template-columns: minmax(180px, 28%) minmax(0, 1fr); min-height: 0; flex: 1; }
+.project-files-list { overflow: auto; border-right: 1px solid var(--line); background: var(--canvas); padding: 8px; min-width: 0; }
+.project-files-list > p, .project-file-reader > p { margin: 16px; font-size: 13px; color: var(--secondary); overflow-wrap: anywhere; }
+.project-files-dialog p.form-error { color: var(--red); }
+.project-file-entry { display: flex; width: 100%; min-width: 0; align-items: flex-start; gap: 8px; padding: 10px 8px; border: 0; border-radius: 4px; text-align: left; background: transparent; cursor: pointer; }
+.project-file-entry > svg { flex-shrink: 0; margin-top: 2px; color: var(--secondary); }
+.project-file-entry > span { display: grid; min-width: 0; gap: 4px; }
+.project-file-entry strong { font-size: 12px; font-weight: 500; line-height: 18px; overflow-wrap: anywhere; }
+.project-file-entry small { font-size: 11px; color: var(--secondary); }
+.project-file-entry:hover { background: var(--line-soft); }
+.project-file-entry.selected { background: var(--teal-soft); color: var(--teal-dark); }
+.project-file-reader { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
+.project-file-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line-soft); }
+.project-file-toolbar > strong { flex: 1 1 180px; min-width: 0; font-size: 13px; line-height: 20px; font-weight: 500; overflow-wrap: anywhere; }
+.project-file-toolbar label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--secondary); }
+.project-file-toolbar select { font: inherit; width: 84px; height: 30px; padding: 2px 4px; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 4px; }
+.project-file-reader pre { flex: 1; min-height: 0; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; padding: 16px; font-size: 13px; line-height: 1.7; font-family: Consolas, "Microsoft YaHei UI", monospace; }
+.project-file-pagination { margin-top: auto; display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-top: 1px solid var(--line-soft); }
+.project-file-pagination span { flex: 1; font-size: 11px; color: var(--secondary); }
+.project-file-binary { min-height: 0; overflow: auto; padding: 16px; font-size: 13px; }
+.project-file-binary > svg, .project-file-binary dt { color: var(--secondary); }
+.project-file-binary dl { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 8px 12px; }
+.project-file-binary dd { margin: 0; overflow-wrap: anywhere; }
+.project-files-dialog .icon-button { flex: 0 0 32px; width: 32px; height: 32px; min-width: 32px; }
+.project-files-dialog :is(a, button, select, pre):focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
+.project-skill-draft { min-height: 0; overflow: auto; padding: 14px 16px; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.project-skill-actions { display: flex; align-items: center; gap: 8px; }
+.project-skill-actions h3 { margin: 0; flex: 1; font-size: 14px; }
+.project-skill-draft dl { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 8px 12px; margin: 14px 0; }
+.project-skill-draft dt { color: var(--secondary); }
+.project-skill-draft dd { margin: 0; }
+.project-skill-valid { color: var(--teal-dark); }
+.project-skill-download { display: inline-flex; align-items: center; gap: 6px; color: var(--blue); min-height: 32px; }
+.project-skill-scope { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line-soft); }
+.project-skill-scope select { max-width: 100%; min-height: 32px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink); background: var(--paper); font: inherit; padding: 4px 8px; }
+.project-skill-install { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; max-width: 100%; }
+@media (max-width: 640px) {
+  .project-files-dialog { width: calc(100vw - 16px); height: calc(100dvh - 24px); }
+  .project-files-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(110px, 28%) minmax(0, 1fr); }
+  .project-files-list { border-right: 0; border-bottom: 1px solid var(--line); }
+  .project-file-toolbar { padding: 8px 12px; }
+}

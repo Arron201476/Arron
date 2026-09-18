@@ -1,0 +1,228 @@
+{
+  "contract_version": "1.0.0",
+  "definition_status": "design_contract",
+  "presentations": [
+    {
+      "artifact_type": "source_input",
+      "label": "来源材料",
+      "description": "本次生成使用的文件、素材批次和用户要求。",
+      "renderer": "document",
+      "editable": false,
+      "preferred_fields": ["assets", "source_kind", "collection_state"],
+      "navigation": {"order": 10, "group_mode": "single", "visibility": "user"},
+      "available_actions": ["inspect", "version_history"]
+    },
+    {
+      "artifact_type": "source_manifest",
+      "label": "来源清单",
+      "description": "系统读取到的材料范围与完整性检查。",
+      "renderer": "document",
+      "editable": false,
+      "preferred_fields": ["source_kind", "units", "covered_source_unit_ids", "missing_or_unread_scope", "truncation_risk"],
+      "navigation": {"order": 20, "group_mode": "single", "visibility": "internal"},
+      "available_actions": ["inspect"]
+    },
+    {
+      "artifact_type": "story_bible",
+      "label": "故事圣经",
+      "description": "稳定约束人物、世界观、关系和关键情节。",
+      "renderer": "document",
+      "editable": true,
+      "preferred_fields": ["story_overview", "major_plotline", "characters", "relationships", "world_rules", "must_keep_facts", "climax_map", "foreshadowing_and_payoff", "short_drama_assets", "adaptation_risks"],
+      "navigation": {"order": 30, "group_mode": "single", "visibility": "user"},
+      "available_actions": ["manual_edit", "agent_revision", "regenerate", "version_history"]
+    },
+    {
+      "artifact_type": "episode_split",
+      "label": "拆集方案",
+      "description": "原文覆盖、分集边界和每集剧情目标。",
+      "renderer": "document",
+      "editable": true,
+      "preferred_fields": ["split_strategy", "target_episode_count", "actual_episode_count", "episodes", "coverage_check", "global_risks"],
+      "navigation": {"order": 40, "group_mode": "single", "visibility": "user"},
+      "available_actions": ["manual_edit", "agent_revision", "regenerate", "version_history"]
+    },
+    {
+      "artifact_type": "material_bank",
+      "label": "素材库",
+      "description": "从非小说材料中整理的事实、冲突、情绪和可用桥段。",
+      "renderer": "document",
+      "editable": true,
+      "preferred_fields": ["user_supplied_facts", "input_type_tags", "emotional_drives", "conflict_materials", "hook_candidates", "payoff_candidates", "visual_scene_candidates", "gaps_and_questions", "most_promising_direction", "volume_fit_notes", "discard_or_later"],
+      "navigation": {"order": 50, "group_mode": "single", "visibility": "user"},
+      "available_actions": ["manual_edit", "agent_revision", "regenerate", "version_history"]
+    },
+    {
+      "artifact_type": "story_seed",
+      "label": "故事种子",
+      "description": "生成剧本前确认的核心故事方向。",
+      "renderer": "document",
+      "editable": true,
+      "preferred_fields": ["logline", "genre_tags", "core_premise", "protagonist", "main_characters", "central_conflict", "main_plotline", "relationship_engine", "hook_engine", "payoff_chain", "world_rules", "risks", "development_notes", "volume_plan_notes"],
+      "navigation": {"order": 60, "group_mode": "single", "visibility": "user"},
+      "available_actions": ["manual_edit", "agent_revision", "regenerate", "version_history"]
+    },
+    {
+      "artifact_type": "series_blueprint",
+      "label": "系列蓝图",
+      "description": "全剧阶段、人物推进、钩子和爽点分布。",
+      "renderer": "document",
+      "editable": true,
+      "preferred_fields": ["series_promise", "recommended_episode_count", "resolved_episode_count", "episode_count_reason", "phase_plan", "character_progression", "relationship_progression", "hook_distribution", "payoff_distribution", "pacing_density_plan", "first_major_climax_plan", "continuity_rules", "fit_risks"],
+      "navigation": {"order": 70, "group_mode": "single", "visibility": "user"},
+      "available_actions": ["manual_edit", "agent_revision", "regenerate", "version_history"]
+    },
+    {
+      "artifact_type": "episode_cards",
+      "label": "分集规划",
+      "description": "逐集目标、冲突、转折和结尾钩子。",
+      "renderer": "episode_plan",
+      "editable": true,
+      "preferred_fields": ["episodes", "continuity_delta"],
+      "navigation": {"order": 80, "group_mode": "single", "visibility": "user"},
+      "available_actions": ["manual_edit", "agent_revision", "regenerate", "version_history"]
+    },
+    {
+      "artifact_type": "video_script_unit",
+      "label": "视频还原剧本",
+      "description": "单集视频解析得到的剧情概要和逐场剧本。",
+      "renderer": "video_script",
+      "editable": true,
+      "preferred_fields": ["episode_no", "title", "source_file_name", "extraction_completeness", "plot_summary", "script_text", "scenes", "uncertainty_flags"],
+      "navigation": {"order": 90, "group_mode": "episode_directory", "visibility": "user"},
+      "available_actions": ["manual_edit", "agent_revision", "regenerate", "version_history"]
+    },
+    {
+      "artifact_type": "reference_scripts",
+      "label": "参考剧本合集",
+      "description": "已确认逐集剧本的排序与完整度。",
+      "renderer": "script_collection",
+      "editable": false,
+      "preferred_fields": ["episode_count", "episode_order", "completeness", "missing_episode_nos", "failed_episode_nos", "duplicate_episode_nos", "unit_refs"],
+      "navigation": {"order": 100, "group_mode": "single", "visibility": "user"},
+      "available_actions": ["inspect", "version_history", "export"],
+      "collection_member_type": "video_script_unit"
+    },
+    {
+      "artifact_type": "script_analysis",
+      "label": "剧本分析",
+      "description": "参考剧的结构、人设、钩子、情绪和可迁移方法。",
+      "renderer": "document",
+      "editable": true,
+      "preferred_fields": ["basic_information", "overall_judgment", "opening_strategy", "characters_and_relationships", "plot_and_emotion_curve", "payoff_and_emotion", "hook_system", "differentiation", "transferable_methods", "optimization_actions", "marketing_material_directions", "final_conclusion", "risks"],
+      "navigation": {"order": 110, "group_mode": "single", "visibility": "user"},
+      "available_actions": ["manual_edit", "agent_revision", "regenerate", "version_history"]
+    },
+    {
+      "artifact_type": "adaptation_options",
+      "label": "改编方案",
+      "description": "可组合选择的改编方法与风险。",
+      "renderer": "form",
+      "editable": false,
+      "preferred_fields": ["selection_instructions", "options"],
+      "navigation": {"order": 120, "group_mode": "single", "visibility": "user"},
+      "available_actions": ["inspect", "regenerate", "version_history"]
+    },
+    {
+      "artifact_type": "adaptation_brief",
+      "label": "改编 Brief",
+      "description": "用户确认后用于约束后续生成的改编方法。",
+      "renderer": "document",
+      "editable": true,
+      "preferred_fields": ["adaptation_goal", "patterns_to_keep", "content_to_replace", "selected_methods", "new_elements", "character_and_relationship_adjustments", "genre_style_worldview_direction", "target_episode_count", "episode_duration_minutes", "user_requirements", "forbidden_copying", "compliance_boundary", "unresolved_questions"],
+      "navigation": {"order": 130, "group_mode": "single", "visibility": "user"},
+      "available_actions": ["manual_edit", "agent_revision", "regenerate", "version_history"]
+    },
+    {
+      "artifact_type": "continuation_options",
+      "label": "续写方向",
+      "description": "基于剧本当前结尾生成的 5 个互斥续写方向。",
+      "renderer": "form",
+      "editable": false,
+      "preferred_fields": ["selection_instructions", "options", "core_settings"],
+      "navigation": {"order": 135, "group_mode": "single", "visibility": "user"},
+      "available_actions": ["inspect", "regenerate", "version_history"]
+    },
+    {
+      "artifact_type": "continuation_script",
+      "label": "续写剧本",
+      "description": "根据用户选定方向生成的完整续写剧本。",
+      "renderer": "script",
+      "editable": true,
+      "preferred_fields": ["title", "script_text", "selected_option_id"],
+      "navigation": {"order": 136, "group_mode": "single", "visibility": "user"},
+      "available_actions": ["manual_edit", "agent_revision", "regenerate", "version_history", "export"]
+    },
+    {
+      "artifact_type": "script_context",
+      "label": "剧本上下文",
+      "description": "单集生成时使用的事实、连续性和改编边界。",
+      "renderer": "document",
+      "editable": false,
+      "preferred_fields": ["episode_no", "must_follow_facts", "character_state", "relationship_state", "continuity_state", "allowed_additions", "forbidden_changes", "style_constraints", "user_notes", "source_material"],
+      "navigation": {"order": 140, "group_mode": "single", "visibility": "internal"},
+      "available_actions": ["inspect"]
+    },
+    {
+      "artifact_type": "script_unit",
+      "label": "单集剧本",
+      "description": "可编辑的单集剧本文稿。",
+      "renderer": "script",
+      "editable": true,
+      "preferred_fields": ["episode_no", "title", "script_text", "scenes"],
+      "navigation": {"order": 150, "group_mode": "episode_directory", "visibility": "user"},
+      "available_actions": ["manual_edit", "agent_revision", "regenerate", "version_history"]
+    },
+    {
+      "artifact_type": "script_handoff",
+      "label": "剧本交接",
+      "description": "本集生成后的连续性变化与下集约束。",
+      "renderer": "document",
+      "editable": false,
+      "preferred_fields": ["episode_no", "continuity_delta", "next_episode_must_address", "critical_presentation_constraints", "review_focus", "self_check"],
+      "navigation": {"order": 160, "group_mode": "single", "visibility": "internal"},
+      "available_actions": ["inspect"]
+    },
+    {
+      "artifact_type": "structured_run_state",
+      "label": "运行连续性状态",
+      "description": "Harness 在同一 Run 内维护并传递给 Worker 的内部连续性状态。",
+      "renderer": "document",
+      "editable": false,
+      "preferred_fields": [],
+      "navigation": {"order": 165, "group_mode": "single", "visibility": "internal"},
+      "available_actions": ["inspect"]
+    },
+    {
+      "artifact_type": "scripts",
+      "label": "完整剧本",
+      "description": "全部单集剧本的聚合结果与完整性。",
+      "renderer": "script_collection",
+      "editable": false,
+      "preferred_fields": ["episode_count", "completeness", "quality_flags", "global_continuity_state", "unit_refs"],
+      "navigation": {"order": 170, "group_mode": "single", "visibility": "user"},
+      "available_actions": ["inspect", "version_history", "export"],
+      "collection_member_type": "script_unit"
+    },
+    {
+      "artifact_type": "generic_document",
+      "label": "文档",
+      "description": "由 Agent 根据当前请求创建的通用文档。",
+      "renderer": "document",
+      "editable": true,
+      "preferred_fields": ["title", "summary", "content", "items"],
+      "navigation": {"order": 900, "group_mode": "single", "visibility": "user"},
+      "available_actions": ["manual_edit", "agent_revision", "version_history"]
+    },
+    {
+      "artifact_type": "generic_table",
+      "label": "表格",
+      "description": "由 Agent 根据当前请求创建的结构化表格。",
+      "renderer": "table",
+      "editable": true,
+      "preferred_fields": ["title", "columns", "rows"],
+      "navigation": {"order": 910, "group_mode": "single", "visibility": "user"},
+      "available_actions": ["manual_edit", "agent_revision", "version_history", "export"]
+    }
+  ]
+}

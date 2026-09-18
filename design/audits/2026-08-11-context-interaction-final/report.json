@@ -1,0 +1,15 @@
+{
+  "projectMenu": "escape closes",
+  "context": {
+    "selectionSubmitted": true,
+    "artifactContextSubmitted": true,
+    "selectionHashLength": 64,
+    "historyReferenceVisible": true
+  },
+  "skillMenu": "escape closes",
+  "candidateMenu": "outside click closes",
+  "layout": {
+    "viewport": "1280x800",
+    "horizontalOverflow": false
+  }
+}

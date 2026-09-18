@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prompt / Skill 引用消费审计</title>
+  <style>
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,"Microsoft YaHei",sans-serif;margin:0;background:#f6f7fb;color:#172033;line-height:1.65}
+    main{max-width:1180px;margin:0 auto;padding:28px}
+    h1{font-size:28px;margin:0 0 8px} h2{margin-top:34px;border-left:5px solid #2563eb;padding-left:10px} h3{margin:16px 0 8px}
+    .note{background:#fff;border:1px solid #dbe3f0;border-radius:14px;padding:16px;margin:14px 0;box-shadow:0 6px 18px rgba(15,23,42,.04)}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;margin:14px 0;box-shadow:0 6px 18px rgba(15,23,42,.04)}
+    th,td{border:1px solid #e5eaf3;padding:10px 12px;vertical-align:top;text-align:left} th{background:#eef4ff;font-weight:700}
+    code{background:#eef2f7;border-radius:6px;padding:1px 5px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.92em}
+    .tag{display:inline-block;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:700;background:#e5e7eb;color:#374151;white-space:nowrap}
+    .keep{background:#dcfce7;color:#166534}.partial{background:#fef3c7;color:#92400e}.remove{background:#fee2e2;color:#991b1b}.add{background:#dbeafe;color:#1d4ed8}.risk{background:#fce7f3;color:#9d174d}
+    ul{margin:6px 0 6px 20px;padding:0}.small{color:#64748b;font-size:13px}.strong{font-weight:700;color:#0f172a}
+  </style>
+</head>
+<body>
+<main>
+  <h1>Prompt / Skill 引用消费审计</h1>
+  <p class="small">目的：检查每个 prompt 引用的 skill 是否真的被输入、输出或执行规则消费；不消费就不应引用，部分消费需要说明边界。</p>
+
+    <section class="note">
+    <h2>执行状态：已按审计结论落地</h2>
+    <ul>
+      <li>新增 <code>09_非小说素材与故事种子.md</code>，非小说 Step1/Step2 改为引用它。</li>
+      <li>小说 Step2/Step3 已移除对 <code>01_素材理解与故事圣经.md</code> 的直接引用，改为消费 <code>story_bible</code>。</li>
+      <li>小说 Step3、非小说 Step4 已补充 <code>06_转场_闪回_连续性_格式.md</code>，仅用于 <code>visual_strategy</code> 的视听/转场/闪回策略。</li>
+      <li>小说 Step1 已补齐 <code>short_drama_assets</code> 字段，用来承接 Skill01 的核心梗、情绪前置、保留/压缩/删除/前置和心理转场面准则。</li>
+    </ul>
+  </section>
+<section class="note">
+    <h2>审计原则</h2>
+    <ul>
+      <li><span class="strong">Skill</span> 只提供准则，不提供输入、输出、参数、字段协议。</li>
+      <li><span class="strong">Prompt</span> 引用 skill 的前提：当前步骤的执行规则或输出 artifact 会实际使用这些准则。</li>
+      <li>如果只是通过上游 artifact 间接使用，不应重复引用上游 skill；prompt 应消费 artifact 字段，而不是再引用生成 artifact 的 skill。</li>
+      <li>如果 prompt 输出了某个字段，但没有引用能支撑该字段的 skill，要补引用或把准则移到已引用 skill 中。</li>
+      <li>如果 skill 中某些准则没有任何 prompt 输出承接，要么补 artifact 字段，要么标记为暂不启用，不让它悬空。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>全局结论</h2>
+    <table>
+      <thead><tr><th>问题</th><th>判断</th><th>建议动作</th></tr></thead>
+      <tbody>
+        <tr><td><code>01_素材理解与故事圣经</code> 被下游重复引用</td><td><span class="tag remove">应收敛</span> Step2/Step3 下游应消费 <code>story_bible</code>，不是直接再引用 Skill01。</td><td>小说 Step2、小说 Step3 建议移除 Skill01 直接引用；保留对 <code>story_bible</code> 字段的消费规则。</td></tr>
+        <tr><td><code>visual_strategy</code> 有字段但缺 Skill06 支撑</td><td><span class="tag add">需补引用</span> 分集规划现在输出视觉策略，但引用列表没有转场/闪回/视听表达准则。</td><td>小说 Step3、非小说 Step4 如果继续输出 <code>visual_strategy</code>，建议补引用 <code>06_转场_闪回_连续性_格式</code>，并说明只消费视听/闪回/转场准则，不消费剧本格式。</td></tr>
+        <tr><td>非小说 Step1/Step2 引用 Skill01</td><td><span class="tag risk">不完全匹配</span> Skill01 当前包含“故事圣经/原文/网文转短剧”语境，非小说素材链路使用会混淆。</td><td>建议新增或恢复非小说专用 skill，例如 <code>09_非小说素材与故事种子</code>；非小说 Step1/Step2 改引用它，而不是 Skill01。</td></tr>
+        <tr><td>Skill01 内部准则没有全部字段承接</td><td><span class="tag partial">部分消费</span> “核心梗提纯、情绪前置、保留/合并/删除/前置、心理转场面”目前只能松散落在 <code>short_drama_assets</code>。</td><td>要么给 <code>story_bible.short_drama_assets</code> 补明确字段，要么把这些准则标成暂不启用；不能让准则悬空。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>小说链 Prompt 引用审计</h2>
+    <table>
+      <thead><tr><th>Prompt</th><th>当前引用</th><th>消费判断</th><th>建议</th></tr></thead>
+      <tbody>
+        <tr><td><code>小说 step1_story_bible</code></td><td>01、02</td><td><span class="tag partial">部分匹配</span> 01 用于全文理解和短剧化资产识别；02 用于人物关系、声口边界。问题是 Skill01 的部分准则缺字段承接。</td><td>保留 01、02；补 <code>short_drama_assets</code> 明确字段，或收窄 Skill01 准则。</td></tr>
+        <tr><td><code>小说 step2_episode_split</code></td><td>01、03、07</td><td><span class="tag remove">01 不应直引</span> Step2 应消费 Step1 产物 <code>story_bible</code>，不是再引用 Skill01。03/07 被拆集断点、尾钩、信息密度消费。</td><td>移除 01；保留 03、07。</td></tr>
+        <tr><td><code>小说 step3_episode_cards</code></td><td>01、02、03、07</td><td><span class="tag partial">需调整</span> 01 应通过 <code>story_bible</code> 间接消费；02/03/07 有消费出口。新增 <code>visual_strategy</code> 需要 Skill06。</td><td>移除 01；保留 02/03/07；新增 06，并限定为视觉/闪回/转场策略参考。</td></tr>
+        <tr><td><code>小说 step4_script_generate</code></td><td>02、04、05、06、07、08</td><td><span class="tag keep">基本匹配</span> 02 声口、04 剧本写作、05 对白、06 转场格式、07 小程序适配、08 示例均能作用于 <code>script_text</code>。</td><td>保留全部；08 标明“示例参考，不改变剧情规则”。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>非小说链 Prompt 引用审计</h2>
+    <table>
+      <thead><tr><th>Prompt</th><th>当前引用</th><th>消费判断</th><th>建议</th></tr></thead>
+      <tbody>
+        <tr><td><code>非小说 step1_material_bank</code></td><td>01、02</td><td><span class="tag risk">01 不完全匹配</span> 该步骤是素材整理，不是小说全文理解/故事圣经。02 可用于人物关系材料整理。</td><td>01 改为非小说专用素材 skill；02 保留。</td></tr>
+        <tr><td><code>非小说 step2_story_seed</code></td><td>01、02、03、07</td><td><span class="tag risk">01 不完全匹配</span> 本步骤是原创扩写/故事种子，不适合直接吃“忠实原文/网文改编”准则。02/03/07 有用。</td><td>01 改为非小说专用故事开发 skill；保留 02/03/07。</td></tr>
+        <tr><td><code>非小说 step3_series_blueprint</code></td><td>03、07</td><td><span class="tag keep">匹配</span> 系列体量、阶段结构、高潮、节奏、集数匹配都由 03/07 支撑。</td><td>保留 03、07。</td></tr>
+        <tr><td><code>非小说 step4_episode_cards</code></td><td>02、03、07</td><td><span class="tag partial">缺 06</span> 人物、结构、小程序适配有消费；但输出 <code>visual_strategy</code> 缺视听/转场准则支撑。</td><td>保留 02/03/07；新增 06 的视觉/转场部分引用。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Skill 被消费情况</h2>
+    <table>
+      <thead><tr><th>Skill</th><th>适合直接引用的步骤</th><th>当前问题</th><th>建议状态</th></tr></thead>
+      <tbody>
+        <tr><td><code>01 素材理解与故事圣经</code></td><td>小说 Step1</td><td>对下游是间接消费；对非小说链不完全匹配；部分准则缺字段承接。</td><td><span class="tag partial">收敛</span> 只给小说 Step1 直引；补字段或拆分 skill。</td></tr>
+        <tr><td><code>02 人物关系与声口</code></td><td>Step1 人物整理、Step3 人物变化、Step4 声口执行；非小说人物链路</td><td>基本匹配。对 Step3 是人物变化/关系状态，不是对白细节。</td><td><span class="tag keep">保留</span> 引用时说明消费边界。</td></tr>
+        <tr><td><code>03 结构规划_开头_冲突_爽点_尾钩</code></td><td>拆集、分集卡、系列蓝图</td><td>基本匹配。Step4 不应直接引用，除非要改剧本生成的结构节奏。</td><td><span class="tag keep">保留</span> 主要给规划层。</td></tr>
+        <tr><td><code>04 剧本写作技法</code></td><td>剧本生成</td><td>只适合 Step4，不适合规划层。</td><td><span class="tag keep">保留</span> 只给 script_generate。</td></tr>
+        <tr><td><code>05 对白规则</code></td><td>剧本生成</td><td>对白最终落在 <code>script_text</code>，不一定需要独立字段。</td><td><span class="tag keep">保留</span> 只给 script_generate。</td></tr>
+        <tr><td><code>06 转场_闪回_连续性_格式</code></td><td>剧本生成；规划层只消费视觉/转场策略部分</td><td>现在 planning prompt 输出 visual_strategy 却没引用 06。</td><td><span class="tag add">补引用</span> 小说 Step3、非小说 Step4 增加部分引用。</td></tr>
+        <tr><td><code>07 小程序短剧适配</code></td><td>拆集、分集规划、剧本生成、非小说蓝图</td><td>基本匹配，但它是平台适配准则，不能替代硬流程决策。</td><td><span class="tag keep">保留</span> 引用边界是节奏/密度/留存。</td></tr>
+        <tr><td><code>08 示例库</code></td><td>剧本生成</td><td>只能当格式和表达参考，不能作为剧情规则。</td><td><span class="tag keep">保留</span> 仅 Step4 示例参考。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="note">
+    <h2>建议的下一步改动顺序</h2>
+    <ol>
+      <li>先确认是否新增/恢复非小说专用 skill。否则非小说 Step1/Step2 继续引用 Skill01 会混淆。</li>
+      <li>补齐 Skill01 准则对应的 Step1 输出字段，或者把暂时不消费的准则标记为“仅参考，不进入当前 artifact”。</li>
+      <li>调整引用列表：移除小说 Step2/Step3 的 Skill01；给小说 Step3、非小说 Step4 添加 Skill06 的部分引用。</li>
+      <li>再重建 preview，检查每个 prompt 的“引用 Skills”与输出字段是否闭环。</li>
+    </ol>
+  </section>
+</main>
+</body>
+</html>

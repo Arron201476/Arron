@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project_id", "source_type", "user_request_message_id"],
+  "anyOf": [{"required": ["assets"]}, {"required": ["artifact_versions"]}],
+  "properties": {
+    "project_id": {"type": "string", "minLength": 1},
+    "source_type": {"const": "story"},
+    "user_request_message_id": {"type": "string", "minLength": 1},
+    "user_notes": {"type": "array", "items": {"type": "string"}},
+    "assets": {"type": "array", "minItems": 1, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["asset_id", "asset_snapshot_id", "role", "order"],
+      "properties": {
+        "asset_id": {"type": "string", "minLength": 1},
+        "asset_snapshot_id": {"type": "string", "minLength": 1},
+        "role": {"const": "primary_source"},
+        "order": {"type": "integer", "minimum": 1}
+      }
+    }},
+    "artifact_versions": {"type": "array", "minItems": 1, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_version_id", "role", "order"],
+      "properties": {
+        "artifact_version_id": {"type": "string", "minLength": 1},
+        "role": {"const": "primary_source"},
+        "order": {"type": "integer", "minimum": 1}
+      }
+    }}
+  }
+}

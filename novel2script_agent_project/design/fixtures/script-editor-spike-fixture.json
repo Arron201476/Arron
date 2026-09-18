@@ -1,0 +1,181 @@
+{
+  "artifact_id": "scripts_demo",
+  "artifact_type": "scripts",
+  "version": 1,
+  "source_mode": "non_novel",
+  "title": "宫斗复仇短剧样例",
+  "episodes": [
+    {
+      "episode_id": "ep_001",
+      "episode_no": 1,
+      "title": "废后回宫",
+      "summary": "女主被迫回宫，在贵妃监视下发现旧案证据。",
+      "scenes": [
+        {
+          "scene_id": "sc_001_001",
+          "scene_no": 1,
+          "title": "冷宫雨夜",
+          "location": "冷宫外阶",
+          "time_of_day": "夜",
+          "lines": [
+            {
+              "line_id": "ln_001_001_001",
+              "block_type": "action",
+              "text": "雨声压过远处钟鼓。女主跪在殿阶下，袖中握着碎玉。",
+              "marks": []
+            },
+            {
+              "line_id": "ln_001_001_002",
+              "block_type": "dialogue",
+              "speaker": "女主",
+              "text": "三年冷宫，我等的不是回去，是让你们亲手开门。",
+              "marks": [
+                {
+                  "type": "bold",
+                  "offset_range": [0, 4]
+                }
+              ]
+            },
+            {
+              "line_id": "ln_001_001_003",
+              "block_type": "transition",
+              "text": "转场：钟声压低，切近女主袖中碎玉。",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "scene_id": "sc_001_002",
+          "scene_no": 2,
+          "title": "贵妃册封殿",
+          "location": "正殿",
+          "time_of_day": "晨",
+          "lines": [
+            {
+              "line_id": "ln_001_002_001",
+              "block_type": "action",
+              "text": "贵妃抬手，所有宫人跪下。女主没有低头。",
+              "marks": []
+            },
+            {
+              "line_id": "ln_001_002_002",
+              "block_type": "dialogue",
+              "speaker": "贵妃",
+              "text": "你该知道，回到这里的人，先要学会低头。",
+              "marks": []
+            },
+            {
+              "line_id": "ln_001_002_003",
+              "block_type": "dialogue",
+              "speaker": "女主",
+              "text": "臣妾低过头，所以才看清谁踩着旧案往上爬。",
+              "marks": [
+                {
+                  "type": "underline",
+                  "offset_range": [9, 13]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "episode_id": "ep_002",
+      "episode_no": 2,
+      "title": "旧证反咬",
+      "summary": "男主试探女主，贵妃用旧证制造二次陷害。",
+      "scenes": [
+        {
+          "scene_id": "sc_002_001",
+          "scene_no": 1,
+          "title": "偏殿试探",
+          "location": "偏殿",
+          "time_of_day": "午后",
+          "lines": [
+            {
+              "line_id": "ln_002_001_001",
+              "block_type": "action",
+              "text": "男主将茶盏推到女主面前，杯底压着一角旧供词。",
+              "marks": []
+            },
+            {
+              "line_id": "ln_002_001_002",
+              "block_type": "dialogue",
+              "speaker": "男主",
+              "text": "你若真想翻案，就不该只带一枚碎玉回来。",
+              "marks": []
+            },
+            {
+              "line_id": "ln_002_001_003",
+              "block_type": "dialogue",
+              "speaker": "女主",
+              "text": "我带回来的不是证据，是能让他们自己开口的恐惧。",
+              "marks": [
+                {
+                  "type": "italic",
+                  "offset_range": [10, 18]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "scene_id": "sc_002_002",
+          "scene_no": 2,
+          "title": "夜审宫婢",
+          "location": "内务府暗房",
+          "time_of_day": "夜",
+          "lines": [
+            {
+              "line_id": "ln_002_002_001",
+              "block_type": "action",
+              "text": "宫婢跪在暗房中央，贵妃的人守在门外。",
+              "marks": []
+            },
+            {
+              "line_id": "ln_002_002_002",
+              "block_type": "dialogue",
+              "speaker": "宫婢",
+              "text": "奴婢只记得，那夜送药的人戴着皇后宫里的银铃。",
+              "marks": []
+            },
+            {
+              "line_id": "ln_002_002_003",
+              "block_type": "action",
+              "text": "女主缓缓摊开掌心，碎玉与银铃缺口严丝合缝。",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "comments": [
+    {
+      "comment_id": "cmt_001",
+      "target": {
+        "episode_id": "ep_001",
+        "scene_id": "sc_001_001",
+        "line_id": "ln_001_001_002",
+        "offset_range": [0, 4]
+      },
+      "author": "user",
+      "text": "这句需要更强势，但不要像现代口语。",
+      "created_at": "2026-06-26T00:00:00+08:00",
+      "resolved": false
+    }
+  ],
+  "sample_patch": {
+    "patch_id": "patch_001",
+    "target": {
+      "episode_id": "ep_001",
+      "scene_id": "sc_001_001",
+      "line_id": "ln_001_001_002",
+      "offset_range": [0, 23]
+    },
+    "before": "三年冷宫，我等的不是回去，是让你们亲手开门。",
+    "after": "三年冷宫，我等的不是恩准，是你们亲手把门打开。",
+    "status": "suggested"
+  }
+}

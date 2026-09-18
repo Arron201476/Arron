@@ -1,0 +1,28 @@
+{
+  "execution_id": "",
+  "started_at": "",
+  "finished_at": "",
+  "build_ref": "",
+  "environment_id": "",
+  "runtime_schema_version": 18,
+  "capability_versions": {},
+  "provider_variants": {},
+  "fixture_hashes": {},
+  "results": [
+    {
+      "case_id": "",
+      "result": "not_run",
+      "actual_result": "",
+      "evidence_refs": [],
+      "defect_id": null,
+      "blocks_demo": false
+    }
+  ],
+  "summary": {
+    "pass": 0,
+    "fail": 0,
+    "blocked": 0,
+    "not_run": 0,
+    "demo_gate": "not_run"
+  }
+}

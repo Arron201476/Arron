@@ -1,0 +1,61 @@
+{
+  "checked_at": "2026-08-07",
+  "scope": "predeployment code and local integration regression",
+  "status": "passed_with_release_gates_deferred",
+  "passed": {
+    "frontend_tests": "16/16",
+    "frontend_production_build": true,
+    "frontend_dependency_tree": "valid",
+    "go_module_verification": true,
+    "go_vet": true,
+    "go_packages": "all passed",
+    "gofmt": true,
+    "capability_contracts": {
+      "manifests": 3,
+      "steps": 34,
+      "response_adapters": 19
+    },
+    "acceptance_matrix": {
+      "cases": 96,
+      "fixtures": 10,
+      "areas": 17
+    },
+    "browser_smoke": [
+      "project create, open, rename and confirmed delete",
+      "deterministic Agent fallback exchange and refresh persistence",
+      "1280x800 and 1920x1080 horizontal-overflow checks"
+    ],
+    "database_copy_preflight": {
+      "source_database_modified": false,
+      "project_count_read_from_copy": 5,
+      "health": "ok"
+    },
+    "configured_runtime_preflight": {
+      "external_model_requests_sent": false,
+      "available_capabilities": 3,
+      "domain_capabilities": 3
+    },
+    "credential_pattern_scan": true
+  },
+  "fixed": [
+    "typed Provider environment values now fail fast instead of silently falling back",
+    "image and video Provider calls classify non-2xx status before parsing response bodies",
+    "server and video-worker typed deployment settings now fail fast",
+    "server request and idle limits are explicit",
+    "Vite backend proxy is configurable for isolated environments",
+    "deployment environment example covers Provider, worker and host-tool settings",
+    "generated caches and build outputs are excluded from source control"
+  ],
+  "not_claimed": [
+    "real Provider generation was not repeated during this regression",
+    "formal migration cutover, canary and rollback were not executed",
+    "multi-user load and long-running SSE pressure were not executed",
+    "manual content-quality acceptance was not repeated"
+  ],
+  "maintainability_followups": [
+    "split frontend/src/App.tsx by project-entry, workbench and Agent-panel ownership",
+    "split backend/internal/httpapi/runtime_handlers.go by API domain",
+    "split backend/internal/runtime/batch_execution.go by planning, checkpoint and merge responsibilities",
+    "replace the empty .git marker with a real repository or remove it before source-control operations"
+  ]
+}

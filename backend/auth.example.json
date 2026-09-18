@@ -1,0 +1,12 @@
+{
+  "principals": [
+    {
+      "token_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "user_id": "user_example_owner",
+      "display_name": "Example Owner",
+      "workspace_id": "workspace_example",
+      "workspace_name": "Example Workspace",
+      "role": "owner"
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Novel2Script UI Draft</title>
+  <style>
+    :root {
+      --canvas:#f6f8fb; --surface:#fff; --soft:#f8fafc; --text:#172033; --strong:#0f172a;
+      --muted:#667085; --faint:#98a2b3; --line:#d9e2ec; --line-soft:#e8eef5;
+      --primary:#0f766e; --primary-soft:#e7f6f3; --blue:#2563eb; --blue-soft:#eaf2ff;
+      --warning:#b45309; --warning-soft:#fff7ed; --danger:#b42318; --danger-soft:#fef3f2;
+      font-family: Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+    }
+    *{box-sizing:border-box} body{margin:0;height:100vh;overflow:hidden;background:var(--canvas);color:var(--text);font-size:14px;letter-spacing:0}
+    button,textarea,select{font:inherit} button{border:0;background:none}
+    .app{height:100vh;min-width:1180px;display:grid;grid-template-rows:56px 1fr;background:linear-gradient(90deg,rgba(217,226,236,.45) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(0deg,rgba(217,226,236,.38) 1px,transparent 1px) 0 0/24px 24px,var(--canvas)}
+    .topbar{display:grid;grid-template-columns:280px 1fr auto;align-items:center;gap:18px;padding:0 18px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.94)}
+    .brand,.project,.actions,.pill,.btn,.nav-item,.scene-title,.task,.chips,.composer-actions{display:flex;align-items:center}
+    .brand{gap:10px;font-weight:800;color:var(--strong)} .logo{width:30px;height:30px;border-radius:8px;background:#102033;display:grid;place-items:center}
+    .logo:before{content:"";width:15px;height:15px;border-left:4px solid #2dd4bf;border-top:4px solid #7dd3fc;transform:skew(-12deg);border-radius:2px}
+    .project{gap:10px;min-width:0}.project strong{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pill{height:28px;border-radius:999px;padding:0 10px;border:1px solid var(--line-soft);background:#fff;color:var(--muted);font-size:12px;gap:6px}.pill.mode{background:var(--primary-soft);color:#115e59;border-color:#bce7df}
+    .actions{gap:8px}.btn{height:34px;border:1px solid var(--line);border-radius:8px;background:#fff;color:#344054;padding:0 11px;gap:8px;box-shadow:0 1px 2px rgba(15,23,42,.05);white-space:nowrap}.btn.icon{width:34px;padding:0;justify-content:center}
+    svg{width:16px;height:16px;stroke-width:1.8}
+    .workspace{min-height:0;display:grid;grid-template-columns:272px minmax(640px,1fr) 404px}.sidebar,.center,.agent{min-height:0;background:rgba(255,255,255,.9)}.sidebar,.center{border-right:1px solid var(--line)}
+    .sidebar{display:grid;grid-template-rows:1fr auto}.scroll{overflow:auto;min-height:0;padding:20px 14px}.label{margin:18px 4px 8px;font-size:12px;font-weight:800;color:#475467}
+    .project-card,.progress,.bubble,.task-card,.approval,.suggestion,.doc,.rail{border:1px solid var(--line);border-radius:10px;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+    .project-card{padding:14px}.project-card strong{display:block;margin-bottom:6px}.project-card span,.small{font-size:12px;color:var(--muted);line-height:1.5}
+    .nav{display:grid;gap:4px}.nav-item{display:grid;grid-template-columns:24px 1fr auto;gap:8px;min-height:42px;padding:8px 9px;border:1px solid transparent;border-radius:8px;color:#344054}.nav-item.active{border-color:#b8e1d9;background:var(--primary-soft);color:#115e59}.nav-icon{width:17px;height:17px;border:1.6px solid #50627a;border-radius:5px}.nav-item.active .nav-icon{border-color:var(--primary);background:rgba(15,118,110,.08)}.nav-main{font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.status{font-size:12px;color:var(--muted);white-space:nowrap}.ok{color:var(--primary)}.warn{color:var(--warning)}.run{color:var(--blue)}
+    .progress{margin:16px 4px 10px;padding:13px}.progress-head{display:flex;justify-content:space-between;margin-bottom:10px;font-weight:700}.bar{height:6px;background:#e7edf4;border-radius:999px;overflow:hidden}.bar span{display:block;width:72%;height:100%;background:linear-gradient(90deg,var(--primary),#14b8a6)}
+    .collapse{border-top:1px solid var(--line);padding:12px 16px;background:#fff}.collapse .btn{height:34px}
+    .center{display:grid;grid-template-rows:auto auto 1fr auto}.head{padding:18px 20px 0}.title{display:flex;align-items:center;gap:10px}.title h1{margin:0;font-size:18px}.approval-pill{height:26px;border:1px solid #fed7aa;border-radius:999px;background:var(--warning-soft);color:var(--warning);padding:0 9px;display:flex;align-items:center;font-size:12px;font-weight:700}
+    .tabs{display:flex;gap:22px;margin-top:16px;border-bottom:1px solid var(--line)}.tab{padding:0 0 11px;font-weight:700;color:var(--muted);border-bottom:2px solid transparent}.tab.active{color:var(--primary);border-color:var(--primary)}
+    .toolbar{display:flex;align-items:center;gap:6px;padding:10px 20px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.9)}.tool,.select{height:32px;border-radius:7px;border:1px solid transparent;color:#344054}.select{border-color:var(--line-soft);background:#fff;padding:0 10px}.tool{min-width:32px;padding:0 8px;font-weight:800}.divider{width:1px;height:22px;background:var(--line);margin:0 4px}
+    .editor{min-height:0;padding:16px 20px 10px;overflow:hidden}.editor-grid{height:100%;display:grid;grid-template-columns:154px 1fr;gap:16px;min-height:0}.rail{overflow:auto;padding:10px}.rail-title{margin:0 0 9px;font-size:12px;color:var(--muted);font-weight:800}.ep{padding:9px;border-radius:8px;border:1px solid transparent;margin-bottom:6px}.ep.active{border-color:#b8e1d9;background:var(--primary-soft)}.ep-top{display:flex;justify-content:space-between;font-size:12px;font-weight:800}.ep p{margin:4px 0 0;font-size:12px;color:var(--muted);line-height:1.45}
+    .doc-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;background:#fff}.doc{width:min(820px,calc(100% - 56px));margin:22px auto 28px;padding:0 0 28px;border:0;box-shadow:none}.episode-head{display:flex;justify-content:space-between;border-bottom:1px solid var(--line-soft);padding-bottom:14px;margin-bottom:18px}.episode-head h2{margin:0;font-size:19px}.episode-head span{font-size:12px;color:var(--muted)}
+    .scene{margin:20px 0 26px}.scene-title{display:grid;grid-template-columns:92px 1fr auto;overflow:hidden;background:#fbf8f4;border:1px solid #e7ded2;border-radius:8px}.scene-title b{padding:10px 14px;border-right:1px solid #e7ded2;background:rgba(255,255,255,.55);color:#475467}.scene-title strong{padding:10px 14px}.scene-tools{padding-right:10px;display:flex;gap:8px;color:var(--faint);font-size:12px}
+    .script-p{width:min(640px,100%);margin:14px auto 0;line-height:1.78;font-size:15px;color:#344054}.dialogue{width:min(370px,80%);margin:18px auto 0;text-align:center;line-height:1.78;color:#344054}.speaker{display:block;margin-bottom:5px;font-weight:800;color:var(--strong)}.paren{display:block;color:var(--muted);font-size:13px}.transition{width:min(640px,100%);margin:16px auto 0;color:var(--primary);font-weight:800}.selection{background:var(--blue-soft);border-radius:5px;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.comment{display:inline-flex;width:18px;height:18px;margin-left:6px;border:1px solid #b8e1d9;border-radius:50%;align-items:center;justify-content:center;color:var(--primary);font-size:11px}
+    .footer{height:42px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:#fff;color:var(--muted);font-size:12px}.stats,.zoom{display:flex;gap:18px;align-items:center}.zoom{gap:8px}.mini{height:30px;min-width:30px;border:1px solid var(--line);border-radius:8px;background:#fff;color:#475467}
+    .agent{display:grid;grid-template-rows:auto 1fr auto}.agent-head{display:flex;justify-content:space-between;align-items:center;padding:18px 16px 14px;border-bottom:1px solid var(--line)}.agent-head strong{font-size:16px}.thinking{background:var(--blue-soft);color:#1d4ed8;border:1px solid #cfe0ff;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:700}
+    .agent-scroll{overflow:auto;min-height:0;padding:16px 14px;background:rgba(248,250,252,.75)}.msg{display:grid;grid-template-columns:28px 1fr;gap:10px;margin-bottom:12px}.avatar{width:28px;height:28px;border-radius:7px;background:#102033;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800}.bubble{padding:11px 12px;line-height:1.58;color:#344054}.bubble.user{grid-column:2;background:#eef4ff;border-color:#cfe0ff}
+    .task-card{margin-top:10px;padding:11px;background:#fbfcfe}.task{display:grid;grid-template-columns:18px 1fr auto;gap:8px;min-height:28px;color:var(--muted);font-size:13px}.dot{width:10px;height:10px;border:1.5px solid #c7d2df;border-radius:50%}.dot.done{background:#667085;border-color:#667085;opacity:.52}.dot.run{border-color:var(--blue);border-top-color:transparent;animation:spin .9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.time{font-size:12px;color:var(--faint)}
+    .approval,.suggestion{margin-top:10px;padding:12px}.approval{background:var(--warning-soft);border-color:#f6bf7a}.suggestion{background:#f8fbff;border-color:#cfe0ff}.card-title{display:flex;justify-content:space-between;gap:8px;margin-bottom:7px;font-weight:800;color:var(--strong)}.range{border-radius:999px;background:var(--blue-soft);color:#1d4ed8;padding:4px 8px;font-size:12px}.patch{display:grid;gap:7px;margin-top:10px}.patch div{padding:9px 10px;border-radius:8px;font-size:13px;line-height:1.55}.old{background:var(--danger-soft);color:var(--danger)}.new{background:var(--primary-soft);color:#115e59}.actions-row{display:flex;gap:8px;margin-top:11px}.primary,.secondary{height:34px;border-radius:8px;padding:0 12px;font-weight:800}.primary{background:var(--primary);color:#fff}.secondary{border:1px solid var(--line);background:#fff;color:#475467}
+    .composer{border-top:1px solid var(--line);padding:12px 14px 14px;background:#fff}.chips{flex-wrap:wrap;gap:8px;margin-bottom:9px}.chip{display:flex;align-items:center;gap:8px;max-width:280px;min-height:30px;padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:#fbfcfe;font-size:12px;color:#344054}.chip.ref{border-color:#cfe0ff;background:#f7fbff}.chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chip b{color:var(--faint)}
+    .input{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}.input textarea{width:100%;min-height:74px;resize:none;border:0;outline:0;padding:12px 13px 8px;line-height:1.55}.input textarea::placeholder{color:var(--faint)}.composer-actions{justify-content:space-between;padding:0 7px 7px 10px}.send{height:34px;border-radius:9px;background:var(--primary);color:#fff;display:grid;place-items:center;padding:0 12px;font-weight:800}
+    ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#c7d2df;border-radius:999px}::-webkit-scrollbar-thumb:hover{background:#98a2b3}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo"></div><span>Novel2Script Agent</span></div>
+    <div class="project"><strong>《逆光之城》短剧项目</strong><span class="pill mode">小说改编</span></div>
+    <div class="actions"><span class="btn icon">主题</span><span class="pill">自动保存 10:32:18</span><span class="btn">项目设置</span><span class="btn">导出</span><span class="btn">编剧助手</span></div>
+  </header>
+  <main class="workspace">
+    <aside class="sidebar">
+      <div class="scroll">
+        <div class="label">项目工作区</div>
+        <div class="project-card"><strong>《逆光之城》短剧项目</strong><span>共 12 集 · 现代都市 · 复仇 / 成长</span></div>
+        <div class="label">创作流程</div>
+        <div class="nav">
+          <div class="nav-item"><span class="nav-icon"></span><div class="nav-main">输入材料</div><div class="status ok">已生成</div></div>
+          <div class="nav-item"><span class="nav-icon"></span><div class="nav-main">过程产物</div><div class="status ok">已生成</div></div>
+          <div class="nav-item"><span class="nav-icon"></span><div class="nav-main">故事圣经</div><div class="status ok">已生成</div></div>
+          <div class="nav-item"><span class="nav-icon"></span><div class="nav-main">故事种子</div><div class="status ok">已生成</div></div>
+          <div class="nav-item"><span class="nav-icon"></span><div class="nav-main">剧集蓝图</div><div class="status ok">已生成</div></div>
+          <div class="nav-item active"><span class="nav-icon"></span><div class="nav-main">分集卡</div><div class="status warn">待审批</div></div>
+          <div class="nav-item"><span class="nav-icon"></span><div class="nav-main">剧本</div><div class="status run">生成中</div></div>
+          <div class="nav-item"><span class="nav-icon"></span><div class="nav-main">运行记录</div><div class="status">3</div></div>
+        </div>
+        <div class="progress"><div class="progress-head"><span>整体进度</span><span>72%</span></div><div class="bar"><span></span></div><div class="small" style="margin-top:8px">预计剩余 8-12 分钟</div></div>
+      </div>
+      <div class="collapse"><button class="btn">收起侧栏</button></div>
+    </aside>
+
+    <section class="center">
+      <div class="head"><div class="title"><h1>剧本 / 第 3 集 · 破局</h1><span class="approval-pill">待审批</span></div><div class="tabs"><div class="tab">结构视图</div><div class="tab active">脚本视图</div></div></div>
+      <div class="toolbar"><select class="select"><option>正文</option></select><select class="select"><option>思源宋体</option></select><select class="select"><option>14</option></select><span class="divider"></span><button class="tool">B</button><button class="tool"><em>I</em></button><button class="tool"><u>U</u></button><button class="tool"><s>S</s></button><span class="divider"></span><button class="tool">批注</button><button class="tool">查找</button><span class="divider"></span><button class="tool">⋯</button></div>
+      <div class="editor"><div class="editor-grid">
+        <nav class="rail"><p class="rail-title">分集目录</p><div class="ep"><div class="ep-top">第 1 集 <span class="ok">已生成</span></div><p>归来与误判</p></div><div class="ep"><div class="ep-top">第 2 集 <span class="ok">已生成</span></div><p>线索反噬</p></div><div class="ep active"><div class="ep-top">第 3 集 <span class="warn">待确认</span></div><p>医院破局</p></div><div class="ep"><div class="ep-top">第 4 集 <span>待生成</span></div><p>公开反击</p></div><div class="ep"><div class="ep-top">第 5 集 <span>待生成</span></div><p>证词倒戈</p></div></nav>
+        <div class="doc-wrap"><article class="doc">
+          <div class="episode-head"><h2>第 3 集 · 破局</h2><span>8 场 · 约 10'32'' · 当前选中：场景 3-2</span></div>
+          <section class="scene"><div class="scene-title"><b>场景 3-1</b><strong>INT. 城市医院 · 走廊 · 夜</strong><span class="scene-tools">标记 更多</span></div><p class="script-p">昏黄的灯光，走廊尽头传来仪器的滴答声。林岚攥着检查单，脚步停住。</p><p class="dialogue"><span class="speaker">林岚</span><span class="paren">低声自语</span>他们到底瞒了什么……</p></section>
+          <section class="scene"><div class="scene-title"><b>场景 3-2</b><strong>INT. 医生办公室 · 夜</strong><span class="scene-tools">标记 更多</span></div><p class="script-p">医生合上病历，推了推眼镜，语气谨慎。</p><p class="dialogue"><span class="speaker">医生</span>目前的情况需要进一步观察，<span class="selection">建议尽快住院检查</span>。<span class="comment">1</span></p><p class="dialogue"><span class="speaker">林岚</span>真相，从来都不是一个人能承担的。</p></section>
+          <section class="scene"><div class="scene-title"><b>场景 3-3</b><strong>EXT. 医院门口 · 夜</strong><span class="scene-tools">标记 更多</span></div><p class="script-p">林岚站在台阶上，手机屏幕亮起一条陌生号码的短信。</p><p class="transition">转场：短信内容特写 → 林岚眼神收紧</p></section>
+        </article></div>
+      </div></div>
+      <footer class="footer"><div class="stats"><span>字数：1,892</span><span>场景：8</span><span>时长：约 10'32''</span><span>最后编辑：刚刚</span></div><div class="zoom"><button class="mini">大纲</button><button class="mini">−</button><span>100%</span><button class="mini">＋</button></div></footer>
+    </section>
+
+    <aside class="agent">
+      <div class="agent-head"><strong>Agent 助手</strong><span class="thinking">思考中</span></div>
+      <div class="agent-scroll">
+        <div class="msg"><div class="avatar">N</div><div class="bubble">我将根据已确认的分集卡生成第 3 集剧本。正在规划场景结构与关键对白。<div class="task-card"><div class="task"><span class="dot done"></span><span>理解请求</span><span class="time">10:32</span></div><div class="task"><span class="dot done"></span><span>识别意图</span><span class="time">10:32</span></div><div class="task"><span class="dot done"></span><span>检索素材与记忆</span><span class="time">10:32</span></div><div class="task"><span class="dot run"></span><span>生成脚本草稿</span><span class="time">进行中</span></div><div class="task"><span class="dot"></span><span>质量检查</span><span></span></div></div><div class="approval"><div class="card-title">请确认：分集卡 → 剧本生成</div><div class="small">将基于已确认的分集卡生成第 3 集脚本草稿，预计 60-120 秒。</div><div class="actions-row"><button class="primary">确认并开始生成</button><button class="secondary">稍后处理</button></div></div></div></div>
+        <div class="msg"><div></div><div class="bubble user">把医生那句台词改得更有压迫感，但不要像反派。</div></div>
+        <div class="msg"><div class="avatar">N</div><div class="bubble">已定位到第 3 集 / 场景 3-2 / 医生对白。我建议这样调整，确认后再写入正文。<div class="suggestion"><div class="card-title"><span>建议修改</span><span class="range">第 3 集 / 场景 3-2</span></div><div class="patch"><div class="old">目前的情况需要进一步观察，建议尽快住院检查。</div><div class="new">现在还不能下结论，但如果今晚离开，后面的风险就不在我们控制里了。</div></div><div class="actions-row"><button class="primary">接受修改</button><button class="secondary">拒绝修改</button></div></div></div></div>
+      </div>
+      <div class="composer"><div class="chips"><div class="chip"><span>逆光之城_原著节选.txt · 2.1MB</span><b>×</b></div><div class="chip"><span>角色关系图.png · 1.4MB</span><b>×</b></div><div class="chip ref"><span>引用：第 3 集 / 场景 3-2 / 医生对白</span><b>×</b></div></div><div class="input"><textarea placeholder="输入你的指令，Enter 发送，Shift+Enter 换行"></textarea><div class="composer-actions"><div><button class="mini">附件</button><button class="mini">设置</button></div><button class="send">发送</button></div></div></div>
+    </aside>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,710 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://content-agent.internal/schemas/v1/non-novel-to-script.schema.json",
+  "title": "Non Novel To Script Capability Schemas",
+  "$defs": {
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "project_id",
+        "source_type",
+        "assets",
+        "user_request_message_id"
+      ],
+      "properties": {
+        "project_id": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "source_type": {
+          "const": "non_novel"
+        },
+        "assets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "common.schema.json#/$defs/assetInputRef"
+          }
+        },
+        "declared_material_types": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "user_request_message_id": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "user_notes": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        }
+      }
+    },
+    "config": {
+      "$ref": "common.schema.json#/$defs/generationConfig"
+    },
+    "nonNovelSourceTrace": {
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/sourceTrace"
+        },
+        {
+          "type": "object",
+          "required": [
+            "claims"
+          ]
+        }
+      ]
+    },
+    "userSuppliedFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "characters",
+        "relationships",
+        "events",
+        "world_rules",
+        "scenes",
+        "dialogue_lines",
+        "selling_points"
+      ],
+      "properties": {
+        "characters": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "relationships": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "world_rules": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "scenes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "dialogue_lines": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "selling_points": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        }
+      }
+    },
+    "volumeFitNotes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "material_sufficiency",
+        "can_support_target",
+        "risks",
+        "questions"
+      ],
+      "properties": {
+        "material_sufficiency": {
+          "enum": [
+            "sufficient",
+            "borderline",
+            "insufficient"
+          ]
+        },
+        "can_support_target": {
+          "type": "boolean"
+        },
+        "risks": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "questions": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        }
+      }
+    },
+    "materialBank": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_type_tags",
+        "user_supplied_facts",
+        "conflict_materials",
+        "emotional_drives",
+        "payoff_candidates",
+        "hook_candidates",
+        "visual_scene_candidates",
+        "discard_or_later",
+        "inferred_candidates",
+        "gaps_and_questions",
+        "most_promising_direction",
+        "volume_fit_notes",
+        "source_trace"
+      ],
+      "properties": {
+        "input_type_tags": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "user_supplied_facts": {
+          "$ref": "#/$defs/userSuppliedFacts"
+        },
+        "conflict_materials": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "emotional_drives": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "payoff_candidates": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "hook_candidates": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "visual_scene_candidates": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "discard_or_later": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "inferred_candidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "content",
+              "reason",
+              "requires_confirmation"
+            ],
+            "properties": {
+              "content": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "requires_confirmation": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "gaps_and_questions": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "most_promising_direction": {
+          "type": "string"
+        },
+        "volume_fit_notes": {
+          "$ref": "#/$defs/volumeFitNotes"
+        },
+        "source_trace": {
+          "$ref": "#/$defs/nonNovelSourceTrace"
+        }
+      }
+    },
+    "materialBankProviderResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "material_bank"
+      ],
+      "properties": {
+        "material_bank": {
+          "$ref": "#/$defs/materialBank"
+        }
+      }
+    },
+    "storySeed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "logline",
+        "core_premise",
+        "genre_tags",
+        "protagonist",
+        "main_characters",
+        "relationship_engine",
+        "central_conflict",
+        "world_rules",
+        "main_plotline",
+        "payoff_chain",
+        "hook_engine",
+        "generated_additions",
+        "volume_plan_notes",
+        "development_notes",
+        "risks",
+        "source_trace"
+      ],
+      "properties": {
+        "logline": {
+          "type": "string"
+        },
+        "core_premise": {
+          "type": "string"
+        },
+        "genre_tags": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "protagonist": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name_or_role",
+            "goal",
+            "pressure",
+            "inner_need"
+          ],
+          "properties": {
+            "name_or_role": {
+              "type": "string"
+            },
+            "goal": {
+              "type": "string"
+            },
+            "pressure": {
+              "type": "string"
+            },
+            "inner_need": {
+              "type": "string"
+            }
+          }
+        },
+        "main_characters": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "relationship_engine": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "central_conflict": {
+          "type": "string"
+        },
+        "world_rules": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "main_plotline": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "opening_situation",
+            "escalation_path",
+            "major_turn",
+            "final_payoff_direction"
+          ],
+          "properties": {
+            "opening_situation": {
+              "type": "string"
+            },
+            "escalation_path": {
+              "$ref": "common.schema.json#/$defs/stringList"
+            },
+            "major_turn": {
+              "type": "string"
+            },
+            "final_payoff_direction": {
+              "type": "string"
+            }
+          }
+        },
+        "payoff_chain": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "hook_engine": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "generated_additions": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "volume_plan_notes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "can_support_target",
+            "expansion_strategy",
+            "padding_risks"
+          ],
+          "properties": {
+            "can_support_target": {
+              "type": "boolean"
+            },
+            "expansion_strategy": {
+              "type": "string"
+            },
+            "padding_risks": {
+              "$ref": "common.schema.json#/$defs/stringList"
+            }
+          }
+        },
+        "development_notes": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "risks": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "source_trace": {
+          "$ref": "#/$defs/nonNovelSourceTrace"
+        }
+      }
+    },
+    "seriesBlueprint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resolved_episode_count",
+        "recommended_episode_count",
+        "episode_count_reason",
+        "series_promise",
+        "phase_plan",
+        "payoff_distribution",
+        "hook_distribution",
+        "first_major_climax_plan",
+        "pacing_density_plan",
+        "character_progression",
+        "relationship_progression",
+        "continuity_rules",
+        "generated_additions",
+        "fit_risks",
+        "source_trace"
+      ],
+      "properties": {
+        "resolved_episode_count": {
+          "$ref": "common.schema.json#/$defs/positiveInteger"
+        },
+        "recommended_episode_count": {
+          "$ref": "common.schema.json#/$defs/positiveInteger"
+        },
+        "episode_count_reason": {
+          "type": "string"
+        },
+        "series_promise": {
+          "type": "string"
+        },
+        "phase_plan": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "phase_id",
+              "episode_range",
+              "phase_function",
+              "main_conflict",
+              "payoff_focus",
+              "hook_strategy"
+            ],
+            "properties": {
+              "phase_id": {
+                "type": "string"
+              },
+              "episode_range": {
+                "type": "string"
+              },
+              "phase_function": {
+                "type": "string"
+              },
+              "main_conflict": {
+                "type": "string"
+              },
+              "payoff_focus": {
+                "type": "string"
+              },
+              "hook_strategy": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "payoff_distribution": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "hook_distribution": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "first_major_climax_plan": {
+          "type": "object"
+        },
+        "pacing_density_plan": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "character_progression": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "relationship_progression": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "continuity_rules": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "generated_additions": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "fit_risks": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "source_trace": {
+          "$ref": "#/$defs/nonNovelSourceTrace"
+        }
+      }
+    },
+    "episodeCards": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "episodes",
+        "continuity_delta"
+      ],
+      "properties": {
+        "episodes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "episode_no",
+              "episode_function",
+              "opening_state",
+              "main_conflict",
+              "key_events",
+              "payoff_or_reversal",
+              "character_turn",
+              "ending_hook",
+              "card_point_function",
+              "pacing_plan",
+              "visual_strategy",
+              "scene_outline",
+              "source_basis",
+              "risk_notes"
+            ],
+            "properties": {
+              "episode_no": {
+                "$ref": "common.schema.json#/$defs/positiveInteger"
+              },
+              "episode_function": {
+                "type": "string"
+              },
+              "opening_state": {
+                "type": "string"
+              },
+              "main_conflict": {
+                "type": "string"
+              },
+              "key_events": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              },
+              "payoff_or_reversal": {
+                "type": "string"
+              },
+              "character_turn": {
+                "type": "string"
+              },
+              "ending_hook": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "hook_text",
+                  "hook_type",
+                  "hook_strength"
+                ],
+                "properties": {
+                  "hook_text": {
+                    "type": "string"
+                  },
+                  "hook_type": {
+                    "type": "string"
+                  },
+                  "hook_strength": {
+                    "enum": [
+                      "high",
+                      "medium",
+                      "low"
+                    ]
+                  }
+                }
+              },
+              "card_point_function": {
+                "type": "string"
+              },
+              "pacing_plan": {
+                "type": "object"
+              },
+              "visual_strategy": {
+                "type": "object"
+              },
+              "scene_outline": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "source_basis": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "from_user_material",
+                  "from_story_seed",
+                  "from_series_blueprint",
+                  "generated_additions"
+                ],
+                "properties": {
+                  "from_user_material": {
+                    "$ref": "common.schema.json#/$defs/stringList"
+                  },
+                  "from_story_seed": {
+                    "$ref": "common.schema.json#/$defs/stringList"
+                  },
+                  "from_series_blueprint": {
+                    "$ref": "common.schema.json#/$defs/stringList"
+                  },
+                  "generated_additions": {
+                    "$ref": "common.schema.json#/$defs/stringList"
+                  }
+                }
+              },
+              "risk_notes": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              }
+            }
+          }
+        },
+        "continuity_delta": {
+          "$ref": "common.schema.json#/$defs/continuityDelta"
+        }
+      }
+    },
+    "episodeCardsProviderResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "episode_cards"
+      ],
+      "properties": {
+        "episode_cards": {
+          "$ref": "#/$defs/episodeCards"
+        }
+      }
+    },
+    "scriptContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_kind",
+        "episode_no",
+        "generation_config",
+        "must_follow_facts",
+        "allowed_additions",
+        "forbidden_changes",
+        "character_state",
+        "relationship_state",
+        "continuity_state",
+        "source_material",
+        "style_constraints",
+        "user_notes"
+      ],
+      "properties": {
+        "source_kind": {
+          "enum": [
+            "non_novel",
+            "video_reference"
+          ]
+        },
+        "episode_no": {
+          "$ref": "common.schema.json#/$defs/positiveInteger"
+        },
+        "generation_config": {
+          "$ref": "common.schema.json#/$defs/generationConfig"
+        },
+        "must_follow_facts": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "allowed_additions": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "forbidden_changes": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "character_state": {
+          "type": "object"
+        },
+        "relationship_state": {
+          "type": "object"
+        },
+        "continuity_state": {
+          "type": "object"
+        },
+        "source_material": {
+          "type": "object"
+        },
+        "style_constraints": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "user_notes": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        }
+      }
+    },
+    "scriptUnit": {
+      "$ref": "common.schema.json#/$defs/scriptUnit"
+    },
+    "scriptHandoff": {
+      "$ref": "common.schema.json#/$defs/scriptHandoff"
+    },
+    "scripts": {
+      "$ref": "common.schema.json#/$defs/scriptsAggregate"
+    }
+  }
+}

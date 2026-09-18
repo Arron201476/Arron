@@ -1,0 +1,36 @@
+.instructions-page { min-height: 100dvh; background: var(--paper); color: var(--ink); }
+.instructions-header { display: flex; align-items: center; gap: 20px; padding: 20px 28px; border-bottom: 1px solid var(--line); }
+.instructions-header h1 { font-size: 20px; margin: 0; }
+.instructions-header > div { flex: 1; min-width: 0; }
+.instructions-header span { font-size: 12px; color: var(--secondary); overflow-wrap: anywhere; }
+.instructions-main { max-width: 900px; margin: 0 auto; padding: 24px 28px 48px; }
+.instructions-scope-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); padding-bottom: 18px; }
+.instructions-scope-bar [role=tablist] { display: flex; gap: 4px; }
+.instructions-scope-bar [role=tab] { border: 0; border-bottom: 2px solid transparent; padding: 10px 18px; background: transparent; color: var(--secondary); }
+.instructions-scope-bar [role=tab][aria-selected=true] { color: var(--ink); border-bottom-color: currentColor; }
+.instructions-scope-bar > label { display: flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%; font-size: 13px; }
+.instructions-scope-bar select { min-width: 0; width: 240px; max-width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); }
+.instruction-editor { padding-top: 24px; }
+.instruction-editor-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.instruction-editor h2 { margin: 0; font-size: 17px; }
+.instruction-editor-heading span, .instruction-facts, .instruction-editor-options { font-size: 12px; color: var(--secondary); }
+.instruction-facts { display: flex; flex-wrap: wrap; gap: 12px 28px; margin: 18px 0 24px; }
+.instruction-facts > div { display: flex; gap: 8px; }
+.instruction-facts dd { margin: 0; color: var(--ink); }
+.instruction-content-label { display: block; font-size: 13px; margin-bottom: 8px; }
+.instruction-editor textarea { display: block; width: 100%; min-height: 300px; resize: vertical; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); color: var(--ink); padding: 14px; font: inherit; font-size: 14px; line-height: 1.7; overflow-wrap: anywhere; }
+.instruction-editor-options { display: flex; justify-content: space-between; gap: 12px; margin-top: 12px; }
+.instruction-editor-options label { display: flex; align-items: center; gap: 6px; color: var(--ink); }
+.instruction-actions { display: flex; flex-wrap: wrap; gap: 12px; padding-top: 22px; }
+.instruction-editor .form-error { overflow-wrap: anywhere; }
+.instruction-change-approval > div { min-width: 0; }
+.instruction-change-content { display: grid; gap: 10px; min-width: 0; }
+.instruction-change-content dl { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 12px; }
+.instruction-change-content dl > div { display: flex; gap: 6px; }
+.instruction-change-content dd { margin: 0; }
+.instruction-change-content pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 240px; overflow-y: auto; margin: 0; padding: 10px 0; font: inherit; font-size: 13px; border-block: 1px solid var(--line); }
+.instruction-change-content summary { cursor: pointer; font-size: 13px; }
+.memory-change-approval { overflow-wrap: anywhere; }
+.memory-change-approval .instruction-change-content { grid-template-columns: minmax(0, 1fr); }
+.memory-change-approval .approval-actions > .icon-button { flex: 0 0 34px; min-width: 34px; width: 34px; height: 34px; padding: 0; }
+@media (max-width: 560px) { .instructions-header { padding: 16px; gap: 12px; } .instructions-main { padding: 20px 16px; } .instructions-scope-bar > label { width: 100%; } .instructions-scope-bar select { flex: 1; } .instruction-facts { display: grid; gap: 10px; } }

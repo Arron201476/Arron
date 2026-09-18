@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "id": "outline_critic",
+  "version": "1.0.0",
+  "execution_mode": "inline",
+  "accepted_asset_kinds": ["text", "document"],
+  "required_providers": ["content_model_provider", "document_parser"],
+  "commands": ["inspect", "invoke"],
+  "requires_user_confirmation": false,
+  "explicit_aliases": ["大纲诊断", "诊断大纲", "outline_critic"],
+  "intent_examples": [
+    "帮我看看这份故事大纲有哪些结构问题",
+    "诊断这份分集大纲的人物动机和集尾钩子"
+  ],
+  "ui": {
+    "icon_key": "scan_text",
+    "sort_order": 50,
+    "entry_view_key": "source_materials"
+  }
+}

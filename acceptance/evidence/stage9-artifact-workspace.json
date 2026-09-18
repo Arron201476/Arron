@@ -1,0 +1,85 @@
+{
+  "checked_at": "2026-08-10T11:49:17.611Z",
+  "project_id": "prj_4c3470daa02805521268b2101f395030",
+  "step_count": 13,
+  "steps": [
+    {
+      "label": "来源材料",
+      "status": "已生成",
+      "readable": true,
+      "raw_debug_collapsed": true
+    },
+    {
+      "label": "视频还原剧本",
+      "status": "已生成",
+      "readable": true,
+      "raw_debug_collapsed": true
+    },
+    {
+      "label": "参考剧本合集",
+      "status": "已生成",
+      "readable": true,
+      "raw_debug_collapsed": true
+    },
+    {
+      "label": "剧本分析",
+      "status": "已生成",
+      "readable": true,
+      "raw_debug_collapsed": true
+    },
+    {
+      "label": "改编方案",
+      "status": "已生成",
+      "readable": true,
+      "raw_debug_collapsed": true
+    },
+    {
+      "label": "改编 Brief",
+      "status": "已生成",
+      "readable": true,
+      "raw_debug_collapsed": true
+    },
+    {
+      "label": "故事种子",
+      "status": "已生成",
+      "readable": true,
+      "raw_debug_collapsed": true
+    },
+    {
+      "label": "系列蓝图",
+      "status": "已生成",
+      "readable": true,
+      "raw_debug_collapsed": true
+    },
+    {
+      "label": "分集规划",
+      "status": "已生成",
+      "readable": true,
+      "raw_debug_collapsed": true
+    },
+    {
+      "label": "剧本上下文",
+      "status": "12/12 已生成",
+      "readable": true,
+      "raw_debug_collapsed": true
+    },
+    {
+      "label": "单集剧本",
+      "status": "12/12 已生成",
+      "readable": true,
+      "raw_debug_collapsed": true
+    },
+    {
+      "label": "剧本交接",
+      "status": "12/12 已生成",
+      "readable": true,
+      "raw_debug_collapsed": true
+    },
+    {
+      "label": "完整剧本",
+      "status": "已生成",
+      "readable": true,
+      "raw_debug_collapsed": true
+    }
+  ]
+}

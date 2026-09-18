@@ -1,0 +1,2100 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>内容生产 Agent - 阶段 3 低保真原型</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f5f6;
+      --surface: #ffffff;
+      --surface-muted: #f8f9fa;
+      --line: #d9dde2;
+      --line-strong: #b9c0c8;
+      --text: #20252b;
+      --muted: #68717c;
+      --accent: #1769aa;
+      --accent-soft: #e9f2f9;
+      --success: #25724a;
+      --success-soft: #e9f5ee;
+      --warning: #8a5a00;
+      --warning-soft: #fff4d8;
+      --danger: #a73737;
+      --danger-soft: #faeaea;
+      --sidebar: 244px;
+      --agent: 340px;
+      --header: 56px;
+      font-family: "Microsoft YaHei UI", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-width: 1100px;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+      letter-spacing: 0;
+    }
+
+    button {
+      border: 1px solid var(--line-strong);
+      border-radius: 5px;
+      padding: 7px 12px;
+      color: var(--text);
+      background: var(--surface);
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: #87919d;
+      background: #f5f7f8;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    button:disabled {
+      color: #9aa1a9;
+      border-color: #e0e3e6;
+      background: #f4f5f6;
+      cursor: not-allowed;
+    }
+
+    .primary {
+      color: #fff;
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .primary:hover {
+      border-color: #12578e;
+      background: #12578e;
+    }
+
+    .danger {
+      color: var(--danger);
+      border-color: #d6a5a5;
+    }
+
+    .icon-button {
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      display: inline-grid;
+      place-items: center;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .app {
+      width: 100%;
+      height: 100%;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .topbar {
+      height: var(--header);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .brand {
+      font-size: 16px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .shared-note {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .topbar-spacer {
+      flex: 1;
+    }
+
+    .connection {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .connection-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .projects-page {
+      height: calc(100% - var(--header));
+      overflow: auto;
+      background: var(--bg);
+    }
+
+    .projects-shell {
+      width: min(1180px, calc(100% - 64px));
+      margin: 0 auto;
+      padding: 34px 0 56px;
+    }
+
+    .page-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 7px;
+      font-size: 26px;
+      line-height: 1.25;
+    }
+
+    h2 {
+      margin-bottom: 8px;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    .subtitle {
+      margin-bottom: 0;
+      color: var(--muted);
+    }
+
+    .quick-start {
+      margin-bottom: 26px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .quick-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 7px;
+      color: #434b55;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    textarea,
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: 5px;
+      color: var(--text);
+      background: var(--surface);
+    }
+
+    textarea {
+      min-height: 76px;
+      padding: 10px 12px;
+      resize: vertical;
+    }
+
+    input,
+    select {
+      height: 36px;
+      padding: 0 10px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) 180px;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .project-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .project-table th,
+    .project-table td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .project-table th {
+      color: var(--muted);
+      background: var(--surface-muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .project-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .project-table tbody tr {
+      cursor: pointer;
+    }
+
+    .project-table tbody tr:hover {
+      background: #f8fafb;
+    }
+
+    .project-name {
+      font-weight: 700;
+    }
+
+    .project-meta {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 2px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #4c5661;
+      background: #f5f6f7;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .status.waiting {
+      color: var(--warning);
+      border-color: #e5c979;
+      background: var(--warning-soft);
+    }
+
+    .status.running {
+      color: var(--accent);
+      border-color: #9bc0dc;
+      background: var(--accent-soft);
+    }
+
+    .status.done {
+      color: var(--success);
+      border-color: #98c7ab;
+      background: var(--success-soft);
+    }
+
+    .status.failed {
+      color: var(--danger);
+      border-color: #dfaaaa;
+      background: var(--danger-soft);
+    }
+
+    .workbench {
+      height: 100%;
+      display: grid;
+      grid-template-rows: var(--header) 1fr;
+      background: var(--surface);
+    }
+
+    .project-header {
+      min-width: 0;
+    }
+
+    .back-button {
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      font-size: 20px;
+    }
+
+    .project-title {
+      min-width: 0;
+      max-width: 320px;
+      overflow: hidden;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .workbench-grid {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: var(--sidebar) minmax(480px, 1fr) var(--agent);
+    }
+
+    .sidebar,
+    .agent-panel {
+      min-height: 0;
+      background: var(--surface-muted);
+    }
+
+    .sidebar {
+      overflow-y: auto;
+      border-right: 1px solid var(--line);
+      padding: 16px 10px;
+    }
+
+    .nav-group {
+      margin-bottom: 20px;
+    }
+
+    .nav-label {
+      margin: 0 10px 7px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .nav-item {
+      width: 100%;
+      min-height: 38px;
+      display: grid;
+      grid-template-columns: 18px minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 3px;
+      padding: 7px 9px;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      text-align: left;
+      background: transparent;
+    }
+
+    .nav-item:hover {
+      border-color: var(--line);
+      background: var(--surface);
+    }
+
+    .nav-item.active {
+      color: #124e7d;
+      border-color: #a8c8df;
+      background: var(--accent-soft);
+    }
+
+    .nav-item.locked {
+      color: #9299a1;
+    }
+
+    .nav-text {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .nav-state {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #aab1b9;
+    }
+
+    .nav-state.waiting {
+      background: #c28616;
+    }
+
+    .nav-state.running {
+      background: var(--accent);
+    }
+
+    .nav-state.done {
+      background: var(--success);
+    }
+
+    .nav-state.failed {
+      background: var(--danger);
+    }
+
+    .count {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .workspace {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      background: var(--surface);
+    }
+
+    .workspace-header {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .workspace-title {
+      min-width: 0;
+    }
+
+    .workspace-title h2 {
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .workspace-title p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .workspace-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .workspace-body {
+      min-height: 0;
+      overflow: auto;
+      padding: 22px 24px 50px;
+    }
+
+    .content-column {
+      width: min(920px, 100%);
+      margin: 0 auto;
+    }
+
+    .notice {
+      margin-bottom: 18px;
+      padding: 12px 14px;
+      border-left: 3px solid var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .notice.warning {
+      border-left-color: #c28616;
+      background: var(--warning-soft);
+    }
+
+    .notice.danger {
+      border-left-color: var(--danger);
+      background: var(--danger-soft);
+    }
+
+    .notice.success {
+      border-left-color: var(--success);
+      background: var(--success-soft);
+    }
+
+    .notice strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .section {
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section:first-child {
+      padding-top: 0;
+    }
+
+    .section:last-child {
+      border-bottom: 0;
+    }
+
+    .definition-grid {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 0;
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+
+    .definition-grid dt,
+    .definition-grid dd {
+      margin: 0;
+      padding: 11px 12px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .definition-grid dt {
+      color: var(--muted);
+      background: var(--surface-muted);
+      font-weight: 700;
+    }
+
+    .bullet-list {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    .bullet-list li {
+      margin-bottom: 7px;
+      line-height: 1.65;
+    }
+
+    .episode-layout {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    .episode-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .episode-button {
+      width: 100%;
+      padding: 7px 8px;
+      text-align: left;
+    }
+
+    .episode-button.active {
+      color: #124e7d;
+      border-color: #9abed9;
+      background: var(--accent-soft);
+    }
+
+    .script-paper {
+      min-height: 520px;
+      padding: 28px 34px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      font-family: "Microsoft YaHei UI", "PingFang SC", sans-serif;
+      line-height: 1.9;
+    }
+
+    .script-paper [contenteditable="true"]:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
+
+    .video-table,
+    .candidate-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .video-table th,
+    .video-table td,
+    .candidate-table th,
+    .candidate-table td {
+      padding: 10px 11px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .video-table th,
+    .candidate-table th {
+      color: var(--muted);
+      background: var(--surface-muted);
+      font-size: 12px;
+    }
+
+    .video-table tr:last-child td,
+    .candidate-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .progress {
+      width: 110px;
+      height: 7px;
+      overflow: hidden;
+      border-radius: 4px;
+      background: #e1e5e8;
+    }
+
+    .progress > span {
+      display: block;
+      height: 100%;
+      background: var(--accent);
+    }
+
+    .inline-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .mini {
+      padding: 4px 7px;
+      font-size: 12px;
+    }
+
+    .agent-panel {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      border-left: 1px solid var(--line);
+    }
+
+    .agent-header {
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .agent-avatar {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      border-radius: 50%;
+      background: var(--surface-muted);
+      font-weight: 700;
+    }
+
+    .agent-title {
+      font-weight: 700;
+    }
+
+    .agent-subtitle {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .timeline {
+      min-height: 0;
+      overflow-y: auto;
+      padding: 16px 14px 24px;
+    }
+
+    .message {
+      margin-bottom: 14px;
+      padding: 10px 11px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      line-height: 1.55;
+    }
+
+    .message.user {
+      margin-left: 30px;
+      border-color: #b9d1e2;
+      background: var(--accent-soft);
+    }
+
+    .message-label {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .run-strip {
+      margin-bottom: 14px;
+      padding: 11px;
+      border: 1px solid #a8c8df;
+      background: var(--accent-soft);
+    }
+
+    .run-strip strong {
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    .composer {
+      position: relative;
+      padding: 12px;
+      border-top: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .composer-tools {
+      display: flex;
+      gap: 7px;
+      margin-bottom: 8px;
+    }
+
+    .composer textarea {
+      min-height: 72px;
+      padding-right: 48px;
+    }
+
+    .send-button {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+    }
+
+    .skill-menu {
+      position: absolute;
+      left: 12px;
+      bottom: 126px;
+      z-index: 4;
+      width: 220px;
+      padding: 7px;
+      border: 1px solid var(--line-strong);
+      background: var(--surface);
+      box-shadow: 0 10px 25px rgba(25, 33, 41, 0.14);
+    }
+
+    .skill-option {
+      width: 100%;
+      display: block;
+      padding: 9px 10px;
+      border: 0;
+      text-align: left;
+    }
+
+    .skill-option:hover {
+      background: var(--surface-muted);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(24, 29, 35, 0.38);
+    }
+
+    .modal {
+      width: min(520px, 100%);
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: var(--surface);
+      box-shadow: 0 18px 50px rgba(20, 25, 30, 0.2);
+    }
+
+    .modal-header,
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 16px;
+    }
+
+    .modal-header {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-header h2 {
+      margin: 0;
+    }
+
+    .modal-body {
+      padding: 18px 16px;
+    }
+
+    .modal-footer {
+      justify-content: flex-end;
+      border-top: 1px solid var(--line);
+    }
+
+    .field {
+      margin-bottom: 15px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    .empty-state {
+      min-height: 430px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .empty-state-inner {
+      width: min(460px, 100%);
+    }
+
+    .empty-mark {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 50%;
+      color: var(--muted);
+      background: var(--surface-muted);
+      font-size: 24px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .prototype-footnote {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .context-menu {
+      position: fixed;
+      z-index: 40;
+      width: 168px;
+      padding: 6px;
+      border: 1px solid var(--line-strong);
+      border-radius: 5px;
+      background: var(--surface);
+      box-shadow: 0 8px 24px rgba(28, 39, 49, 0.16);
+    }
+
+    .context-menu button {
+      display: block;
+      width: 100%;
+      border: 0;
+      padding: 9px 10px;
+      text-align: left;
+      background: transparent;
+    }
+
+    .context-menu button:hover,
+    .context-menu button:focus {
+      background: var(--surface-muted);
+    }
+
+    .context-menu .danger {
+      color: var(--danger);
+    }
+
+    .inline-rename {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .inline-rename input {
+      min-width: 180px;
+      height: 34px;
+    }
+
+    .inline-rename button {
+      min-width: 34px;
+      padding: 6px 8px;
+    }
+
+    .dialog-danger .modal-header {
+      border-bottom-color: #e7b3ad;
+    }
+
+    .dialog-danger .primary {
+      border-color: var(--danger);
+      background: var(--danger);
+    }
+
+    .toast-stack {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 60;
+      display: grid;
+      gap: 8px;
+      width: min(360px, calc(100vw - 44px));
+    }
+
+    .toast {
+      padding: 10px 14px;
+      border: 1px solid #98c7ab;
+      border-radius: 5px;
+      background: #e9f5ee;
+      color: #25724a;
+      box-shadow: 0 6px 18px rgba(28, 39, 49, 0.12);
+    }
+
+    .toast.warning {
+      border-color: #d5bd7b;
+      background: #fff7df;
+      color: #755900;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .form-grid .field {
+      margin: 0;
+    }
+
+    .locked-reason {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .impact-list {
+      margin: 12px 0 0;
+      padding-left: 20px;
+    }
+
+    .run-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .option-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option-card {
+      display: grid;
+      grid-template-columns: 20px 1fr;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: var(--surface);
+    }
+
+    .option-card:has(input:checked) {
+      border-color: var(--accent);
+      background: #f3f8fc;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="app">
+    <section id="projects-view">
+      <header class="topbar">
+        <div class="brand">内容生产 Agent</div>
+        <div class="shared-note">公司内部共享空间</div>
+        <div class="topbar-spacer"></div>
+        <div class="connection"><span class="connection-dot"></span>服务正常</div>
+      </header>
+
+      <main class="projects-page">
+        <div class="projects-shell">
+          <div class="page-heading">
+            <div>
+              <h1>作品</h1>
+              <p class="subtitle">创建新作品，或继续处理已有剧本任务。</p>
+            </div>
+            <button id="new-project-button" class="primary">+ 新建作品</button>
+          </div>
+
+          <section class="quick-start" aria-labelledby="quick-title">
+            <h2 id="quick-title">快速开始</h2>
+            <div class="quick-row">
+              <div>
+                <label class="field-label" for="quick-input">创作需求或材料</label>
+                <textarea id="quick-input" placeholder="例如：把这部小说改成 24 集、每集 2 分钟的漫剧剧本。"></textarea>
+              </div>
+              <button id="quick-upload" title="添加文件">+ 文件</button>
+              <button id="quick-send" class="primary">开始</button>
+            </div>
+          </section>
+
+          <div class="filters">
+            <input id="project-search" type="search" placeholder="搜索作品">
+            <select id="project-filter" aria-label="筛选作品状态">
+              <option value="all">全部状态</option>
+              <option value="waiting">等待确认</option>
+              <option value="running">运行中</option>
+              <option value="done">已完成</option>
+            </select>
+          </div>
+
+          <table class="project-table">
+            <thead>
+              <tr>
+                <th>作品</th>
+                <th>当前状态</th>
+                <th>Skill</th>
+                <th>当前待办</th>
+                <th>更新时间</th>
+                <th aria-label="操作"></th>
+              </tr>
+            </thead>
+            <tbody id="project-rows"></tbody>
+          </table>
+        </div>
+      </main>
+    </section>
+
+    <section id="workbench-view" class="workbench hidden">
+      <header class="topbar project-header">
+        <button id="back-to-projects" class="back-button" title="返回作品">←</button>
+        <div id="project-title" class="project-title">作品名称</div>
+        <span id="header-skill" class="status">未选择 Skill</span>
+        <span id="header-status" class="status">等待材料</span>
+        <div class="topbar-spacer"></div>
+        <button id="candidate-shortcut">候选稿</button>
+        <button id="export-button">导出</button>
+        <div class="connection"><span class="connection-dot"></span>已保存</div>
+      </header>
+
+      <div class="workbench-grid">
+        <aside id="sidebar" class="sidebar" aria-label="流程和产物目录"></aside>
+
+        <main class="workspace">
+          <header class="workspace-header">
+            <div class="workspace-title">
+              <h2 id="workspace-title">当前内容</h2>
+              <p id="workspace-meta">状态</p>
+            </div>
+            <div id="workspace-actions" class="workspace-actions"></div>
+          </header>
+          <div id="workspace-body" class="workspace-body"></div>
+        </main>
+
+        <aside class="agent-panel" aria-label="Agent 对话">
+          <header class="agent-header">
+            <div class="agent-avatar">A</div>
+            <div>
+              <div class="agent-title">内容生产 Agent</div>
+              <div id="agent-state" class="agent-subtitle">可以对话</div>
+            </div>
+          </header>
+          <div id="timeline" class="timeline"></div>
+          <div class="composer">
+            <div class="composer-tools">
+              <button id="attach-button" class="icon-button" title="添加文件">+</button>
+              <button id="skill-button">Skill</button>
+            </div>
+            <textarea id="composer-input" placeholder="描述你想做什么"></textarea>
+            <button id="send-button" class="send-button primary" title="发送">↑</button>
+            <div id="skill-menu" class="skill-menu hidden" role="menu">
+              <button class="skill-option" role="menuitem" data-skill="小说转剧本">小说转剧本</button>
+              <button class="skill-option" role="menuitem" data-skill="非小说文本转剧本">非小说文本转剧本</button>
+              <button class="skill-option" role="menuitem" data-skill="视频参考创作">视频参考创作</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </div>
+
+  <div id="menu-root"></div>
+  <div id="modal-root"></div>
+  <div id="toast-root" class="toast-stack" aria-live="polite"></div>
+
+  <script type="text/plain" id="legacy-prototype-script">
+    const projects = [
+      {
+        id: "novel",
+        name: "凡骨问仙",
+        scenario: "novel",
+        status: "waiting",
+        statusLabel: "等待确认",
+        skill: "小说转剧本",
+        todo: "确认故事圣经",
+        updated: "今天 09:42"
+      },
+      {
+        id: "outline",
+        name: "雾城夜谈",
+        scenario: "nonNovel",
+        status: "waiting",
+        statusLabel: "等待确认",
+        skill: "非小说文本转剧本",
+        todo: "选择扩写策略",
+        updated: "昨天 18:16"
+      },
+      {
+        id: "video",
+        name: "穷剑修参考创作",
+        scenario: "video",
+        status: "running",
+        statusLabel: "解析中",
+        skill: "视频参考创作",
+        todo: "已解析 7 / 9 集",
+        updated: "今天 10:08"
+      },
+      {
+        id: "candidate",
+        name: "逆风长歌",
+        scenario: "candidate",
+        status: "done",
+        statusLabel: "剧本已完成",
+        skill: "小说转剧本",
+        todo: "选择最终稿",
+        updated: "7 月 28 日"
+      }
+    ];
+
+    const state = {
+      currentProject: null,
+      currentScenario: "empty",
+      currentView: "empty",
+      runActive: false,
+      incompleteConfirmed: false,
+      finalSelected: false
+    };
+
+    const projectRows = document.getElementById("project-rows");
+    const projectsView = document.getElementById("projects-view");
+    const workbenchView = document.getElementById("workbench-view");
+    const sidebar = document.getElementById("sidebar");
+    const workspaceTitle = document.getElementById("workspace-title");
+    const workspaceMeta = document.getElementById("workspace-meta");
+    const workspaceActions = document.getElementById("workspace-actions");
+    const workspaceBody = document.getElementById("workspace-body");
+    const timeline = document.getElementById("timeline");
+    const composerInput = document.getElementById("composer-input");
+    const sendButton = document.getElementById("send-button");
+    const skillMenu = document.getElementById("skill-menu");
+
+    function statusPill(label, kind) {
+      return `<span class="status ${kind || ""}">${label}</span>`;
+    }
+
+    function renderProjectRows() {
+      const query = document.getElementById("project-search").value.trim().toLowerCase();
+      const filter = document.getElementById("project-filter").value;
+      const filtered = projects.filter((project) => {
+        const matchesQuery = !query || `${project.name}${project.skill}${project.todo}`.toLowerCase().includes(query);
+        const matchesFilter = filter === "all" || project.status === filter;
+        return matchesQuery && matchesFilter;
+      });
+
+      projectRows.innerHTML = filtered.map((project) => `
+        <tr data-project-id="${project.id}" tabindex="0">
+          <td>
+            <div class="project-name">${project.name}</div>
+            <div class="project-meta">共享作品</div>
+          </td>
+          <td>${statusPill(project.statusLabel, project.status)}</td>
+          <td>${project.skill}</td>
+          <td>${project.todo}</td>
+          <td>${project.updated}</td>
+          <td><button class="icon-button more-button" title="更多操作" data-more="${project.id}">⋯</button></td>
+        </tr>
+      `).join("");
+
+      document.querySelectorAll("[data-project-id]").forEach((row) => {
+        row.addEventListener("click", (event) => {
+          if (event.target.closest("[data-more]")) return;
+          openProject(row.dataset.projectId);
+        });
+        row.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") openProject(row.dataset.projectId);
+        });
+      });
+
+      document.querySelectorAll("[data-more]").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          showProjectMenu(button.dataset.more);
+        });
+      });
+    }
+
+    function openProject(projectId) {
+      const project = projects.find((item) => item.id === projectId);
+      if (!project) return;
+
+      state.currentProject = project;
+      state.currentScenario = project.scenario;
+      state.currentView = defaultView(project.scenario);
+      state.runActive = project.scenario === "video";
+      state.incompleteConfirmed = false;
+      state.finalSelected = false;
+
+      document.getElementById("project-title").textContent = project.name;
+      document.getElementById("header-skill").textContent = project.skill;
+      document.getElementById("header-status").textContent = project.statusLabel;
+      document.getElementById("header-status").className = `status ${project.status}`;
+      projectsView.classList.add("hidden");
+      workbenchView.classList.remove("hidden");
+      renderWorkbench();
+    }
+
+    function defaultView(scenario) {
+      if (scenario === "novel") return "storyBible";
+      if (scenario === "nonNovel") return "completeness";
+      if (scenario === "video") return "videoBatch";
+      if (scenario === "candidate") return "candidates";
+      return "empty";
+    }
+
+    function renderWorkbench() {
+      renderSidebar();
+      renderWorkspace();
+      renderAgent();
+      updateComposerState();
+    }
+
+    function navGroup(label, items) {
+      return `
+        <div class="nav-group">
+          <div class="nav-label">${label}</div>
+          ${items.map((item) => `
+            <button class="nav-item ${state.currentView === item.id ? "active" : ""} ${item.locked ? "locked" : ""}"
+              data-view-id="${item.id}" ${item.locked ? "disabled" : ""}>
+              <span class="nav-state ${item.state || ""}"></span>
+              <span class="nav-text">${item.label}</span>
+              <span class="count">${item.count || ""}</span>
+            </button>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function renderSidebar() {
+      let groups = [];
+
+      if (state.currentScenario === "empty") {
+        groups = [
+          ["材料", [{ id: "empty", label: "添加材料" }]],
+          ["当前流程", [{ id: "noRun", label: "尚未开始", locked: true }]],
+          ["剧本", [{ id: "noScript", label: "暂无剧本", locked: true }]]
+        ];
+      }
+
+      if (state.currentScenario === "novel") {
+        groups = [
+          ["材料", [{ id: "source", label: "小说原文", state: "done" }]],
+          ["当前流程", [
+            { id: "storyBible", label: "故事圣经", state: "waiting" },
+            { id: "episodeSplit", label: "原文拆集", locked: true },
+            { id: "episodeCards", label: "分集卡", locked: true }
+          ]],
+          ["剧本", [
+            { id: "scripts", label: "分集剧本", count: "12", state: "done" },
+            { id: "quality", label: "质量审核", state: "failed" }
+          ]],
+          ["候选与最终稿", [{ id: "candidates", label: "候选稿", count: "1" }]],
+          ["历史记录", [{ id: "versions", label: "版本历史" }]]
+        ];
+      }
+
+      if (state.currentScenario === "nonNovel") {
+        groups = [
+          ["材料", [{ id: "source", label: "故事大纲", state: "done" }]],
+          ["当前流程", [
+            { id: "completeness", label: "材料完整度", state: "waiting" },
+            { id: "materialBank", label: "素材库", locked: true },
+            { id: "storySeed", label: "故事种子", locked: true },
+            { id: "blueprint", label: "整剧蓝图", locked: true },
+            { id: "episodeCards", label: "分集卡", locked: true }
+          ]],
+          ["剧本", [{ id: "scripts", label: "分集剧本", locked: true }]],
+          ["候选与最终稿", [{ id: "candidates", label: "候选稿", locked: true }]],
+          ["历史记录", [{ id: "versions", label: "版本历史" }]]
+        ];
+      }
+
+      if (state.currentScenario === "video") {
+        groups = [
+          ["材料", [{ id: "videoBatch", label: "视频批次", count: "9", state: "running" }]],
+          ["当前流程", [
+            { id: "referenceScripts", label: "参考剧本", state: state.incompleteConfirmed ? "done" : "running" },
+            { id: "analysis", label: "整剧分析", locked: !state.incompleteConfirmed },
+            { id: "brief", label: "改编 Brief", locked: true }
+          ]],
+          ["新剧本", [
+            { id: "storySeed", label: "故事种子", locked: true },
+            { id: "blueprint", label: "整剧蓝图", locked: true },
+            { id: "episodeCards", label: "分集卡", locked: true },
+            { id: "scripts", label: "分集剧本", locked: true }
+          ]],
+          ["历史记录", [{ id: "versions", label: "版本历史" }]]
+        ];
+      }
+
+      if (state.currentScenario === "candidate") {
+        groups = [
+          ["材料", [{ id: "source", label: "小说原文", state: "done" }]],
+          ["当前流程", [
+            { id: "storyBible", label: "故事圣经", state: "done" },
+            { id: "episodeSplit", label: "原文拆集", state: "done" },
+            { id: "episodeCards", label: "分集卡", state: "done" }
+          ]],
+          ["剧本", [
+            { id: "scripts", label: "分集剧本", count: "24", state: "done" },
+            { id: "quality", label: "质量审核", state: "done" }
+          ]],
+          ["候选与最终稿", [
+            { id: "candidates", label: "候选稿", count: "2", state: "done" },
+            { id: "final", label: "当前最终稿", state: state.finalSelected ? "done" : "waiting" }
+          ]],
+          ["历史记录", [{ id: "versions", label: "版本历史", count: "18" }]]
+        ];
+      }
+
+      sidebar.innerHTML = groups.map(([label, items]) => navGroup(label, items)).join("");
+      sidebar.querySelectorAll("[data-view-id]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.currentView = button.dataset.viewId;
+          renderWorkbench();
+        });
+      });
+    }
+
+    function renderWorkspace() {
+      workspaceActions.innerHTML = "";
+
+      const renderers = {
+        empty: renderEmpty,
+        source: renderSource,
+        storyBible: renderStoryBible,
+        completeness: renderCompleteness,
+        videoBatch: renderVideoBatch,
+        referenceScripts: renderReferenceScripts,
+        analysis: renderAnalysis,
+        scripts: renderScripts,
+        quality: renderQuality,
+        candidates: renderCandidates,
+        final: renderFinal,
+        versions: renderVersions
+      };
+
+      const renderer = renderers[state.currentView] || renderUnavailable;
+      renderer();
+    }
+
+    function setWorkspace(title, meta, body, actions = "") {
+      workspaceTitle.textContent = title;
+      workspaceMeta.textContent = meta;
+      workspaceBody.innerHTML = `<div class="content-column">${body}</div>`;
+      workspaceActions.innerHTML = actions;
+      bindWorkspaceActions();
+    }
+
+    function renderEmpty() {
+      setWorkspace(
+        "添加创作材料",
+        "当前作品尚未启动 Skill",
+        `
+          <div class="empty-state">
+            <div class="empty-state-inner">
+              <div class="empty-mark">+</div>
+              <h2>从材料或对话开始</h2>
+              <p class="muted">添加小说、故事大纲、图片或视频。Agent 会先理解你的意图，不会因为上传文件自动启动任务。</p>
+              <div class="inline-actions" style="justify-content:center">
+                <button id="empty-upload">添加文件</button>
+                <button id="empty-novel">引用小说转剧本</button>
+              </div>
+            </div>
+          </div>
+        `
+      );
+    }
+
+    function renderSource() {
+      setWorkspace(
+        state.currentScenario === "nonNovel" ? "故事大纲" : "小说原文",
+        "来源材料 · 已保存",
+        `
+          <div class="notice success">
+            <strong>来源材料已保存</strong>
+            后续产物将保留对这份材料精确版本的引用。
+          </div>
+          <section class="section">
+            <h2>${state.currentScenario === "nonNovel" ? "雾城夜谈故事大纲" : "凡骨问仙原文"}</h2>
+            <p>少年在宗门试炼中意外发现自己的残缺灵根能够吸收废弃法器中的灵力，由此卷入家族旧案与宗门权力争夺。</p>
+            <p class="muted">TXT · 128,430 字 · 今天 09:12 上传</p>
+          </section>
+        `,
+        `<button>查看来源信息</button><button>替换文件</button>`
+      );
+    }
+
+    function renderStoryBible() {
+      setWorkspace(
+        "故事圣经",
+        "版本 2 · 已生成，等待确认",
+        `
+          <div class="notice warning">
+            <strong>请确认整部作品的故事基础</strong>
+            确认后将用于原文拆集。你可以直接编辑，或在右侧要求 Agent 修改。
+          </div>
+          <section class="section">
+            <h2>核心故事</h2>
+            <dl class="definition-grid">
+              <dt>主角</dt><dd>陆沉，外门弟子，表面灵根残缺，实际能吸收废器残留灵力。</dd>
+              <dt>核心目标</dt><dd>通过宗门试炼获得内门资格，并查清父亲被逐出宗门的真相。</dd>
+              <dt>主要阻力</dt><dd>资源垄断、同门打压、家族旧案被刻意掩盖。</dd>
+              <dt>核心看点</dt><dd>废物逆袭、低成本破局、宗门规则反杀。</dd>
+            </dl>
+          </section>
+          <section class="section">
+            <h2>关系主线</h2>
+            <ul class="bullet-list">
+              <li>陆沉与沈月：从利益合作到互相信任。</li>
+              <li>陆沉与执法长老：围绕旧案和宗门秩序持续对抗。</li>
+              <li>陆沉与堂兄陆衡：家族资源争夺逐步升级为身份冲突。</li>
+            </ul>
+          </section>
+        `,
+        `<button id="edit-artifact">编辑</button><button id="regenerate-artifact">重新生成</button><button id="approve-artifact" class="primary">确认并继续</button>`
+      );
+    }
+
+    function renderCompleteness() {
+      setWorkspace(
+        "材料完整度",
+        "需要确认扩写策略",
+        `
+          <div class="notice warning">
+            <strong>现有材料不足以直接支撑 24 集</strong>
+            已有主角、起因和结局方向，但中段冲突、反派动机和人物关系缺少明确内容。
+          </div>
+          <section class="section">
+            <h2>已明确</h2>
+            <ul class="bullet-list">
+              <li>主角是一名调查旧城停电事件的电台主播。</li>
+              <li>核心悬念是每次停电都会出现同一个失踪者声音。</li>
+              <li>结局需要回到十年前的地铁事故。</li>
+            </ul>
+          </section>
+          <section class="section">
+            <h2>需要补全</h2>
+            <dl class="definition-grid">
+              <dt>中段冲突</dt><dd>材料未明确，需要新增连续升级事件。</dd>
+              <dt>人物关系</dt><dd>只提供主角，需要补充搭档、阻力角色和旧案关联人。</dd>
+              <dt>扩写体量</dt><dd>目标 24 集，每集 2 分钟。</dd>
+            </dl>
+          </section>
+          <section class="section">
+            <h2>选择扩写方式</h2>
+            <label><input type="radio" name="expand" checked> 保留核心悬念，由 Agent 补全中段冲突和配角</label><br><br>
+            <label><input type="radio" name="expand"> 先缩减为 12 集，不新增主要人物</label><br><br>
+            <label><input type="radio" name="expand"> 我先补充更多材料</label>
+          </section>
+        `,
+        `<button>补充材料</button><button id="approve-expansion" class="primary">确认扩写策略</button>`
+      );
+    }
+
+    function renderVideoBatch() {
+      setWorkspace(
+        "视频批次",
+        "9 个视频 · 7 个已完成 · 1 个失败 · 1 个解析中",
+        `
+          <div class="notice warning">
+            <strong>检测到缺少第 6 集</strong>
+            系统不会自动判断上传是否结束。请继续上传，或在全部视频到齐后确认按不完整材料继续。
+          </div>
+          <div class="inline-actions" style="margin-bottom:12px">
+            <button id="add-video">+ 添加视频</button>
+            <button>调整顺序</button>
+            <button id="seal-upload" class="primary">上传完成</button>
+          </div>
+          <table class="video-table">
+            <thead>
+              <tr>
+                <th>顺序</th>
+                <th>文件名</th>
+                <th>集号</th>
+                <th>时长</th>
+                <th>解析状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${videoRow(1, "穷剑修01.mov", "第 1 集", "01:47", "已完成", "done")}
+              ${videoRow(2, "穷剑修02.mov", "第 2 集", "01:53", "已完成", "done")}
+              ${videoRow(3, "穷剑修03.mov", "第 3 集", "02:04", "已完成", "done")}
+              ${videoRow(4, "穷剑修04.mov", "第 4 集", "01:58", "已完成", "done")}
+              ${videoRow(5, "穷剑修05.mov", "第 5 集", "01:51", "已完成", "done")}
+              ${videoRow(6, "穷剑修07.mov", "第 7 集", "02:01", "已完成", "done")}
+              ${videoRow(7, "穷剑修08.mov", "第 8 集", "01:49", "已完成", "done")}
+              ${videoRow(8, "穷剑修09.mov", "第 9 集", "01:55", "解析失败", "failed")}
+              ${videoRow(9, "穷剑修10.mov", "第 10 集", "02:08", "解析中 64%", "running")}
+            </tbody>
+          </table>
+          <p class="prototype-footnote">视频源文件保存 7 天；已生成剧本和来源元数据随作品保留。</p>
+        `
+      );
+    }
+
+    function videoRow(order, file, episode, duration, label, kind) {
+      let action = `<button class="mini">查看剧本</button>`;
+      if (kind === "failed") action = `<button class="mini">重试</button>`;
+      if (kind === "running") action = `<div class="progress" title="64%"><span style="width:64%"></span></div>`;
+      return `
+        <tr>
+          <td>${order}</td>
+          <td>${file}</td>
+          <td>${episode}</td>
+          <td>${duration}</td>
+          <td>${statusPill(label, kind)}</td>
+          <td>${action}</td>
+        </tr>
+      `;
+    }
+
+    function renderReferenceScripts() {
+      setWorkspace(
+        "参考剧本",
+        state.incompleteConfirmed ? "按不完整材料生成 · 等待统一确认" : "正在逐集生成",
+        `
+          <div class="notice ${state.incompleteConfirmed ? "warning" : ""}">
+            <strong>${state.incompleteConfirmed ? "材料完整度：缺少第 6 集" : "当前仍在接收视频"}</strong>
+            ${state.incompleteConfirmed ? "后续分析会持续标记缺失范围，不会把第 5 集和第 7 集之间的内容自行补写。" : "单集解析结果会持续保存，但上传完成前不会进入整剧分析。"}
+          </div>
+          <section class="section">
+            <h2>已生成单集剧本</h2>
+            <ul class="bullet-list">
+              <li>第 1 集：陆尘在剑宗杂役房发现破剑能够吞噬灵石残渣。</li>
+              <li>第 2 集：外门考核前夜，陆尘被逼交出仅剩的报名灵石。</li>
+              <li>第 3 集：陆尘用废剑完成不可能的基础剑招考核。</li>
+              <li>第 4 集：执事质疑作弊，陆尘要求当众复测。</li>
+              <li>第 5 集：复测引出剑碑异动，长老开始调查陆尘身份。</li>
+            </ul>
+          </section>
+        `,
+        state.incompleteConfirmed ? `<button>编辑单集</button><button class="primary">统一确认参考剧本</button>` : ""
+      );
+    }
+
+    function renderAnalysis() {
+      setWorkspace(
+        "整剧分析",
+        "基于 9 个视频，其中缺少第 6 集",
+        `
+          <div class="notice warning">
+            <strong>完整度说明</strong>
+            当前分析不覆盖第 6 集；第 5 集到第 7 集之间的动机衔接无法确认。
+          </div>
+          <section class="section">
+            <h2>核心内容判断</h2>
+            <dl class="definition-grid">
+              <dt>开场策略</dt><dd>先展示极端贫穷，再用破剑异能制造身份反差。</dd>
+              <dt>核心钩子</dt><dd>每次使用破剑都会暴露主角与失踪剑主的关系。</dd>
+              <dt>情绪路径</dt><dd>受辱、隐忍、低成本反击、规则质疑、身份悬念。</dd>
+              <dt>主要风险</dt><dd>第 6 集缺失导致第一次长线反派动机证据不足。</dd>
+            </dl>
+          </section>
+        `,
+        `<button>要求 Agent 修改</button><button class="primary">确认分析</button>`
+      );
+    }
+
+    function renderScripts() {
+      setWorkspace(
+        "分集剧本",
+        "12 集 · 版本 4 · 修改后待重新确认",
+        `
+          <div class="notice warning">
+            <strong>第 4 集已修改</strong>
+            整个剧本需要重新统一确认。右侧 Agent 可以接收当前选区的修改要求。
+          </div>
+          <div class="episode-layout">
+            <nav class="episode-rail" aria-label="剧集">
+              ${Array.from({ length: 12 }, (_, index) => `<button class="episode-button ${index === 3 ? "active" : ""}">第 ${index + 1} 集</button>`).join("")}
+            </nav>
+            <article class="script-paper">
+              <div contenteditable="true" aria-label="第 4 集剧本正文">
+                <strong>4-1 剑宗演武场 外 日</strong><br>
+                人物：陆沉、执事、外门弟子<br><br>
+                △剑碑前围满弟子。执事将陆沉的木牌丢回石阶，示意他退出复测。<br><br>
+                执事（冷声）：一个杂役，也配让剑碑为你再开一次？<br><br>
+                陆沉：规矩写着，考核结果有异议，可以当众复测。<br><br>
+                △人群安静下来。陆沉捡起木牌，走到剑碑前。<br><br>
+                陆沉：你若认规矩，就开阵。你若不认，我现在去问执法堂。<br><br>
+                △执事脸色一沉，抬手启动剑阵。
+              </div>
+            </article>
+          </div>
+        `,
+        `<button id="save-script">保存</button><button>查看版本</button><button id="approve-scripts" class="primary">统一确认剧本</button>`
+      );
+    }
+
+    function renderQuality() {
+      setWorkspace(
+        "质量审核",
+        "需要处理 · 2 个问题",
+        `
+          <div class="notice danger">
+            <strong>剧本暂未形成 Candidate</strong>
+            审核发现连续性问题。修订后会自动重新审核，不需要用户手动启动审核。
+          </div>
+          <section class="section">
+            <h2>问题 1：人物知情范围冲突</h2>
+            <p>第 4 集中沈月直接说出“失踪剑主”，但她在第 7 集才第一次获得该信息。</p>
+            <p class="muted">证据：第 4 集 4-2；第 7 集 7-3</p>
+            <div class="inline-actions">
+              <button>定位到第 4 集</button>
+              <button class="primary">按建议修改</button>
+            </div>
+          </section>
+          <section class="section">
+            <h2>问题 2：尾钩重复</h2>
+            <p>第 8 集和第 9 集都以剑碑再次发光结束，缺少新的信息增量。</p>
+            <p class="muted">证据：第 8 集结尾；第 9 集结尾</p>
+            <div class="inline-actions">
+              <button>查看两集</button>
+              <button class="primary">重新设计第 9 集尾钩</button>
+            </div>
+          </section>
+        `
+      );
+    }
+
+    function renderCandidates() {
+      setWorkspace(
+        "候选稿",
+        state.finalSelected ? "2 个候选 · 已选择当前最终稿" : "2 个候选 · 尚未选择最终稿",
+        `
+          <div class="notice ${state.finalSelected ? "success" : "warning"}">
+            <strong>${state.finalSelected ? "Candidate B 是当前最终稿" : "请选择一份候选稿作为当前最终剧本"}</strong>
+            选择不会删除其他候选；之后改选仍需再次确认。
+          </div>
+          <table class="candidate-table">
+            <thead>
+              <tr>
+                <th>候选</th>
+                <th>来源</th>
+                <th>生成时间</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Candidate A</strong><br><span class="muted">24 集完整剧本</span></td>
+                <td>小说转剧本<br>Run 0031</td>
+                <td>7 月 27 日 16:20</td>
+                <td>${statusPill("历史候选", "")}</td>
+                <td><button class="mini">查看</button></td>
+              </tr>
+              <tr>
+                <td><strong>Candidate B</strong><br><span class="muted">24 集修订版</span></td>
+                <td>修订 Run<br>Run 0044</td>
+                <td>7 月 28 日 11:05</td>
+                <td>${statusPill(state.finalSelected ? "当前最终稿" : "候选", state.finalSelected ? "done" : "waiting")}</td>
+                <td><button id="select-final" class="mini primary">${state.finalSelected ? "已选择" : "设为最终稿"}</button></td>
+              </tr>
+            </tbody>
+          </table>
+        `,
+        state.finalSelected ? `<button>导出 TXT</button><button>导出 DOCX</button>` : ""
+      );
+    }
+
+    function renderFinal() {
+      setWorkspace(
+        "当前最终稿",
+        "Candidate B · 24 集 · 7 月 28 日确认",
+        `
+          <div class="notice success">
+            <strong>当前最终稿已确认</strong>
+            后续修改会形成新的修订版本，不会覆盖这份已完成版本。
+          </div>
+          <section class="section">
+            <h2>逆风长歌</h2>
+            <p>共 24 集，每集约 2 分钟。质量审核已通过。</p>
+          </section>
+        `,
+        `<button>导出 TXT</button><button>导出 DOCX</button><button>发起修订</button>`
+      );
+    }
+
+    function renderVersions() {
+      setWorkspace(
+        "版本历史",
+        "按时间倒序",
+        `
+          <table class="candidate-table">
+            <thead><tr><th>版本</th><th>变更</th><th>来源</th><th>时间</th></tr></thead>
+            <tbody>
+              <tr><td>v4</td><td>修改第 4 集对峙台词</td><td>用户手动编辑</td><td>今天 09:38</td></tr>
+              <tr><td>v3</td><td>重写第 9 集尾钩</td><td>Agent 修改</td><td>昨天 17:22</td></tr>
+              <tr><td>v2</td><td>统一人物称谓</td><td>质量审核返工</td><td>昨天 16:48</td></tr>
+              <tr><td>v1</td><td>首次生成</td><td>小说转剧本</td><td>昨天 15:12</td></tr>
+            </tbody>
+          </table>
+        `
+      );
+    }
+
+    function renderUnavailable() {
+      setWorkspace(
+        "尚未生成",
+        "需要完成前置步骤",
+        `<div class="empty-state"><div class="empty-state-inner"><div class="empty-mark">·</div><h2>当前内容尚不可用</h2><p class="muted">完成并确认前置步骤后会出现在这里。</p></div></div>`
+      );
+    }
+
+    function renderAgent() {
+      const messages = {
+        empty: [
+          ["agent", "这是一个新作品。你可以上传材料，也可以直接告诉我你想生成什么内容。"]
+        ],
+        novel: [
+          ["user", "把这本小说改成 12 集、每集 2 分钟的漫剧剧本。"],
+          ["agent", "已读取小说原文并生成故事圣经。请先检查主角目标、人物关系和核心冲突，确认后我再进行原文拆集。"],
+          ["approval", "当前等待：确认故事圣经"]
+        ],
+        nonNovel: [
+          ["user", "根据这个故事大纲生成 24 集漫剧剧本。"],
+          ["agent", "现有材料能确定核心悬念和结局方向，但不足以支撑 24 集。我整理了两种扩写方式，需要你先确认。"],
+          ["approval", "当前等待：选择扩写策略"]
+        ],
+        video: [
+          ["user", "这些是同一部漫剧，先帮我逐集转成剧本。"],
+          ["agent", "已收到 9 个视频，我正在逐集解析。当前检测到缺少第 6 集，第 9 集解析失败。你可以继续上传，系统不会自动认为已经传完。"],
+          ["run", "逐集解析：7 / 9 已完成"]
+        ],
+        candidate: [
+          ["agent", "修订版已通过质量审核，形成 Candidate B。现在有两份候选稿，请选择当前最终稿，或继续查看和修改。"],
+          ["approval", "当前等待：选择最终稿"]
+        ]
+      };
+
+      timeline.innerHTML = (messages[state.currentScenario] || messages.empty).map(([type, text]) => {
+        if (type === "run") {
+          return `<div class="run-strip"><strong>${text}</strong><div class="progress"><span style="width:78%"></span></div><div class="inline-actions" style="margin-top:9px"><button id="pause-run" class="mini">暂停</button><button id="cancel-run" class="mini danger">取消</button></div></div>`;
+        }
+        if (type === "approval") {
+          return `<div class="message"><div class="message-label">待处理</div>${text}</div>`;
+        }
+        return `<div class="message ${type === "user" ? "user" : ""}"><div class="message-label">${type === "user" ? "你" : "Agent"}</div>${text}</div>`;
+      }).join("");
+
+      document.getElementById("agent-state").textContent = state.runActive ? "任务运行中" : "可以对话";
+
+      const pause = document.getElementById("pause-run");
+      if (pause) {
+        pause.addEventListener("click", () => {
+          state.runActive = false;
+          document.getElementById("header-status").textContent = "已暂停";
+          document.getElementById("header-status").className = "status waiting";
+          addAgentMessage("任务已安全暂停。你可以补充材料或调整已生成的单集剧本。");
+          updateComposerState();
+        });
+      }
+    }
+
+    function updateComposerState() {
+      composerInput.disabled = state.runActive;
+      sendButton.disabled = state.runActive;
+      document.getElementById("skill-button").disabled = state.runActive;
+      document.getElementById("attach-button").disabled = state.runActive;
+      composerInput.placeholder = state.runActive ? "当前任务运行中，暂停或取消后可以继续输入" : "描述你想做什么";
+    }
+
+    function bindWorkspaceActions() {
+      const approve = document.getElementById("approve-artifact");
+      if (approve) {
+        approve.addEventListener("click", () => {
+          showConfirmModal(
+            "确认故事圣经",
+            "确认后，这个版本将作为原文拆集的输入。之后修改会产生新版本并影响下游。",
+            () => {
+              state.currentView = "episodeSplit";
+              addAgentMessage("故事圣经已确认。下一步将根据原文内容生成拆集方案。");
+              renderWorkbench();
+            }
+          );
+        });
+      }
+
+      const expansion = document.getElementById("approve-expansion");
+      if (expansion) {
+        expansion.addEventListener("click", () => {
+          addAgentMessage("扩写策略已确认：保留核心悬念，由 Agent 补全中段冲突和配角。");
+          showToast("扩写策略已确认");
+        });
+      }
+
+      const seal = document.getElementById("seal-upload");
+      if (seal) {
+        seal.addEventListener("click", () => {
+          showConfirmModal(
+            "按当前材料结束上传？",
+            "缺少第 6 集，且第 9 集解析失败。可以继续上传或重试；若继续，后续分析会明确标记材料不完整。",
+            () => {
+              state.incompleteConfirmed = true;
+              state.runActive = false;
+              state.currentView = "referenceScripts";
+              document.getElementById("header-status").textContent = "等待确认";
+              document.getElementById("header-status").className = "status waiting";
+              renderWorkbench();
+            },
+            "按不完整材料继续"
+          );
+        });
+      }
+
+      const selectFinal = document.getElementById("select-final");
+      if (selectFinal && !state.finalSelected) {
+        selectFinal.addEventListener("click", () => {
+          showConfirmModal(
+            "将 Candidate B 设为最终稿？",
+            "Candidate A 和历史最终版本会继续保留。之后可以再次改选，但每次改选都需要确认。",
+            () => {
+              state.finalSelected = true;
+              renderWorkbench();
+            },
+            "确认设为最终稿"
+          );
+        });
+      }
+
+      const emptyNovel = document.getElementById("empty-novel");
+      if (emptyNovel) {
+        emptyNovel.addEventListener("click", () => {
+          composerInput.value = "@小说转剧本 ";
+          composerInput.focus();
+        });
+      }
+
+      const saveScript = document.getElementById("save-script");
+      if (saveScript) saveScript.addEventListener("click", () => showToast("已保存为新版本"));
+    }
+
+    function addAgentMessage(text) {
+      const message = document.createElement("div");
+      message.className = "message";
+      message.innerHTML = `<div class="message-label">Agent</div>${text}`;
+      timeline.appendChild(message);
+      timeline.scrollTop = timeline.scrollHeight;
+    }
+
+    function showConfirmModal(title, body, onConfirm, confirmLabel = "确认") {
+      const root = document.getElementById("modal-root");
+      root.innerHTML = `
+        <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <div class="modal">
+            <div class="modal-header"><h2 id="modal-title">${title}</h2></div>
+            <div class="modal-body"><p>${body}</p></div>
+            <div class="modal-footer">
+              <button id="modal-cancel">取消</button>
+              <button id="modal-confirm" class="primary">${confirmLabel}</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById("modal-cancel").addEventListener("click", () => root.innerHTML = "");
+      document.getElementById("modal-confirm").addEventListener("click", () => {
+        root.innerHTML = "";
+        onConfirm();
+      });
+    }
+
+    function showNewProjectModal() {
+      const root = document.getElementById("modal-root");
+      root.innerHTML = `
+        <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <div class="modal">
+            <div class="modal-header"><h2 id="modal-title">新建作品</h2></div>
+            <div class="modal-body">
+              <div class="field">
+                <label class="field-label" for="new-project-name">作品名称</label>
+                <input id="new-project-name" value="未命名作品">
+              </div>
+              <p class="muted">创建后进入空工作台。Skill 可以稍后选择，也可以由 Agent 根据材料和需求自动识别。</p>
+            </div>
+            <div class="modal-footer">
+              <button id="modal-cancel">取消</button>
+              <button id="create-project" class="primary">创建</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById("modal-cancel").addEventListener("click", () => root.innerHTML = "");
+      document.getElementById("create-project").addEventListener("click", () => {
+        const name = document.getElementById("new-project-name").value.trim() || "未命名作品";
+        root.innerHTML = "";
+        const project = {
+          id: `new-${Date.now()}`,
+          name,
+          scenario: "empty",
+          status: "waiting",
+          statusLabel: "等待材料",
+          skill: "尚未选择",
+          todo: "添加材料或描述需求",
+          updated: "刚刚"
+        };
+        projects.unshift(project);
+        renderProjectRows();
+        openProject(project.id);
+      });
+    }
+
+    function showProjectMenu(projectId) {
+      const project = projects.find((item) => item.id === projectId);
+      if (!project) return;
+      const root = document.getElementById("modal-root");
+      root.innerHTML = `
+        <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <div class="modal">
+            <div class="modal-header"><h2 id="modal-title">${project.name}</h2></div>
+            <div class="modal-body">
+              <div class="inline-actions">
+                <button id="rename-project">重命名</button>
+                <button id="delete-project" class="danger">删除作品</button>
+              </div>
+            </div>
+            <div class="modal-footer"><button id="modal-cancel">关闭</button></div>
+          </div>
+        </div>
+      `;
+      document.getElementById("modal-cancel").addEventListener("click", () => root.innerHTML = "");
+      document.getElementById("delete-project").addEventListener("click", () => {
+        root.innerHTML = "";
+        showConfirmModal(
+          "删除作品？",
+          "删除会影响作品中的材料、任务和产物。第一版不提供回收站，确认后才会执行。",
+          () => showToast("低保真原型未实际删除数据"),
+          "确认删除"
+        );
+      });
+    }
+
+    function showToast(text) {
+      const root = document.getElementById("modal-root");
+      root.innerHTML = `
+        <div style="position:fixed;right:22px;bottom:22px;z-index:30;padding:10px 14px;border:1px solid #98c7ab;border-radius:5px;background:#e9f5ee;color:#25724a">${text}</div>
+      `;
+      window.setTimeout(() => root.innerHTML = "", 1600);
+    }
+
+    document.getElementById("new-project-button").addEventListener("click", showNewProjectModal);
+    document.getElementById("quick-send").addEventListener("click", () => {
+      const value = document.getElementById("quick-input").value.trim();
+      showNewProjectModal();
+      window.setTimeout(() => {
+        const input = document.getElementById("new-project-name");
+        if (input && value) input.value = value.slice(0, 16);
+      }, 0);
+    });
+    document.getElementById("quick-upload").addEventListener("click", () => showToast("已打开文件选择入口"));
+    document.getElementById("project-search").addEventListener("input", renderProjectRows);
+    document.getElementById("project-filter").addEventListener("change", renderProjectRows);
+    document.getElementById("back-to-projects").addEventListener("click", () => {
+      workbenchView.classList.add("hidden");
+      projectsView.classList.remove("hidden");
+      renderProjectRows();
+    });
+    document.getElementById("candidate-shortcut").addEventListener("click", () => {
+      if (!state.currentProject) return;
+      state.currentView = "candidates";
+      renderWorkbench();
+    });
+    document.getElementById("export-button").addEventListener("click", () => {
+      if (!state.finalSelected) {
+        showConfirmModal(
+          "还没有当前最终稿",
+          "请先在候选稿中选择一个当前最终剧本，再导出 TXT 或 DOCX。",
+          () => {
+            state.currentView = "candidates";
+            renderWorkbench();
+          },
+          "查看候选稿"
+        );
+      } else {
+        showToast("请选择 TXT 或 DOCX");
+      }
+    });
+    document.getElementById("skill-button").addEventListener("click", () => skillMenu.classList.toggle("hidden"));
+    document.querySelectorAll("[data-skill]").forEach((button) => {
+      button.addEventListener("click", () => {
+        composerInput.value = `@${button.dataset.skill} `;
+        skillMenu.classList.add("hidden");
+        composerInput.focus();
+      });
+    });
+    sendButton.addEventListener("click", () => {
+      const text = composerInput.value.trim();
+      if (!text || state.runActive) return;
+      const message = document.createElement("div");
+      message.className = "message user";
+      message.innerHTML = `<div class="message-label">你</div>${text}`;
+      timeline.appendChild(message);
+      composerInput.value = "";
+      addAgentMessage("我已收到。正式启动前会先确认所需材料和生成配置。");
+    });
+    composerInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) sendButton.click();
+    });
+
+    renderProjectRows();
+  </script>
+  <script src="./prototype-v2.js"></script>
+</body>
+</html>

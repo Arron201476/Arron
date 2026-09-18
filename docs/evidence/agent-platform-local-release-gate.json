@@ -1,0 +1,102 @@
+{
+  "schema_version": "agent_platform_local_release_gate.v1",
+  "executed_at": "2026-09-05T06:56:57.3395246+00:00",
+  "local_status": "passed",
+  "local_release_candidate_ready": true,
+  "release_status": "pending_external_gates",
+  "source_revision": "a4cdf7be2199665dd1837f45db9da019e777ad2a",
+  "source_worktree_dirty": false,
+  "sdk_versions": {
+    "openai_agents": "0.21.1",
+    "openai": "3.3.1"
+  },
+  "local_gates": [
+    {
+      "id": "capability_contracts",
+      "required": true,
+      "status": "passed",
+      "duration_ms": 443.0
+    },
+    {
+      "id": "acceptance_plan",
+      "required": true,
+      "status": "passed",
+      "duration_ms": 137.0
+    },
+    {
+      "id": "legacy_agent_path_absent",
+      "required": true,
+      "status": "passed",
+      "duration_ms": 11539.0
+    },
+    {
+      "id": "sdk_compatibility_local",
+      "required": true,
+      "status": "passed",
+      "duration_ms": 7690.0
+    },
+    {
+      "id": "go_test",
+      "required": true,
+      "status": "passed",
+      "duration_ms": 246157.0
+    },
+    {
+      "id": "go_vet",
+      "required": true,
+      "status": "passed",
+      "duration_ms": 3764.0
+    },
+    {
+      "id": "sidecar_test",
+      "required": true,
+      "status": "passed",
+      "duration_ms": 21630.0
+    },
+    {
+      "id": "frontend_test",
+      "required": true,
+      "status": "passed",
+      "duration_ms": 11095.0
+    },
+    {
+      "id": "frontend_build",
+      "required": true,
+      "status": "passed",
+      "duration_ms": 8373.0
+    },
+    {
+      "id": "frontend_approval_visual",
+      "required": true,
+      "status": "passed",
+      "duration_ms": 6651.0
+    },
+    {
+      "id": "rollback_drill",
+      "required": true,
+      "status": "passed",
+      "duration_ms": 32783.0
+    }
+  ],
+  "external_gates": [
+    {
+      "id": "gateway_live_responses_tools_skills_compact",
+      "required_for_release": true,
+      "status": "pending_explicit_authorization",
+      "reason": "Live provider and gateway requests are remote operations."
+    },
+    {
+      "id": "pre_release_full_e2e",
+      "required_for_release": true,
+      "status": "pending_explicit_authorization",
+      "reason": "The user prohibited deployment or changes to the test machine before approval."
+    },
+    {
+      "id": "oci_sandbox_attack_suite",
+      "required_for_release": true,
+      "status": "pending_local_oci_runtime",
+      "reason": "Docker and Podman are unavailable on this workstation."
+    }
+  ],
+  "remote_operations": []
+}

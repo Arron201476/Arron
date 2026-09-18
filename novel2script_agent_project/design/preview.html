@@ -1,0 +1,3895 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Novel2Script Development Readiness Preview</title>
+<style>
+:root {
+  --bg:#f6f7f9;
+  --surface:#ffffff;
+  --text:#111827;
+  --muted:#667085;
+  --line:#e5e7eb;
+  --primary:#0f172a;
+  --blue:#2563eb;
+  --amber:#b45309;
+}
+* { box-sizing:border-box; }
+body { margin:0; font-family:Segoe UI, Microsoft YaHei, Arial, sans-serif; background:var(--bg); color:var(--text); }
+.layout { display:grid; grid-template-columns:340px minmax(0,1fr); min-height:100vh; }
+nav { position:sticky; top:0; height:100vh; overflow:auto; background:var(--surface); border-right:1px solid var(--line); padding:18px; }
+nav h1 { margin:0 0 6px; font-size:18px; }
+nav p { margin:0 0 16px; color:var(--muted); font-size:12px; line-height:1.5; }
+.cat-link { display:block; padding:9px 10px; margin:4px 0; border-radius:8px; color:#1f2937; text-decoration:none; font-size:13px; line-height:1.35; }
+.cat-link:hover { background:#eef2ff; color:var(--blue); }
+main { padding:24px 34px 48px; overflow:auto; }
+section { background:var(--surface); border:1px solid var(--line); border-radius:10px; margin-bottom:18px; padding:18px; box-shadow:0 1px 2px rgba(16,24,40,.04); }
+.category { border-left:4px solid var(--primary); }
+.cat-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
+h2 { margin:0; font-size:22px; }
+h3 { margin:0 0 12px; font-size:18px; }
+h4 { margin:14px 0 8px; font-size:13px; color:#344054; }
+p, li { line-height:1.65; }
+ul { margin:0; padding-left:20px; }
+.cat-head span { display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border-radius:999px; background:#f1f5f9; color:#475569; font-size:12px; white-space:nowrap; }
+.doc-link { color:var(--blue); text-decoration:none; }
+.doc-link:hover { text-decoration:underline; }
+.doc-link span { margin-left:8px; color:var(--muted); font-size:12px; }
+.doc-section { scroll-margin-top:20px; }
+pre { white-space:pre-wrap; word-break:break-word; font-family:Consolas, Microsoft YaHei, monospace; font-size:13px; line-height:1.65; margin:0; }
+iframe { width:100%; height:760px; border:1px solid var(--line); border-radius:10px; background:#fff; }
+.open-html { display:inline-block; margin-bottom:12px; color:var(--blue); text-decoration:none; font-weight:700; }
+.ok { color:#047857; }
+.missing-doc { border-color:#fed7aa; background:#fff7ed; }
+@media (max-width: 900px) {
+  .layout { grid-template-columns:1fr; }
+  nav { position:relative; height:auto; }
+  main { padding:16px; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav>
+    <h1>开发准入包 Preview</h1>
+    <p>按 AI 项目前后端开发前置 12 类文档组织。历史资料单独放在底部，不混入主合同。</p>
+    <a class='cat-link' href='#cat_00_开发准入总览'>00. 开发准入总览</a><a class='cat-link' href='#cat_01_产品目标与边界'>01. 产品目标与边界</a><a class='cat-link' href='#cat_02_用户流程与状态机'>02. 用户流程与状态机</a><a class='cat-link' href='#cat_03_信息架构'>03. 信息架构</a><a class='cat-link' href='#cat_04_静态_UI_稿_高保真交互稿'>04. 静态 UI 稿 / 高保真交互稿</a><a class='cat-link' href='#cat_05_组件语义与文案规范'>05. 组件语义与文案规范</a><a class='cat-link' href='#cat_06_数据对象_Artifact_Schema'>06. 数据对象 / Artifact Schema</a><a class='cat-link' href='#cat_07_Agent_行为协议'>07. Agent 行为协议</a><a class='cat-link' href='#cat_08_Prompt_Tool_Rule_设计'>08. Prompt / Tool / Rule 设计</a><a class='cat-link' href='#cat_09_API_事件协议'>09. API / 事件协议</a><a class='cat-link' href='#cat_10_模型与运行时策略'>10. 模型与运行时策略</a><a class='cat-link' href='#cat_11_权限_数据与安全'>11. 权限、数据与安全</a><a class='cat-link' href='#cat_12_验收用例与测试清单'>12. 验收用例与测试清单</a><a class='cat-link' href='#cat_历史参考_待归档'>历史参考 / 待归档</a>
+  </nav>
+  <main><section class='category' id='cat_00_开发准入总览'><div class='cat-head'><h2>00. 开发准入总览</h2><span>总览</span></div><p>说明通用 AI 项目进入前后端开发前需要哪些文档，并盘点当前 Novel2Script 的覆盖情况。</p><h4>支撑文档</h4><ul><li><a class='doc-link' href='#file_zero-to-one-remediation-20260713'>zero-to-one-remediation-20260713.md<span>52 项修复闭环与全量回归证据</span></a></li><li><a class='doc-link' href='#file_zero-to-one-project-audit-20260713'>zero-to-one-project-audit-20260713.md<span>当前 0-1 全面审计与整改优先级</span></a></li><li><a class='doc-link' href='#file_project-workspace-persistence-contract'>project-workspace-persistence-contract.md<span>作品工作区与持久化合同</span></a></li><li><a class='doc-link' href='#file_project-workspace-implementation-20260713'>project-workspace-implementation-20260713.md<span>作品工作区实施与回归记录</span></a></li><li><a class='doc-link' href='#file_artifact-version-conflict-implementation-20260713'>artifact-version-conflict-implementation-20260713.md<span>Artifact 版本冲突保护实施记录</span></a></li><li><a class='doc-link' href='#file_development-readiness-checklist'>development-readiness-checklist.md<span>通用准入标准</span></a></li><li><a class='doc-link' href='#file_development-readiness-gap-analysis'>development-readiness-gap-analysis.md<span>当前项目盘点</span></a></li><li><a class='doc-link' href='#file_implementation-contract-consistency-audit'>implementation-contract-consistency-audit.md<span>开工前合同一致性审计</span></a></li><li><a class='doc-link' href='#file_project-stage-communication-notes'>project-stage-communication-notes.md<span>阶段汇报代办</span></a></li></ul><h4>缺口</h4><p class='ok'>暂无关键缺口。</p></section><section class='doc-section missing-doc' id='file_zero-to-one-remediation-20260713'><h3>zero-to-one-remediation-20260713.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_zero-to-one-project-audit-20260713'><h3>zero-to-one-project-audit-20260713.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_project-workspace-persistence-contract'><h3>project-workspace-persistence-contract.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_project-workspace-implementation-20260713'><h3>project-workspace-implementation-20260713.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_artifact-version-conflict-implementation-20260713'><h3>artifact-version-conflict-implementation-20260713.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_development-readiness-checklist'><h3>development-readiness-checklist.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_development-readiness-gap-analysis'><h3>development-readiness-gap-analysis.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_implementation-contract-consistency-audit'><h3>implementation-contract-consistency-audit.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_project-stage-communication-notes'><h3>project-stage-communication-notes.md</h3><p>文件不存在，需要补齐。</p></section><section class='category' id='cat_01_产品目标与边界'><div class='cat-head'><h2>01. 产品目标与边界</h2><span>初版具备</span></div><p>确定用户、输入、输出、主路径、本期做/不做、AI 与普通 UI 的职责边界。</p><h4>支撑文档</h4><ul><li><a class='doc-link' href='#file_product-scope-contract'>product-scope-contract.md<span>产品边界合同</span></a></li><li><a class='doc-link' href='#file_product-flow-audit'>product-flow-audit.md<span>流程边界</span></a></li><li><a class='doc-link' href='#file_product-review-checklist'>product-review-checklist.md<span>产品审查</span></a></li><li><a class='doc-link' href='#file_screenwriter-feedback-analysis'>screenwriter-feedback-analysis.html<span>编剧反馈来源</span></a></li></ul><h4>缺口</h4><ul><li>产品指标验证</li><li>范围变化同步机制</li><li>版本取舍记录</li></ul></section><section class='doc-section missing-doc' id='file_product-scope-contract'><h3>product-scope-contract.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_product-flow-audit'><h3>product-flow-audit.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_product-review-checklist'><h3>product-review-checklist.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_screenwriter-feedback-analysis'><h3>screenwriter-feedback-analysis.html</h3><p>文件不存在，需要补齐。</p></section><section class='category' id='cat_02_用户流程与状态机'><div class='cat-head'><h2>02. 用户流程与状态机</h2><span>初版具备</span></div><p>统一用户状态、run 状态、step 状态、审批、暂停、失败、完成等转移关系。</p><h4>支撑文档</h4><ul><li><a class='doc-link' href='#file_workflow-state-transition-contract'>workflow-state-transition-contract.md<span>状态转移合同</span></a></li><li><a class='doc-link' href='#file_workflow-state'>workflow-state.md<span>状态定义</span></a></li><li><a class='doc-link' href='#file_frontend-interaction-audit'>frontend-interaction-audit.md<span>前端状态规则</span></a></li><li><a class='doc-link' href='#file_main-agent-operations'>main-agent-operations.md<span>Agent 主循环</span></a></li></ul><h4>缺口</h4><ul><li>后端 state reducer 实现</li><li>事件映射测试</li><li>暂停/继续/确认/失败恢复测试</li></ul></section><section class='doc-section missing-doc' id='file_workflow-state-transition-contract'><h3>workflow-state-transition-contract.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_workflow-state'><h3>workflow-state.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_frontend-interaction-audit'><h3>frontend-interaction-audit.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_main-agent-operations'><h3>main-agent-operations.md</h3><p>文件不存在，需要补齐。</p></section><section class='category' id='cat_03_信息架构'><div class='cat-head'><h2>03. 信息架构</h2><span>初版具备</span></div><p>定义左侧目录、中间内容区、右侧 Agent 入口各自承载什么。</p><h4>支撑文档</h4><ul><li><a class='doc-link' href='#file_information-architecture-contract'>information-architecture-contract.md<span>信息架构合同</span></a></li><li><a class='doc-link' href='#file_frontend-interaction-audit'>frontend-interaction-audit.md<span>三栏职责</span></a></li><li><a class='doc-link' href='#file_frontend-component-language'>frontend-component-language.md<span>组件语义</span></a></li></ul><h4>缺口</h4><ul><li>React 组件映射</li><li>响应式实现</li><li>视觉终稿校验</li></ul></section><section class='doc-section missing-doc' id='file_information-architecture-contract'><h3>information-architecture-contract.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_frontend-component-language'><h3>frontend-component-language.md</h3><p>文件不存在，需要补齐。</p></section><section class='category' id='cat_04_静态_UI_稿_高保真交互稿'><div class='cat-head'><h2>04. 静态 UI 稿 / 高保真交互稿</h2><span>初版具备</span></div><p>前端开发前必须有覆盖关键状态的 UI 稿；当前以多状态 HTML gallery 作为主稿。</p><h4>支撑文档</h4><ul><li><a class='doc-link' href='#file_frontend-design-system'>frontend-design-system.md<span>设计系统</span></a></li><li><a class='doc-link' href='#file_frontend-ui-ue-refactor-contract'>frontend-ui-ue-refactor-contract.md<span>UI/UE 重构合同</span></a></li><li><a class='doc-link' href='#file_frontend-visual-direction-decision'>frontend-visual-direction-decision.md<span>视觉方向选择</span></a></li><li><a class='doc-link' href='#file_frontend-direction1-module-audit'>frontend-direction1-module-audit.md<span>方向 1 模块取舍</span></a></li><li><a class='doc-link' href='#file_frontend-final-ui-draft'>frontend-final-ui-draft.html<span>高保真 UI 定稿草案</span></a></li><li><a class='doc-link' href='#file_frontend-ui-state-spec'>frontend-ui-state-spec.md<span>状态规格</span></a></li><li><a class='doc-link' href='#file_frontend-ui-state-gallery'>frontend-ui-state-gallery.html<span>多状态 UI 稿</span></a></li><li><a class='doc-link' href='#file_audits_product-design-script-editor_audit-report'>audits/product-design-script-editor/audit-report.md<span>Product Design 审计</span></a></li></ul><h4>缺口</h4><ul><li>React 组件实现</li><li>Playwright 视觉回归</li><li>真实数据接入后复核</li></ul></section><section class='doc-section missing-doc' id='file_frontend-design-system'><h3>frontend-design-system.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_frontend-ui-ue-refactor-contract'><h3>frontend-ui-ue-refactor-contract.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_frontend-visual-direction-decision'><h3>frontend-visual-direction-decision.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_frontend-direction1-module-audit'><h3>frontend-direction1-module-audit.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_frontend-final-ui-draft'><h3>frontend-final-ui-draft.html</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_frontend-ui-state-spec'><h3>frontend-ui-state-spec.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_frontend-ui-state-gallery'><h3>frontend-ui-state-gallery.html</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section' id='file_audits_product-design-script-editor_audit-report'><h3>audits/product-design-script-editor/audit-report.md</h3><pre># Product Design Audit: Script Editor And UI State Gallery
+
+审计日期：2026-06-26
+
+## Audit Scope
+
+本次只审计当前可见的前端设计状态，不审计真实模型输出质量。
+
+证据来源为本轮新截图：
+
+- `01-gallery-novel-flow.png`：UI 状态稿中的未开始 / 小说链路状态。
+- `02-gallery-script-edit.png`：UI 状态稿中的小说运行与等待确认状态。
+- `03-tiptap-spike.png`：Tiptap 剧本编辑器候选。
+- `04-lexical-spike.png`：Lexical 剧本编辑器候选。
+
+用户目标：前端进入正式开发前，需要确认三栏工作台、Agent 操作流、剧本正文编辑器、过程产物展示和状态反馈是否足够清楚，避免继续沿用过于原始的 mock 交互。
+
+无障碍目标：关键操作可被键盘使用、状态变化可被理解、按钮/输入/附件/确认卡有清晰标签，长文本编辑不依赖纯视觉线索。
+
+## Step List
+
+1. `01-gallery-novel-flow.png`：未开始状态。健康度：中等，可表达大结构，但仍偏静态展示。
+2. `02-gallery-script-edit.png`：小说链路运行中。健康度：中等偏低，流程关系可见，但画面密度和确认机制仍不够像真实产品。
+3. `03-tiptap-spike.png`：Tiptap 编辑器。健康度：中等，适合快速落地 Word-like 编辑，但结构化剧本能力需要补强。
+4. `04-lexical-spike.png`：Lexical 编辑器。健康度：中等偏高，适合结构化剧本节点，但实现成本更高。
+
+## Strengths
+
+- 三栏关系已经比早期 mock 清楚：左侧是项目目录，中间承载内容，右侧承载 Agent 对话和流程推进。
+- 左侧目录已经开始按链路收敛，没有再把小说和非小说两条链的所有步骤同时暴露给用户。
+- 确认动作已经从中间内容区移向 Agent 区域，方向正确，因为确认、补充说明、暂停、继续都属于 Agent 交互。
+- 剧本正文已经单独作为重编辑区域处理，而不是把所有 artifact 都用同一种 JSON 卡片呈现。
+- Tiptap 和 Lexical spike 都证明基础富文本能力可落地，包括加粗、斜体、下划线、删除线、批注入口、保存和 patch 预览。
+
+## UX Risks
+
+### 1. Gallery 仍像状态说明稿，不像最终操作界面
+
+旧截图 `01` 和 `02` 适合定义信息架构，但不适合作为最终视觉定稿。当前 `frontend-ui-state-gallery.html` 已升级为 UI/UE 定稿候选；进入实现前仍需要用户验收，并在 React 组件状态页中复刻其信息层级和交互语义。
+
+建议：gallery 作为状态契约和 UI/UE 定稿候选；正式实现时减少说明文字，强化真实可操作控件，并通过 React 组件状态页做视觉回归。
+
+### 2. Agent 区域仍需要更像对话流
+
+截图 `02` 里 Agent 有消息、任务步骤和输入框，但确认卡仍像一个流程面板。真实体验里，确认卡应嵌入对话流，和 Agent 的解释、用户补充说明、继续/暂停操作形成同一条时间线。
+
+建议：Agent 右侧消息模型统一为：
+
+- 用户消息。
+- Agent 文本回复。
+- Agent 正在执行状态。
+- tool/task step chips。
+- approval card。
+- attachment pill。
+- run summary card。
+
+不要再把确认卡、日志和聊天拆成互不相干的模块。
+
+### 3. 左侧目录的状态文案需要绑定真实动作
+
+截图 `01` 里有 `待生成`、`待添加`、`未识别`，方向比“已确认”正确。但后续必须明确：只有用户点击过确认，或 Agent 明确完成过确认动作，才能显示“已确认”。自动生成出来的内容只能叫“已生成”“待确认”“生成中”“待生成”。
+
+建议：左侧状态只显示 artifact 生命周期，不显示 Agent 过程细节。
+
+### 4. 中间内容区需要分两种编辑强度
+
+过程产物适合结构化字段编辑，例如故事圣经、人物、分集卡；最终剧本适合 Word-like 正文编辑。当前 gallery 已经分出方向，但还需要写成组件规则，避免所有内容都塞进同一个 editor。
+
+建议：
+
+- `ScriptEditor`：正文级编辑，支持格式、批注、局部修改、选择引用、保存版本。
+- `ArtifactFieldEditor`：字段级编辑，支持增删字段、重排、局部重写、确认。
+- `ArtifactViewer`：只读或弱编辑，用于运行过程回看。
+
+### 5. Tiptap spike 更快，但剧本结构需要额外建模
+
+截图 `03` 中 Tiptap 的正文体验更接近普通富文本编辑器，工具栏也更自然。风险是结构锚点依赖 `data-episode-id` / `data-scene-id` / `data-line-id`，如果没有严格节点规范，局部修改时容易只拿到文本片段，拿不到稳定的 episode / scene / line 来源。
+
+建议：如果选 Tiptap，必须定义自定义节点或严格 schema，不要只用普通 paragraph 承载剧本行。
+
+### 6. Lexical spike 更适合结构化，但视觉表现还没到产品级
+
+截图 `04` 的每一行更像独立剧本节点，便于绑定 episode / scene / line / block type。风险是工具栏、选区、批注、撤销栈和 JSON 视图还偏工程验证，不是给最终用户看的。
+
+建议：如果选 Lexical，先把底层节点模型打稳，再用 shadcn/ui 或同等组件重做工具栏、批注、版本、保存状态。
+
+## Accessibility Risks
+
+- 截图无法证明键盘焦点顺序、屏幕阅读器语义、快捷键冲突和输入法行为，需要后续浏览器测试。
+- 部分工具栏按钮只有短标签或图标，正式实现必须提供 `aria-label`、tooltip 和可见 focus ring。
+- 左侧状态 pill 不能只靠颜色区分，需要文字和语义状态同步。
+- 运行中、完成、等待确认等状态不能只用视觉位置表达，需要在 Agent 消息流里有明确文本。
+- 剧本正文编辑器要避免把结构信息只存在视觉排版中；场次、对白、转场、动作都应有可被程序识别的节点类型。
+
+## Recommendations
+
+1. 把 `frontend-ui-state-gallery.html` 定位为状态契约和 UI/UE 定稿候选；用户验收前不视为最终冻结稿。
+2. 下一步先选编辑器底座：Lexical 更适合结构化剧本，Tiptap 更适合快速接近 Word-like 体验。
+3. 在选型前补一轮真实交互 spike：选择一段对白，让 Agent 读取选区来源，生成 suggestion patch，再由用户接受/拒绝。
+4. 把 Agent 右侧重构为统一消息流，确认卡、附件、任务步骤、运行总结都作为消息 part。
+5. 建立正式组件库：按钮、输入、附件、任务步骤、确认卡、状态 pill、左侧目录项、文档页、剧本行节点。
+6. 高保真 UI 定稿应基于真实 fixture 和长文本，不再使用过短占位文案。
+
+## Evidence Limits And Verification Gaps
+
+- 本次是截图审计和本地 spike 审计，不等于完整可用性测试。
+- 没有覆盖移动端、窄屏、缩放 200%、键盘全流程、屏幕阅读器。
+- 没有接真实模型输出，因此无法判断长剧本、多 episode、多 artifact 的性能和排版稳定性。
+- 没有验证后端 run / artifact / approval 事件是否与 UI 状态逐项绑定。
+
+## Next Design Gate
+
+正式前端开发前，建议先完成一个“编辑器选型 gate”：
+
+- 用同一份长剧本 fixture。
+- 分别验证 Tiptap 和 Lexical 的节点结构、选区来源、patch 应用、批注、撤销、保存和导出。
+- 输出结论：选择一个作为 `ScriptEditor` 底座，另一个归档。
+</pre></section><section class='category' id='cat_05_组件语义与文案规范'><div class='cat-head'><h2>05. 组件语义与文案规范</h2><span>初版具备</span></div><p>约束按钮、状态、图标、任务步骤、审批卡、附件、输入框的命名和显示。</p><h4>支撑文档</h4><ul><li><a class='doc-link' href='#file_frontend-ui-ue-implementation-handoff'>frontend-ui-ue-implementation-handoff.md<span>UI/UE 实现交接</span></a></li><li><a class='doc-link' href='#file_frontend-component-library-plan'>frontend-component-library-plan.md<span>组件库落地方案</span></a></li><li><a class='doc-link' href='#file_figma-component-spec'>figma-component-spec.md<span>Figma 组件蓝图</span></a></li><li><a class='doc-link' href='#file_figma-phase0-discovery'>figma-phase0-discovery.md<span>Figma Phase 0 discovery</span></a></li><li><a class='doc-link' href='#file_frontend-component-spec'>frontend-component-spec.md<span>组件规格</span></a></li><li><a class='doc-link' href='#file_frontend-implementation-plan'>frontend-implementation-plan.md<span>TypeScript 前端实现计划</span></a></li><li><a class='doc-link' href='#file_frontend-component-language'>frontend-component-language.md<span>组件语义</span></a></li><li><a class='doc-link' href='#file_script-editor-spike-plan'>script-editor-spike-plan.md<span>编辑器 spike 合同</span></a></li><li><a class='doc-link' href='#file_script-editor-spike-result'>script-editor-spike-result.md<span>编辑器 spike 阶段结果</span></a></li><li><a class='doc-link' href='#file_audits_script-editor-selection-gate_gate-report'>audits/script-editor-selection-gate/gate-report.md<span>编辑器选型 gate</span></a></li><li><a class='doc-link' href='#file_script-editor-lexical-spec'>script-editor-lexical-spec.md<span>Lexical 正式规格</span></a></li><li><a class='doc-link' href='#file_audits_script-editor-selection-gate_results'>audits/script-editor-selection-gate/results.json<span>编辑器 gate 结果</span></a></li><li><a class='doc-link' href='#file_fixtures_script-editor-spike-fixture'>fixtures/script-editor-spike-fixture.json<span>编辑器 spike fixture</span></a></li><li><a class='doc-link' href='#file_editor-research-notes'>editor-research-notes.md<span>编辑器参考</span></a></li></ul><h4>缺口</h4><ul><li>浏览器交互验证</li><li>长剧本性能测试</li><li>真实 suggestion patch</li><li>React 组件状态页</li><li>组件单测</li><li>可访问性测试</li></ul></section><section class='doc-section missing-doc' id='file_frontend-ui-ue-implementation-handoff'><h3>frontend-ui-ue-implementation-handoff.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_frontend-component-library-plan'><h3>frontend-component-library-plan.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_figma-component-spec'><h3>figma-component-spec.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_figma-phase0-discovery'><h3>figma-phase0-discovery.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_frontend-component-spec'><h3>frontend-component-spec.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_frontend-implementation-plan'><h3>frontend-implementation-plan.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_script-editor-spike-plan'><h3>script-editor-spike-plan.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_script-editor-spike-result'><h3>script-editor-spike-result.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section' id='file_audits_script-editor-selection-gate_gate-report'><h3>audits/script-editor-selection-gate/gate-report.md</h3><pre># ScriptEditor Selection Gate
+
+日期：2026-06-26
+
+## 结论
+
+本轮 gate 建议：正式 `ScriptEditor` 底座选择 **Lexical**。
+
+Tiptap 不删除出局，但当前 spike 不能作为正式剧本编辑器底座直接进入开发。原因不是 Tiptap 不能做，而是当前实现只用普通 HTML / paragraph 承载剧本行，结构锚点没有被编辑器 schema 稳定保留。
+
+如果未来继续考虑 Tiptap，必须先补自定义 node/extension，把 episode / scene / line / block type 作为一等结构处理，再重新跑同一套 gate。
+
+## 验证范围
+
+同一份 fixture：
+
+- 2 集。
+- 4 场。
+- 12 条剧本行。
+- 包含动作、对白、转场、marks、批注、sample patch。
+
+自动化脚本：
+
+```powershell
+cd frontend
+npm run gate:editor
+```
+
+输出文件：
+
+- `design/audits/script-editor-selection-gate/results.json`
+- `design/audits/script-editor-selection-gate/tiptap-after-patch.png`
+- `design/audits/script-editor-selection-gate/lexical-after-patch.png`
+
+## Gate 项目
+
+本轮检查了：
+
+- 编辑器是否正常加载。
+- fixture 的 12 条剧本行是否都有稳定 `line_id` 锚点。
+- 目标行 `ln_001_001_002` 是否存在。
+- 工具栏是否可操作。
+- 侧边 JSON / 状态面板是否输出。
+- 拖选目标行后是否能报告 selection ref。
+- patch 按钮是否可点击。
+- patch 后是否保留目标行锚点。
+- patch 后是否把建议文本写入目标行。
+- patch 是否有可回看的建议状态。
+- save 按钮是否可点击。
+- save 后是否保留行锚点。
+- after-patch 截图是否保存。
+
+## Tiptap 结果
+
+总结果：未通过。
+
+通过项：
+
+- 页面和编辑器 shell 能加载。
+- 工具栏可渲染，8 个按钮存在。
+- JSON / 状态面板有输出。
+- patch 按钮可点击。
+- save 按钮可点击。
+- after-patch 截图已保存。
+
+失败项：
+
+- 预期 12 条 line anchors，实际找到 0 条。
+- 目标行 `ln_001_001_002` 在 patch 前不存在可读结构锚点。
+- 拖选后侧边面板没有暴露目标行 selection ref。
+- patch 后没有可定位的目标行。
+- patch 后无法确认建议文本写入了目标行。
+- patch 没有保留可机器识别的建议标记。
+- save 后仍没有 line anchors。
+
+判断：
+
+Tiptap 当前实现更像“可编辑富文本页”，不是“可追踪剧本结构编辑器”。它适合快速做 Word-like 体验，但如果不做自定义 schema，Agent 的局部修改、选区引用、批注挂载、版本对比都会不稳定。
+
+## Lexical 结果
+
+总结果：通过。
+
+通过项：
+
+- 页面和编辑器 shell 能加载。
+- 12 条 line anchors 全部保留。
+- 目标行 `ln_001_001_002` 在 patch 前存在。
+- 工具栏可渲染，7 个按钮存在。
+- JSON / 状态面板有输出。
+- 拖选后侧边面板能暴露目标行 selection ref。
+- patch 按钮可点击。
+- patch 后目标行锚点仍存在。
+- patch 后建议文本写入目标行。
+- patch 后有可见“建议”状态。
+- save 按钮可点击。
+- save 后 12 条 line anchors 仍保留。
+- after-patch 截图已保存。
+
+判断：
+
+Lexical 当前实现更接近正式需求：剧本行可以作为自定义节点保存 episode / scene / line / block type，Agent 可以从选区追溯 artifact 来源，并把 patch 落到目标节点。
+
+## 仍未完成的验证
+
+本轮 gate 只能说明 Lexical 更适合作为底座，还不能说明它已经产品可用。下一轮需要补：
+
+- 长剧本性能：20 集以上、数百场、数千行。
+- 真实 suggestion model：不要直接替换文本，要支持建议、接受、拒绝、撤回。
+- 批注 thread：批注需要挂到 range，并能随文本编辑保持或失效。
+- 版本对比：原文、AI 建议、用户修改之间要能清楚比较。
+- 导出：至少确认 HTML / JSON / DOCX 路线。
+- 输入法：中文输入、换行、撤销、粘贴 Word 文本。
+- 可访问性：键盘、focus、toolbar label、屏幕阅读器语义。
+
+## 工程决策
+
+后续正式前端实现建议：
+
+- `ScriptEditor` 采用 Lexical。
+- 剧本正文用自定义节点建模：episode heading、scene heading、script line、dialogue line、action line、transition line。
+- 过程产物不要复用 `ScriptEditor`，用字段型 `ArtifactFieldEditor`。
+- Tiptap spike 保留为对照，不再作为主路线推进。
+</pre></section><section class='doc-section missing-doc' id='file_script-editor-lexical-spec'><h3>script-editor-lexical-spec.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section' id='file_audits_script-editor-selection-gate_results'><h3>audits/script-editor-selection-gate/results.json</h3><pre>{
+  &quot;audited_at&quot;: &quot;2026-07-09T05:39:31.806Z&quot;,
+  &quot;base_url&quot;: &quot;http://127.0.0.1:8833&quot;,
+  &quot;fixture&quot;: &quot;C:\\Users\\egois\\Desktop\\novel2script_agent_project\\design\\fixtures\\script-editor-spike-fixture.json&quot;,
+  &quot;target_line_id&quot;: &quot;ln_001_001_002&quot;,
+  &quot;results&quot;: [
+    {
+      &quot;mode&quot;: &quot;tiptap&quot;,
+      &quot;url&quot;: &quot;http://127.0.0.1:8833/?spike=tiptap&quot;,
+      &quot;expected_line_count&quot;: 12,
+      &quot;screenshot&quot;: &quot;C:\\Users\\egois\\Desktop\\novel2script_agent_project\\design\\audits\\script-editor-selection-gate\\tiptap-after-patch.png&quot;,
+      &quot;checks&quot;: [
+        {
+          &quot;name&quot;: &quot;renders editor shell&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;The spike app loaded and displayed its editor shell.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;renders all fixture lines with line anchors&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Expected 12 line anchors, found 12.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;retains target line anchor&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Target line ln_001_001_002 exists before patch.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;renders toolbar actions&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Toolbar buttons: 7.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;renders JSON/state side panel&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Side panel text length: 534.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;reports selection ref for selected line&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Side panel includes ln_001_001_002.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;patch action is clickable&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Clicked the patch preview button by toolbar position.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;patch keeps target line anchor&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Target line ln_001_001_002 still exists after patch.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;patch writes suggested text into target line&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Target line text after patch: 三年冷宫，我等的不是恩准，是你们亲手把门打开。（建议）&quot;
+        },
+        {
+          &quot;name&quot;: &quot;patch remains visibly reviewable&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Patch markers: 0; target contains suggestion label: true.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;save action is clickable&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Clicked the save button by toolbar position.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;save does not remove line anchors&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Line anchors after save: 12.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;screenshot evidence saved&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Saved C:\\Users\\egois\\Desktop\\novel2script_agent_project\\design\\audits\\script-editor-selection-gate\\tiptap-after-patch.png (112163 bytes).&quot;
+        }
+      ],
+      &quot;passed&quot;: true
+    },
+    {
+      &quot;mode&quot;: &quot;lexical&quot;,
+      &quot;url&quot;: &quot;http://127.0.0.1:8833/?spike=lexical&quot;,
+      &quot;expected_line_count&quot;: 12,
+      &quot;screenshot&quot;: &quot;C:\\Users\\egois\\Desktop\\novel2script_agent_project\\design\\audits\\script-editor-selection-gate\\lexical-after-patch.png&quot;,
+      &quot;checks&quot;: [
+        {
+          &quot;name&quot;: &quot;renders editor shell&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;The spike app loaded and displayed its editor shell.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;renders all fixture lines with line anchors&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Expected 12 line anchors, found 12.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;retains target line anchor&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Target line ln_001_001_002 exists before patch.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;renders toolbar actions&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Toolbar buttons: 7.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;renders JSON/state side panel&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Side panel text length: 534.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;reports selection ref for selected line&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Side panel includes ln_001_001_002.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;patch action is clickable&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Clicked the patch preview button by toolbar position.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;patch keeps target line anchor&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Target line ln_001_001_002 still exists after patch.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;patch writes suggested text into target line&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Target line text after patch: 三年冷宫，我等的不是恩准，是你们亲手把门打开。（建议）&quot;
+        },
+        {
+          &quot;name&quot;: &quot;patch remains visibly reviewable&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Patch markers: 0; target contains suggestion label: true.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;save action is clickable&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Clicked the save button by toolbar position.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;save does not remove line anchors&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Line anchors after save: 12.&quot;
+        },
+        {
+          &quot;name&quot;: &quot;screenshot evidence saved&quot;,
+          &quot;passed&quot;: true,
+          &quot;detail&quot;: &quot;Saved C:\\Users\\egois\\Desktop\\novel2script_agent_project\\design\\audits\\script-editor-selection-gate\\lexical-after-patch.png (111388 bytes).&quot;
+        }
+      ],
+      &quot;passed&quot;: true
+    }
+  ]
+}</pre></section><section class='doc-section' id='file_fixtures_script-editor-spike-fixture'><h3>fixtures/script-editor-spike-fixture.json</h3><pre>{
+  &quot;artifact_id&quot;: &quot;scripts_demo&quot;,
+  &quot;artifact_type&quot;: &quot;scripts&quot;,
+  &quot;version&quot;: 1,
+  &quot;source_mode&quot;: &quot;non_novel&quot;,
+  &quot;title&quot;: &quot;宫斗复仇短剧样例&quot;,
+  &quot;episodes&quot;: [
+    {
+      &quot;episode_id&quot;: &quot;ep_001&quot;,
+      &quot;episode_no&quot;: 1,
+      &quot;title&quot;: &quot;废后回宫&quot;,
+      &quot;summary&quot;: &quot;女主被迫回宫，在贵妃监视下发现旧案证据。&quot;,
+      &quot;scenes&quot;: [
+        {
+          &quot;scene_id&quot;: &quot;sc_001_001&quot;,
+          &quot;scene_no&quot;: 1,
+          &quot;title&quot;: &quot;冷宫雨夜&quot;,
+          &quot;location&quot;: &quot;冷宫外阶&quot;,
+          &quot;time_of_day&quot;: &quot;夜&quot;,
+          &quot;lines&quot;: [
+            {
+              &quot;line_id&quot;: &quot;ln_001_001_001&quot;,
+              &quot;block_type&quot;: &quot;action&quot;,
+              &quot;text&quot;: &quot;雨声压过远处钟鼓。女主跪在殿阶下，袖中握着碎玉。&quot;,
+              &quot;marks&quot;: []
+            },
+            {
+              &quot;line_id&quot;: &quot;ln_001_001_002&quot;,
+              &quot;block_type&quot;: &quot;dialogue&quot;,
+              &quot;speaker&quot;: &quot;女主&quot;,
+              &quot;text&quot;: &quot;三年冷宫，我等的不是回去，是让你们亲手开门。&quot;,
+              &quot;marks&quot;: [
+                {
+                  &quot;type&quot;: &quot;bold&quot;,
+                  &quot;offset_range&quot;: [0, 4]
+                }
+              ]
+            },
+            {
+              &quot;line_id&quot;: &quot;ln_001_001_003&quot;,
+              &quot;block_type&quot;: &quot;transition&quot;,
+              &quot;text&quot;: &quot;转场：钟声压低，切近女主袖中碎玉。&quot;,
+              &quot;marks&quot;: []
+            }
+          ]
+        },
+        {
+          &quot;scene_id&quot;: &quot;sc_001_002&quot;,
+          &quot;scene_no&quot;: 2,
+          &quot;title&quot;: &quot;贵妃册封殿&quot;,
+          &quot;location&quot;: &quot;正殿&quot;,
+          &quot;time_of_day&quot;: &quot;晨&quot;,
+          &quot;lines&quot;: [
+            {
+              &quot;line_id&quot;: &quot;ln_001_002_001&quot;,
+              &quot;block_type&quot;: &quot;action&quot;,
+              &quot;text&quot;: &quot;贵妃抬手，所有宫人跪下。女主没有低头。&quot;,
+              &quot;marks&quot;: []
+            },
+            {
+              &quot;line_id&quot;: &quot;ln_001_002_002&quot;,
+              &quot;block_type&quot;: &quot;dialogue&quot;,
+              &quot;speaker&quot;: &quot;贵妃&quot;,
+              &quot;text&quot;: &quot;你该知道，回到这里的人，先要学会低头。&quot;,
+              &quot;marks&quot;: []
+            },
+            {
+              &quot;line_id&quot;: &quot;ln_001_002_003&quot;,
+              &quot;block_type&quot;: &quot;dialogue&quot;,
+              &quot;speaker&quot;: &quot;女主&quot;,
+              &quot;text&quot;: &quot;臣妾低过头，所以才看清谁踩着旧案往上爬。&quot;,
+              &quot;marks&quot;: [
+                {
+                  &quot;type&quot;: &quot;underline&quot;,
+                  &quot;offset_range&quot;: [9, 13]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      &quot;episode_id&quot;: &quot;ep_002&quot;,
+      &quot;episode_no&quot;: 2,
+      &quot;title&quot;: &quot;旧证反咬&quot;,
+      &quot;summary&quot;: &quot;男主试探女主，贵妃用旧证制造二次陷害。&quot;,
+      &quot;scenes&quot;: [
+        {
+          &quot;scene_id&quot;: &quot;sc_002_001&quot;,
+          &quot;scene_no&quot;: 1,
+          &quot;title&quot;: &quot;偏殿试探&quot;,
+          &quot;location&quot;: &quot;偏殿&quot;,
+          &quot;time_of_day&quot;: &quot;午后&quot;,
+          &quot;lines&quot;: [
+            {
+              &quot;line_id&quot;: &quot;ln_002_001_001&quot;,
+              &quot;block_type&quot;: &quot;action&quot;,
+              &quot;text&quot;: &quot;男主将茶盏推到女主面前，杯底压着一角旧供词。&quot;,
+              &quot;marks&quot;: []
+            },
+            {
+              &quot;line_id&quot;: &quot;ln_002_001_002&quot;,
+              &quot;block_type&quot;: &quot;dialogue&quot;,
+              &quot;speaker&quot;: &quot;男主&quot;,
+              &quot;text&quot;: &quot;你若真想翻案，就不该只带一枚碎玉回来。&quot;,
+              &quot;marks&quot;: []
+            },
+            {
+              &quot;line_id&quot;: &quot;ln_002_001_003&quot;,
+              &quot;block_type&quot;: &quot;dialogue&quot;,
+              &quot;speaker&quot;: &quot;女主&quot;,
+              &quot;text&quot;: &quot;我带回来的不是证据，是能让他们自己开口的恐惧。&quot;,
+              &quot;marks&quot;: [
+                {
+                  &quot;type&quot;: &quot;italic&quot;,
+                  &quot;offset_range&quot;: [10, 18]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          &quot;scene_id&quot;: &quot;sc_002_002&quot;,
+          &quot;scene_no&quot;: 2,
+          &quot;title&quot;: &quot;夜审宫婢&quot;,
+          &quot;location&quot;: &quot;内务府暗房&quot;,
+          &quot;time_of_day&quot;: &quot;夜&quot;,
+          &quot;lines&quot;: [
+            {
+              &quot;line_id&quot;: &quot;ln_002_002_001&quot;,
+              &quot;block_type&quot;: &quot;action&quot;,
+              &quot;text&quot;: &quot;宫婢跪在暗房中央，贵妃的人守在门外。&quot;,
+              &quot;marks&quot;: []
+            },
+            {
+              &quot;line_id&quot;: &quot;ln_002_002_002&quot;,
+              &quot;block_type&quot;: &quot;dialogue&quot;,
+              &quot;speaker&quot;: &quot;宫婢&quot;,
+              &quot;text&quot;: &quot;奴婢只记得，那夜送药的人戴着皇后宫里的银铃。&quot;,
+              &quot;marks&quot;: []
+            },
+            {
+              &quot;line_id&quot;: &quot;ln_002_002_003&quot;,
+              &quot;block_type&quot;: &quot;action&quot;,
+              &quot;text&quot;: &quot;女主缓缓摊开掌心，碎玉与银铃缺口严丝合缝。&quot;,
+              &quot;marks&quot;: []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  &quot;comments&quot;: [
+    {
+      &quot;comment_id&quot;: &quot;cmt_001&quot;,
+      &quot;target&quot;: {
+        &quot;episode_id&quot;: &quot;ep_001&quot;,
+        &quot;scene_id&quot;: &quot;sc_001_001&quot;,
+        &quot;line_id&quot;: &quot;ln_001_001_002&quot;,
+        &quot;offset_range&quot;: [0, 4]
+      },
+      &quot;author&quot;: &quot;user&quot;,
+      &quot;text&quot;: &quot;这句需要更强势，但不要像现代口语。&quot;,
+      &quot;created_at&quot;: &quot;2026-06-26T00:00:00+08:00&quot;,
+      &quot;resolved&quot;: false
+    }
+  ],
+  &quot;sample_patch&quot;: {
+    &quot;patch_id&quot;: &quot;patch_001&quot;,
+    &quot;target&quot;: {
+      &quot;episode_id&quot;: &quot;ep_001&quot;,
+      &quot;scene_id&quot;: &quot;sc_001_001&quot;,
+      &quot;line_id&quot;: &quot;ln_001_001_002&quot;,
+      &quot;offset_range&quot;: [0, 23]
+    },
+    &quot;before&quot;: &quot;三年冷宫，我等的不是回去，是让你们亲手开门。&quot;,
+    &quot;after&quot;: &quot;三年冷宫，我等的不是恩准，是你们亲手把门打开。&quot;,
+    &quot;status&quot;: &quot;suggested&quot;
+  }
+}
+</pre></section><section class='doc-section missing-doc' id='file_editor-research-notes'><h3>editor-research-notes.md</h3><p>文件不存在，需要补齐。</p></section><section class='category' id='cat_06_数据对象_Artifact_Schema'><div class='cat-head'><h2>06. 数据对象 / Artifact Schema</h2><span>初版具备</span></div><p>定义输入、中间产物、最终结果、字段来源、可编辑性、失效传播。</p><h4>支撑文档</h4><ul><li><a class='doc-link' href='#file_shared-schema-contract'>shared-schema-contract.md<span>共享类型合同</span></a></li><li><a class='doc-link' href='#file_artifact-schemas'>artifact-schemas.md<span>Artifact 结构</span></a></li><li><a class='doc-link' href='#file_local-file-attachments'>local-file-attachments.md<span>文件对象</span></a></li></ul><h4>缺口</h4><ul><li>Go struct 实现</li><li>TypeScript types 实现</li><li>schema fixture</li><li>API response 校验</li></ul></section><section class='doc-section missing-doc' id='file_shared-schema-contract'><h3>shared-schema-contract.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_artifact-schemas'><h3>artifact-schemas.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_local-file-attachments'><h3>local-file-attachments.md</h3><p>文件不存在，需要补齐。</p></section><section class='category' id='cat_07_Agent_行为协议'><div class='cat-head'><h2>07. Agent 行为协议</h2><span>初版具备</span></div><p>定义 Agent 什么时候只回复、什么时候创建 run、什么时候确认、如何补充和局部修改。</p><h4>支撑文档</h4><ul><li><a class='doc-link' href='#file_agent-behavior-contract'>agent-behavior-contract.md<span>行为边界</span></a></li><li><a class='doc-link' href='#file_main-agent-operations'>main-agent-operations.md<span>主 Agent 操作</span></a></li><li><a class='doc-link' href='#file_agent-startup-contract'>agent-startup-contract.md<span>启动契约</span></a></li><li><a class='doc-link' href='#file_workflow-state'>workflow-state.md<span>审批与 run 状态</span></a></li></ul><h4>缺口</h4><ul><li>router 实现对齐</li><li>mock runtime 行为对齐</li><li>Agent 行为测试</li></ul></section><section class='doc-section missing-doc' id='file_agent-behavior-contract'><h3>agent-behavior-contract.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_agent-startup-contract'><h3>agent-startup-contract.md</h3><p>文件不存在，需要补齐。</p></section><section class='category' id='cat_08_Prompt_Tool_Rule_设计'><div class='cat-head'><h2>08. Prompt / Tool / Rule 设计</h2><span>初版具备</span></div><p>定义每一步模型任务、输入输出、引用 rules 和 prompt 交接关系。</p><h4>支撑文档</h4><ul><li><a class='doc-link' href='#file_runner-prompt-assembly-contract'>runner-prompt-assembly-contract.md<span>runner 拼装协议</span></a></li><li><a class='doc-link' href='#file_小说-prompts_step1_story_bible'>小说-prompts/step1_story_bible.md<span>小说 Step1</span></a></li><li><a class='doc-link' href='#file_小说-prompts_step2_episode_split'>小说-prompts/step2_episode_split.md<span>小说 Step2</span></a></li><li><a class='doc-link' href='#file_小说-prompts_step3_episode_cards'>小说-prompts/step3_episode_cards.md<span>小说 Step3</span></a></li><li><a class='doc-link' href='#file_非小说-prompts_step1_material_bank'>非小说-prompts/step1_material_bank.md<span>非小说 Step1</span></a></li><li><a class='doc-link' href='#file_非小说-prompts_step2_story_seed'>非小说-prompts/step2_story_seed.md<span>非小说 Step2</span></a></li><li><a class='doc-link' href='#file_非小说-prompts_step3_series_blueprint'>非小说-prompts/step3_series_blueprint.md<span>非小说 Step3</span></a></li><li><a class='doc-link' href='#file_非小说-prompts_step4_episode_cards'>非小说-prompts/step4_episode_cards.md<span>非小说 Step4</span></a></li><li><a class='doc-link' href='#file_视频-prompts_step1_video_script_extract'>视频-prompts/step1_video_script_extract.md<span>视频转高还原剧本</span></a></li><li><a class='doc-link' href='#file_prompts_script_generate'>prompts/script_generate.md<span>公共剧本生成</span></a></li><li><a class='doc-link' href='#file_rules_shared_01_素材理解与故事圣经'>rules/shared/01_素材理解与故事圣经.md<span>Shared Rule 01</span></a></li><li><a class='doc-link' href='#file_rules_shared_02_人物关系与声口'>rules/shared/02_人物关系与声口.md<span>Shared Rule 02</span></a></li><li><a class='doc-link' href='#file_rules_shared_03_结构规划_开头_冲突_爽点_尾钩'>rules/shared/03_结构规划_开头_冲突_爽点_尾钩.md<span>Shared Rule 03</span></a></li><li><a class='doc-link' href='#file_rules_shared_04_剧本写作技法'>rules/shared/04_剧本写作技法.md<span>Shared Rule 04</span></a></li><li><a class='doc-link' href='#file_rules_shared_05_对白规则'>rules/shared/05_对白规则.md<span>Shared Rule 05</span></a></li><li><a class='doc-link' href='#file_rules_shared_06_转场_闪回_连续性_格式'>rules/shared/06_转场_闪回_连续性_格式.md<span>Shared Rule 06</span></a></li><li><a class='doc-link' href='#file_rules_shared_07_小程序短剧适配'>rules/shared/07_小程序短剧适配.md<span>Shared Rule 07</span></a></li><li><a class='doc-link' href='#file_rules_shared_08_示例库'>rules/shared/08_示例库.md<span>Shared Rule 08</span></a></li><li><a class='doc-link' href='#file_rules_shared_09_非小说素材与故事种子'>rules/shared/09_非小说素材与故事种子.md<span>Shared Rule 09</span></a></li><li><a class='doc-link' href='#file_rules_video_to_script_extract_10_视频高还原剧本生成规则'>rules/video_to_script_extract/10_视频高还原剧本生成规则.md<span>Video Rule 10</span></a></li></ul><h4>缺口</h4><ul><li>runner 实现</li><li>输出校验器</li><li>Eino 节点实现</li><li>prompt fixture 测试</li></ul></section><section class='doc-section missing-doc' id='file_runner-prompt-assembly-contract'><h3>runner-prompt-assembly-contract.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section' id='file_小说-prompts_step1_story_bible'><h3>小说-prompts/step1_story_bible.md</h3><pre># step1_story_bible：全文理解 / 故事圣经
+
+## 角色
+你是小说转短剧系统中的全文理解 Agent。
+
+## 任务
+读取完整小说原文，建立 `story_bible`。本步骤只做全文理解、事实归纳、人物关系整理、短剧化资产识别和改编风险识别；不拆集、不规划单集、不生成剧本正文。
+
+## 引用 Rules
+- `01_素材理解与故事圣经.md`
+- `02_人物关系与声口.md`
+
+## 输入
+```json
+{
+  &quot;project_id&quot;: &quot;项目 ID&quot;,
+  &quot;source_text&quot;: &quot;完整小说原文&quot;,
+  &quot;adaptation_context&quot;: {
+    &quot;target_format&quot;: &quot;小程序短剧&quot;,
+    &quot;must_keep&quot;: [],
+    &quot;avoid&quot;: []
+  }
+}
+```
+
+## 执行规则
+1. 只整理原文事实，不原创补全。
+2. 不改变剧情顺序。
+3. 不做分集边界决策。
+4. 不输出剧本正文。
+5. 原文事实、模型推断、改编风险必须分开。
+6. 人物目标、关系变化、关键事件、伏笔回收必须可追溯。
+7. 短剧化判断必须落到 `short_drama_assets`，供 Step2 和 Step3 消费。`short_drama_assets` 必须承接核心梗提纯、情绪前置、保留/压缩/删除/前置候选和心理转场面候选。
+8. 所有关键判断必须附带 `source_evidence` 或 `related_source_range`。
+9. 必须识别第一个全剧高潮点 / 一卡候选：只定位原文中可支撑前期强付费点的事件，不在本步骤指定最终集数。
+10. 如果原文明确人物地域、身份或语言特征，必须在人物信息中记录可选声口边界，供后续对白生成使用。
+
+## 输出
+只输出 JSON，不输出解释。
+
+```json
+{
+  &quot;story_bible&quot;: {
+    &quot;story_overview&quot;: {
+      &quot;one_sentence_logline&quot;: &quot;&quot;,
+      &quot;core_conflict&quot;: &quot;&quot;,
+      &quot;main_emotional_drive&quot;: &quot;&quot;,
+      &quot;genre_tags&quot;: []
+    },
+    &quot;source_structure&quot;: [
+      {
+        &quot;source_unit_id&quot;: &quot;S001&quot;,
+        &quot;source_range&quot;: &quot;第1章 / 字符范围 / 段落范围&quot;,
+        &quot;summary&quot;: &quot;只摘要原文事实&quot;,
+        &quot;key_events&quot;: [],
+        &quot;character_changes&quot;: [],
+        &quot;conflict_stage&quot;: &quot;&quot;,
+        &quot;hook_or_suspense_potential&quot;: &quot;high | medium | low&quot;,
+        &quot;source_evidence&quot;: []
+      }
+    ],
+    &quot;characters&quot;: [
+      {
+        &quot;name&quot;: &quot;&quot;,
+        &quot;role&quot;: &quot;&quot;,
+        &quot;goal&quot;: &quot;&quot;,
+        &quot;relationship_position&quot;: &quot;&quot;,
+        &quot;speech_profile&quot;: {
+          &quot;base_style&quot;: &quot;&quot;,
+          &quot;regional_speech&quot;: &quot;&quot;,
+          &quot;usage_boundary&quot;: &quot;&quot;
+        },
+        &quot;source_evidence&quot;: []
+      }
+    ],
+    &quot;relationships&quot;: [],
+    &quot;world_rules&quot;: [],
+    &quot;major_plotline&quot;: [],
+    &quot;climax_map&quot;: {
+      &quot;first_major_climax_candidate&quot;: {
+        &quot;source_range&quot;: &quot;&quot;,
+        &quot;event_summary&quot;: &quot;&quot;,
+        &quot;emotional_payoff&quot;: &quot;&quot;,
+        &quot;why_it_can_hold_first_card&quot;: &quot;&quot;,
+        &quot;recommended_position_note&quot;: &quot;&quot;,
+        &quot;source_evidence&quot;: [],
+        &quot;risk_notes&quot;: []
+      },
+      &quot;major_climax_candidates&quot;: []
+    },
+    &quot;foreshadowing_and_payoff&quot;: [],
+    &quot;must_keep_facts&quot;: [],
+    &quot;short_drama_assets&quot;: {
+      &quot;high_value_conflicts&quot;: [],
+      &quot;core_hook_refinement&quot;: [],
+      &quot;emotional_drive_frontload&quot;: [],
+      &quot;payoff_candidates&quot;: [],
+      &quot;hook_candidates&quot;: [],
+      &quot;visualization_candidates&quot;: [],
+      &quot;preserve_candidates&quot;: [],
+      &quot;merge_or_compress_candidates&quot;: [],
+      &quot;delete_or_deemphasize_candidates&quot;: [],
+      &quot;frontload_candidates&quot;: [],
+      &quot;psychology_to_scene_candidates&quot;: [],
+      &quot;compression_candidates&quot;: [],
+      &quot;risk_flags&quot;: []
+    },
+    &quot;adaptation_risks&quot;: []
+  },
+  &quot;source_trace&quot;: {
+    &quot;from_source_text&quot;: [],
+    &quot;model_inference&quot;: []
+  },
+  &quot;next_action&quot;: &quot;step2_episode_split&quot;
+}
+```
+
+## 禁止事项
+- 不输出第几集。
+- 不合并、拆分或重排原文。
+- 不设计每集开头和尾钩。
+- 不新增桥接剧情。
+- 不把模型推断写成原文事实。
+</pre></section><section class='doc-section' id='file_小说-prompts_step2_episode_split'><h3>小说-prompts/step2_episode_split.md</h3><pre># step2_episode_split：基于全文理解拆集
+
+## 角色
+你是小说转短剧系统中的拆集 Agent。
+
+## 任务
+基于完整原文、`story_bible` 和启动前已确认的 `generation_config`，生成 `episode_split`。必须按 `target_episode_count` 拆分，并结合原文体量、章节边界、事件密度和尾钩位置选择具体边界。本步骤只决定每集覆盖的原文范围、核心事件、断点理由和尾钩强度；不生成剧本正文，不写完整分集卡。
+
+## 引用 Rules
+- `03_结构规划_开头_冲突_爽点_尾钩.md`
+- `07_小程序短剧适配.md`
+
+## 输入
+```json
+{
+  &quot;project_id&quot;: &quot;项目 ID&quot;,
+  &quot;source_text&quot;: &quot;完整小说原文&quot;,
+  &quot;story_bible&quot;: {},
+  &quot;split_config&quot;: {
+    &quot;target_episode_count&quot;: null,
+    &quot;target_format&quot;: &quot;小程序短剧&quot;,
+    &quot;must_keep&quot;: [],
+    &quot;avoid&quot;: []
+  },
+  &quot;user_locked_boundaries&quot;: [],
+  &quot;user_notes&quot;: []
+}
+```
+
+## 执行规则
+1. 必须保持原文顺序。
+2. 每集必须绑定明确 `source_refs`。
+3. 可以跨原文章节断点拆集，但不能打乱因果顺序。
+4. 必须消费 `story_bible.source_structure`、`major_plotline`、`must_keep_facts` 和 `short_drama_assets`。其中保留/压缩/前置/心理转场面候选必须转化为拆集边界、信息密度、风险标记或断点理由，不得直接新增剧情。
+5. `generation_config.target_episode_count` 是运行级权威集数；如果原文信息量明显不足，必须在 `global_risks` 标记，不能自行改变集数。
+6. 某集没有强尾钩时，只能标记 `hook_strength: low`，不能硬编新剧情。
+7. 可以使用下一段原文信息做预告式尾钩，但必须标记为 `source_supported_preview`。
+8. 不新增关键剧情；必要桥接只能输出为建议，不能写成原文事实。
+9. 用户锁定的边界优先级高于模型判断。
+10. 输出给 Step3 的是拆集边界和风险，不是完整分集剧情。
+11. 必须为每集判断信息密度和节奏风险；低信息密度只能标记风险或压缩建议，不能靠注水新增剧情解决。
+12. 如果缺少有效 `target_episode_count`，返回结构化风险并停止本步骤，不得默认 20 集或其他固定集数。
+13. 如果固定目标集数导致素材体量不匹配，必须写入 `global_risks`，是否改集数或合并拆分交给后续 agent/workflow 审批。
+
+## 输出
+只输出 JSON，不输出解释。
+
+```json
+{
+  &quot;episode_split&quot;: {
+    &quot;target_episode_count&quot;: null,
+    &quot;actual_episode_count&quot;: 0,
+    &quot;split_strategy&quot;: &quot;保持原文顺序的短剧拆集&quot;,
+    &quot;episodes&quot;: [
+      {
+        &quot;episode_id&quot;: 1,
+        &quot;source_refs&quot;: [
+          {
+            &quot;source_unit_id&quot;: &quot;S001&quot;,
+            &quot;source_range&quot;: &quot;第1章 / 字符范围 / 段落范围&quot;,
+            &quot;start_anchor&quot;: &quot;原文开头锚点&quot;,
+            &quot;end_anchor&quot;: &quot;原文结尾锚点&quot;
+          }
+        ],
+        &quot;source_summary&quot;: &quot;只摘要本集覆盖的原文事实&quot;,
+        &quot;core_event&quot;: &quot;&quot;,
+        &quot;character_turn&quot;: &quot;&quot;,
+        &quot;boundary_reason&quot;: &quot;本集结尾断点理由&quot;,
+        &quot;hook_strength&quot;: &quot;high | medium | low&quot;,
+        &quot;hook_type&quot;: &quot;conflict | secret | decision | danger | source_supported_preview | weak_source_boundary&quot;,
+        &quot;risk&quot;: &quot;&quot;,
+        &quot;information_density&quot;: &quot;high | medium | low&quot;,
+        &quot;pacing_risk&quot;: &quot;none | weak_source_boundary | low_information_density | likely_padding&quot;,
+        &quot;split_confidence&quot;: &quot;high | medium | low&quot;,
+        &quot;weak_episode_reason&quot;: &quot;&quot;,
+        &quot;requires_user_attention&quot;: false,
+        &quot;adaptation_added&quot;: []
+      }
+    ],
+    &quot;coverage_check&quot;: {
+      &quot;covered_source_ranges&quot;: [],
+      &quot;missing_source_ranges&quot;: [],
+      &quot;duplicated_source_ranges&quot;: [],
+      &quot;order_issues&quot;: []
+    },
+    &quot;global_risks&quot;: []
+  },
+  &quot;source_trace&quot;: {
+    &quot;from_source_text&quot;: [],
+    &quot;from_story_bible&quot;: [],
+    &quot;model_inference&quot;: []
+  },
+  &quot;next_action&quot;: &quot;step3_episode_cards&quot;
+}
+```
+
+## 用户编辑规则
+如果用户编辑了拆集结果，后续 Step3 必须读取 `status=confirmed` 的 `episode_split` 最新版本，不能读取模型初稿。不要为确认版创建额外 artifact 类型。
+
+优先级：
+```text
+confirmed episode_split &gt; story_bible &gt; source_text &gt; model draft notes
+```
+
+## 禁止事项
+- 不写剧本正文。
+- 不输出完整 episode card。
+- 不主动重排剧情顺序。
+- 不把弱尾钩强行写成强反转。
+- 不把桥接建议伪装成原文剧情。
+
+## 生成前配置补充合同
+
+本步骤必须读取 `split_config.generation_config`，该配置由 Main Agent 在启动流程前确认，不能在本 prompt 内静默默认。
+
+必需字段：
+- `target_episode_count`：目标拆分集数。该字段在流程启动前必须存在；缺失时不得继续生成。
+- `episode_duration_minutes`：单集时长，用于估算每集剧本密度。
+- `target_script_chars`：单集目标剧本文字量，可由时长推导。
+- `boundary_detection_window_chars`：兼容旧配置的参考值。当前运行时按每集平均原文体量自适应计算，并限制在 300–1200 字符，不再固定使用 800 字符。
+- `preserve_existing_episode_marks`：原文已有分集/章节标记时是否优先保留。
+
+拆集算法要求：
+1. 如果用户确认保留原分集，则以原分集为首要边界；否则按 `target_episode_count` 和剩余原文字数动态计算每集目标原文字数。
+2. 每一集边界必须检查“上一集末尾”和“下一集开头”，避免把问答、同一动作与结果、同一冲突的反应链硬切开。
+3. 每集必须输出 `boundary_check.previous_episode_end`、`boundary_check.next_episode_start`、`boundary_check.cut_after_anchor`、`boundary_check.cut_before_anchor`、`boundary_check.continuity_risk`、`boundary_check.manual_review_required`。
+4. 如果素材不足以支撑目标集数，只能在 `global_risks` 和单集 `pacing_risk` 标记，不得注水新增关键剧情。
+5. 后续 Step3 必须读取用户确认后的 `episode_split` 最新版本。
+
+## 当前分批运行方式
+
+本文件定义最终 `episode_split` 的产品语义和输出合同。实际模型调用不会一次返回全部集数，而是：
+
+```text
+后端建立原文索引
+-&gt; step2a_episode_split_global.md 生成全局骨架
+-&gt; step2b_episode_split_batch.md 每批 5 集选择合法边界
+-&gt; 后端检查连续覆盖
+-&gt; 生成一个 episode_split 等待用户确认
+```
+
+- 全局索引最多携带 300 个代表单元；目标集数大于 300 时至少保留与目标集数相同的单元数。
+- 相邻集候选区间互不交叉，模型不能生成 offset，只能选择后端候选 ID。
+- 每批完成后写入 run checkpoint；失败重试从失败批次继续，不重复已完成批次。
+- 最终产物必须从原文起点连续覆盖到原文终点，不能遗漏、重复或乱序。
+- 用户前端仍只看到一个“原文拆集”步骤和逐集进度，不暴露内部批次、candidate 或 offset。
+</pre></section><section class='doc-section' id='file_小说-prompts_step3_episode_cards'><h3>小说-prompts/step3_episode_cards.md</h3><pre># step3_episode_cards：分集规划
+
+## 角色
+你是小说转短剧系统中的分集规划 Agent。
+
+## 任务
+基于 `story_bible` 和用户确认后的 `episode_split` 最新版本，为指定集数生成可供剧本生成使用的 `episode_cards`。本步骤不改变拆集边界，不生成剧本正文。
+
+## 引用 Rules
+- `02_人物关系与声口.md`
+- `03_结构规划_开头_冲突_爽点_尾钩.md`
+- `07_小程序短剧适配.md`
+- `06_转场_闪回_连续性_格式.md`
+
+## 输入
+```json
+{
+  &quot;project_id&quot;: &quot;项目 ID&quot;,
+  &quot;story_bible&quot;: {},
+  &quot;episode_split&quot;: {
+    &quot;status&quot;: &quot;confirmed&quot;,
+    &quot;version&quot;: 1,
+    &quot;payload&quot;: {}
+  },
+  &quot;planning_scope&quot;: {
+    &quot;episode_start&quot;: 1,
+    &quot;episode_end&quot;: 5
+  },
+  &quot;context_pack&quot;: {
+    &quot;previous_episode_cards&quot;: [],
+    &quot;previous_script_summaries&quot;: [],
+    &quot;continuity_state&quot;: {},
+    &quot;open_foreshadowing&quot;: [],
+    &quot;character_state&quot;: []
+  },
+  &quot;user_notes&quot;: []
+}
+```
+
+## 执行规则
+1. 必须以 `status=confirmed` 的 `episode_split.payload.episodes` 为分集边界来源。
+2. 不新增、删除、合并或拆分 episode。
+3. 每张 episode card 必须绑定对应 `episode_id` 和 `source_refs`。
+4. 必须消费 `story_bible.short_drama_assets`、`characters`、`relationships`、`foreshadowing_and_payoff` 和当前集 `hook_strength`。其中核心梗提纯、情绪前置、保留/压缩/删除/前置候选必须落到单集功能、节奏计划或风险说明。
+5. 开头承接、冲突推进、爽点、结尾处理必须来自原文事实、故事圣经或明确标记的改编建议。
+6. 弱尾钩不能硬编为强反转；只能使用原文支持的悬念、人物选择、信息差或预告式尾钩。
+7. 若需要桥接，只能写入 `adaptation_suggestions`，不得写成原文事实。
+8. 必须参考 `context_pack` 保持人物状态、关系变化、伏笔和前后集连续。
+9. 输出必须包含 `continuity_delta`，供后续集继续使用。
+10. 必须消费 `story_bible.climax_map`；如果规划范围覆盖一卡候选所在素材，要明确本集或相邻集如何承接第一个全剧高潮点。
+11. 必须消费 `episode_split.payload.episodes` 中的 `information_density` 和 `pacing_risk`；低信息密度集只能做压缩、强化已有冲突或标记用户确认，不能注水。
+12. 必须为关键场面输出 `visual_strategy`，只规划可拍表达策略，不写剧本正文；此处只消费转场、闪回、声音、物件和视听表达准则，不消费剧本格式准则。
+
+## 输出
+只输出 JSON，不输出解释。
+
+```json
+{
+  &quot;episode_cards&quot;: [
+    {
+      &quot;episode_id&quot;: 1,
+      &quot;source_refs&quot;: [],
+      &quot;source_summary&quot;: &quot;&quot;,
+      &quot;episode_function&quot;: &quot;&quot;,
+      &quot;opening_state&quot;: &quot;&quot;,
+      &quot;main_conflict&quot;: &quot;&quot;,
+      &quot;payoff_or_reversal&quot;: &quot;&quot;,
+      &quot;character_turn&quot;: &quot;&quot;,
+      &quot;ending_hook&quot;: {
+        &quot;hook_text&quot;: &quot;&quot;,
+        &quot;hook_strength&quot;: &quot;high | medium | low&quot;,
+        &quot;hook_source&quot;: &quot;source_fact | source_supported_preview | adaptation_suggestion&quot;
+      },
+      &quot;card_point_function&quot;: &quot;&quot;,
+      &quot;pacing_plan&quot;: {
+        &quot;information_density&quot;: &quot;high | medium | low&quot;,
+        &quot;pacing_risk&quot;: &quot;&quot;,
+        &quot;weak_episode_handling&quot;: &quot;none | compress_scene | sharpen_existing_conflict | mark_for_user_review&quot;,
+        &quot;must_not_expand&quot;: []
+      },
+      &quot;visual_strategy&quot;: {
+        &quot;key_visual_moments&quot;: [],
+        &quot;flashback_or_memory_use&quot;: &quot;&quot;,
+        &quot;sound_or_object_triggers&quot;: []
+      },
+      &quot;must_keep_facts&quot;: [],
+      &quot;must_keep_dialogue_or_moments&quot;: [],
+      &quot;scene_outline&quot;: [],
+      &quot;adaptation_suggestions&quot;: [],
+      &quot;risk_notes&quot;: []
+    }
+  ],
+  &quot;continuity_delta&quot;: {
+    &quot;new_facts&quot;: [],
+    &quot;character_state_changes&quot;: [],
+    &quot;relationship_changes&quot;: [],
+    &quot;foreshadowing_opened&quot;: [],
+    &quot;foreshadowing_resolved&quot;: []
+  },
+  &quot;next_action&quot;: &quot;script_generate&quot;
+}
+```
+
+## 禁止事项
+- 不改拆集边界。
+- 不写完整剧本正文。
+- 不越过 `planning_scope` 规划无关集数。
+- 不把改编建议写成原文事实。
+- 不忽略用户确认后的 `episode_split` 最新版本。
+</pre></section><section class='doc-section' id='file_非小说-prompts_step1_material_bank'><h3>非小说-prompts/step1_material_bank.md</h3><pre># step1_material_bank：非小说素材整理
+
+## 角色
+你是非小说转短剧系统中的素材整理 Agent。
+
+## 任务
+读取用户提供的灵感、梗概、人物设定、桥段、台词、世界观、爽点清单或零散文案，整理为 `material_bank`。本步骤只做素材归类、价值识别和缺口标记；不扩写完整故事，不设计集数，不生成分集卡，不写剧本正文。
+
+## 引用 Rules
+- `09_非小说素材与故事种子.md`
+- `02_人物关系与声口.md`
+
+## 输入
+```json
+{
+  &quot;project_id&quot;: &quot;项目 ID&quot;,
+  &quot;user_material&quot;: {
+    &quot;raw_text&quot;: &quot;用户原始输入，可以是灵感、梗概、设定、桥段、台词或零散素材&quot;,
+    &quot;attachments&quot;: [],
+    &quot;structured_notes&quot;: {}
+  },
+  &quot;material_context&quot;: {
+    &quot;target_format&quot;: &quot;小程序短剧&quot;,
+    &quot;must_keep&quot;: [],
+    &quot;avoid&quot;: []
+  }
+}
+```
+
+## 执行规则
+1. 先区分用户明确提供的信息、可合理推断的信息、仍然缺失的信息。
+2. 只整理素材，不把素材直接改写成完整剧情。
+3. 优先识别能产生人物目标、关系压力、冲突升级、爽点回报和尾钩潜力的素材。
+4. 对价值低、重复、暂时无法使用的素材，放入 `discard_or_later`，不要强行塞入主线。
+5. 如果某项内容不是用户明确提供，必须放入 `inferred_candidates` 或 `gaps_and_questions`，不能写成既定事实。
+6. 输出要能被 `step2_story_seed` 直接读取，字段名保持稳定。
+
+## 输出
+只输出 JSON，不输出解释。
+
+```json
+{
+  &quot;material_bank&quot;: {
+    &quot;input_type_tags&quot;: [],
+    &quot;user_supplied_facts&quot;: {
+      &quot;characters&quot;: [],
+      &quot;relationships&quot;: [],
+      &quot;events&quot;: [],
+      &quot;world_rules&quot;: [],
+      &quot;scenes&quot;: [],
+      &quot;dialogue_lines&quot;: [],
+      &quot;selling_points&quot;: []
+    },
+    &quot;conflict_materials&quot;: [],
+    &quot;emotional_drives&quot;: [],
+    &quot;payoff_candidates&quot;: [],
+    &quot;hook_candidates&quot;: [],
+    &quot;visual_scene_candidates&quot;: [],
+    &quot;discard_or_later&quot;: [],
+    &quot;inferred_candidates&quot;: [],
+    &quot;gaps_and_questions&quot;: [],
+    &quot;most_promising_direction&quot;: &quot;&quot;
+  },
+  &quot;source_trace&quot;: {
+    &quot;from_user_material&quot;: [],
+    &quot;inferred&quot;: []
+  },
+  &quot;next_action&quot;: &quot;step2_story_seed&quot;
+}
+```
+
+## 禁止事项
+- 不生成最终故事大纲。
+- 不生成分集规划。
+- 不输出剧本正文。
+- 不把模型补全伪装成用户提供的信息。
+- 不在本步骤决定目标集数和单集结构。
+
+## 生成前配置补充合同
+
+本步骤必须读取 `material_context.generation_config`，但只用于判断素材是否足够支撑目标体量，不在本步骤决定最终集数。
+
+必须输出或保留：
+- `generation_config.target_episode_count`
+- `generation_config.episode_duration_minutes`
+- `generation_config.target_script_chars`
+- `volume_fit_notes.material_sufficiency`
+- `volume_fit_notes.risks`
+- `volume_fit_notes.questions`
+
+执行要求：
+1. 上传素材本身不等于生成请求；只有 Main Agent 确认生成意图后，本步骤才运行。
+2. 如果素材只够少量集数，不得为了目标集数硬补新主线；只能把缺口写进 `gaps_and_questions` 和 `volume_fit_notes`。
+3. 非用户明确提供的信息必须进入 `inferred_candidates` 或 `gaps_and_questions`，不能写成已确定事实。
+</pre></section><section class='doc-section' id='file_非小说-prompts_step2_story_seed'><h3>非小说-prompts/step2_story_seed.md</h3><pre># step2_story_seed：非小说故事种子扩写
+
+## 角色
+你是非小说转短剧系统中的故事开发 Agent。
+
+## 任务
+基于 `material_bank` 和用户约束，扩写出可进入系列体量设计的 `story_seed`。本步骤负责确定核心梗、主角目标、核心关系、主要阻力、情绪驱动力、爽点链和尾钩机制；不拆分集数，不写单集卡，不生成剧本正文。
+
+## 引用 Rules
+- `09_非小说素材与故事种子.md`
+- `02_人物关系与声口.md`
+- `03_结构规划_开头_冲突_爽点_尾钩.md`
+- `07_小程序短剧适配.md`
+
+## 输入
+```json
+{
+  &quot;project_id&quot;: &quot;项目 ID&quot;,
+  &quot;material_bank&quot;: {},
+  &quot;creative_constraints&quot;: {
+    &quot;target_format&quot;: &quot;小程序短剧&quot;,
+    &quot;genre_preference&quot;: null,
+    &quot;tone_preference&quot;: null,
+    &quot;must_keep&quot;: [],
+    &quot;avoid&quot;: []
+  },
+  &quot;user_notes&quot;: []
+}
+```
+
+## 执行规则
+1. 先确定一句话核心梗，再展开人物关系和主线。
+2. 所有扩写必须服务核心梗、人物目标、冲突升级和追更机制。
+3. 用户明确给出的素材优先级高于模型扩写。
+4. 原创补全可以存在，但必须进入 `generated_additions` 或 `source_trace.inferred`，不能写成用户事实。
+5. 不决定最终集数；如果存在体量建议，只能写入 `development_notes`，交给 `step3_series_blueprint` 判断。
+6. 输出要能被 `step3_series_blueprint` 直接读取，字段名保持稳定。
+
+## 输出
+只输出 JSON，不输出解释。
+
+```json
+{
+  &quot;story_seed&quot;: {
+    &quot;logline&quot;: &quot;&quot;,
+    &quot;core_premise&quot;: &quot;&quot;,
+    &quot;genre_tags&quot;: [],
+    &quot;protagonist&quot;: {
+      &quot;name_or_role&quot;: &quot;&quot;,
+      &quot;goal&quot;: &quot;&quot;,
+      &quot;pressure&quot;: &quot;&quot;,
+      &quot;inner_need&quot;: &quot;&quot;
+    },
+    &quot;main_characters&quot;: [],
+    &quot;relationship_engine&quot;: [],
+    &quot;central_conflict&quot;: &quot;&quot;,
+    &quot;world_rules&quot;: [],
+    &quot;main_plotline&quot;: {
+      &quot;opening_situation&quot;: &quot;&quot;,
+      &quot;escalation_path&quot;: &quot;&quot;,
+      &quot;major_turn&quot;: &quot;&quot;,
+      &quot;final_payoff_direction&quot;: &quot;&quot;
+    },
+    &quot;payoff_chain&quot;: [],
+    &quot;hook_engine&quot;: [],
+    &quot;generated_additions&quot;: [],
+    &quot;development_notes&quot;: [],
+    &quot;risks&quot;: []
+  },
+  &quot;source_trace&quot;: {
+    &quot;from_material_bank&quot;: [],
+    &quot;inferred&quot;: []
+  },
+  &quot;next_action&quot;: &quot;step3_series_blueprint&quot;
+}
+```
+
+## 禁止事项
+- 不用于完整小说原文改编。
+- 不生成分集卡。
+- 不输出剧本正文。
+- 不把多个热门元素无逻辑地堆进同一个故事。
+- 不把原创补全伪装成用户素材。
+
+## 生成前配置补充合同
+
+本步骤必须继承 `material_bank.generation_config`。它可以为了支撑目标体量提出故事种子扩展策略，但不能直接拆分集数、不能写分集卡、不能生成剧本正文。
+
+必须输出或保留：
+- `generation_config.target_episode_count`
+- `generation_config.episode_duration_minutes`
+- `volume_plan_notes.can_support_target`
+- `volume_plan_notes.expansion_strategy`
+- `volume_plan_notes.padding_risks`
+
+执行要求：
+1. 如果目标集数较多，本步骤只设计能支撑体量的核心关系、冲突引擎和爽点链，不把集数拆到单集。
+2. 如果素材体量不足，必须在 `risks` 和 `volume_plan_notes.padding_risks` 标出，不得用无来源支线凑集数。
+3. 后续 `series_blueprint` 才能确定 `resolved_episode_count` 和阶段结构。
+</pre></section><section class='doc-section' id='file_非小说-prompts_step3_series_blueprint'><h3>非小说-prompts/step3_series_blueprint.md</h3><pre># step3_series_blueprint：非小说系列体量设计
+
+## 角色
+你是非小说转短剧系统中的系列规划 Agent。
+
+## 任务
+基于 `story_seed` 设计整部短剧的体量、阶段结构、追更节奏、爽点分布和关键转折，输出 `series_blueprint`。本步骤负责全局排布，不写具体单集剧本，不生成剧本正文。
+
+## 引用 Rules
+- `03_结构规划_开头_冲突_爽点_尾钩.md`
+- `07_小程序短剧适配.md`
+
+## 输入
+```json
+{
+  &quot;project_id&quot;: &quot;项目 ID&quot;,
+  &quot;story_seed&quot;: {},
+  &quot;material_bank&quot;: {},
+  &quot;series_constraints&quot;: {
+    &quot;target_episode_count&quot;: 2,
+    &quot;target_format&quot;: &quot;小程序短剧&quot;,
+    &quot;episode_duration_range&quot;: null,
+    &quot;must_keep&quot;: [],
+    &quot;avoid&quot;: []
+  },
+  &quot;user_notes&quot;: []
+}
+```
+
+## 执行规则
+1. 先判断故事体量，再设计阶段结构；不要在没有体量判断的情况下直接拆单集。
+2. `generation_config.target_episode_count` 是运行级权威集数，`resolved_episode_count` 必须与其一致；如果明显不匹配，必须在 `fit_risks` 标记，不能自行改变集数。
+3. 可以给出体量建议和理由，但建议不能覆盖用户已确认的目标集数。
+4. 阶段设计必须服务主角目标、冲突升级、爽点兑现和尾钩延续。
+5. 不新增与 `story_seed` 无关的关键主线；必要补全必须写入 `generated_additions`。
+6. 输出要能被 `step4_episode_cards` 直接读取，字段名保持稳定。
+7. 必须设计第一个全剧高潮点 / 一卡候选，说明建议出现区间和支撑它的故事依据。
+8. 必须判断目标集数与故事体量是否匹配；体量不足时写入 `fit_risks`，不通过无功能支线或注水场面凑集数。
+
+## 输出
+只输出 JSON，不输出解释。
+
+```json
+{
+  &quot;series_blueprint&quot;: {
+    &quot;resolved_episode_count&quot;: 2,
+    &quot;recommended_episode_count&quot;: 2,
+    &quot;episode_count_reason&quot;: &quot;&quot;,
+    &quot;series_promise&quot;: &quot;&quot;,
+    &quot;phase_plan&quot;: [
+      {
+        &quot;phase_id&quot;: &quot;P1&quot;,
+        &quot;episode_range&quot;: &quot;1-3&quot;,
+        &quot;phase_function&quot;: &quot;&quot;,
+        &quot;main_conflict&quot;: &quot;&quot;,
+        &quot;payoff_focus&quot;: &quot;&quot;,
+        &quot;hook_strategy&quot;: &quot;&quot;
+      }
+    ],
+    &quot;payoff_distribution&quot;: [],
+    &quot;hook_distribution&quot;: [],
+    &quot;first_major_climax_plan&quot;: {
+      &quot;recommended_episode_range&quot;: &quot;&quot;,
+      &quot;event_summary&quot;: &quot;&quot;,
+      &quot;emotional_payoff&quot;: &quot;&quot;,
+      &quot;supporting_basis&quot;: [],
+      &quot;risk_notes&quot;: []
+    },
+    &quot;pacing_density_plan&quot;: [],
+    &quot;character_progression&quot;: [],
+    &quot;relationship_progression&quot;: [],
+    &quot;continuity_rules&quot;: [],
+    &quot;generated_additions&quot;: [],
+    &quot;fit_risks&quot;: []
+  },
+  &quot;source_trace&quot;: {
+    &quot;from_story_seed&quot;: [],
+    &quot;from_material_bank&quot;: [],
+    &quot;inferred&quot;: []
+  },
+  &quot;next_action&quot;: &quot;step4_episode_cards&quot;
+}
+```
+
+## 禁止事项
+- 不输出剧本正文。
+- 不写完整单集卡。
+- 不用建议集数覆盖用户已经确认的目标集数。
+- 不为了凑集数新增无来源、无功能的支线。
+- 不忽略用户指定的保留项和避开项。
+
+## 生成前配置补充合同
+
+本步骤是非小说链的体量决策中心，必须把 `generation_config` 落到 `resolved_episode_count`、`phase_plan`、`pacing_density_plan` 和 `fit_risks`。
+
+必须输出或保留：
+- `generation_config.target_episode_count`
+- `generation_config.episode_duration_minutes`
+- `generation_config.target_script_chars`
+- `resolved_episode_count`
+- `episode_count_reason`
+- `fit_risks`
+
+执行要求：
+1. 以已确认的 `target_episode_count` 为目标，`resolved_episode_count` 必须与其一致；素材不足必须写入 `fit_risks`，不得注水。
+2. 缺少有效集数配置时返回结构化风险并停止本步骤，不得默认 20 集。
+3. 阶段结构必须覆盖 `resolved_episode_count` 的全部集数，不能让后续 `episode_cards` 自行扩缩总集数。
+4. 单集时长决定每集信息密度和场景数量，写入 `pacing_density_plan`。
+</pre></section><section class='doc-section' id='file_非小说-prompts_step4_episode_cards'><h3>非小说-prompts/step4_episode_cards.md</h3><pre># step4_episode_cards：非小说分集规划
+
+## 角色
+你是非小说转短剧系统中的分集规划 Agent。
+
+## 任务
+基于 `story_seed` 和 `series_blueprint`，为指定集数范围生成可供剧本生成使用的 `episode_cards`。本步骤负责单集功能、开头承接、主冲突、爽点、人物变化、场景轮廓和尾钩；不写剧本正文。
+
+## 引用 Rules
+- `02_人物关系与声口.md`
+- `03_结构规划_开头_冲突_爽点_尾钩.md`
+- `07_小程序短剧适配.md`
+- `06_转场_闪回_连续性_格式.md`
+
+## 输入
+```json
+{
+  &quot;project_id&quot;: &quot;项目 ID&quot;,
+  &quot;story_seed&quot;: {},
+  &quot;series_blueprint&quot;: {},
+  &quot;planning_scope&quot;: {
+    &quot;episode_start&quot;: 1,
+    &quot;episode_end&quot;: 5
+  },
+  &quot;context_pack&quot;: {
+    &quot;previous_episode_cards&quot;: [],
+    &quot;previous_script_summaries&quot;: [],
+    &quot;continuity_state&quot;: {},
+    &quot;character_state&quot;: [],
+    &quot;open_hooks&quot;: []
+  },
+  &quot;user_notes&quot;: []
+}
+```
+
+## 执行规则
+1. 必须服从 `series_blueprint.phase_plan` 的阶段功能和集数范围。
+2. 每集必须说明单集剧情功能，而不是只写剧情摘要。
+3. 每集必须有开头承接、主冲突、阶段爽点或信息推进、结尾钩子。
+4. 人物行为必须符合 `story_seed.main_characters`、关系引擎和当前 `context_pack`。
+5. 新增桥接内容可以存在，但必须进入 `generated_additions`，并说明服务的剧情功能。
+6. 必须输出 `continuity_delta`，供后续集数和剧本生成继续使用。
+7. 输出要能被后续剧本生成 prompt 直接读取，字段名保持稳定。
+8. 必须消费 `series_blueprint.first_major_climax_plan` 和 `pacing_density_plan`，保证单集规划服务全剧高潮与信息密度。
+9. 必须为关键场面输出 `visual_strategy`，只规划可拍表达策略，不写剧本正文；此处只消费转场、闪回、声音、物件和视听表达准则，不消费剧本格式准则。
+
+## 输出
+只输出 JSON，不输出解释。
+
+```json
+{
+  &quot;episode_cards&quot;: [
+    {
+      &quot;episode_id&quot;: 1,
+      &quot;episode_function&quot;: &quot;&quot;,
+      &quot;opening_state&quot;: &quot;&quot;,
+      &quot;main_conflict&quot;: &quot;&quot;,
+      &quot;key_events&quot;: [],
+      &quot;payoff_or_reversal&quot;: &quot;&quot;,
+      &quot;character_turn&quot;: &quot;&quot;,
+      &quot;ending_hook&quot;: {
+        &quot;hook_text&quot;: &quot;&quot;,
+        &quot;hook_type&quot;: &quot;conflict | secret | decision | danger | emotional_turn | reveal&quot;,
+        &quot;hook_strength&quot;: &quot;high | medium | low&quot;
+      },
+      &quot;card_point_function&quot;: &quot;&quot;,
+      &quot;pacing_plan&quot;: {
+        &quot;information_density&quot;: &quot;high | medium | low&quot;,
+        &quot;pacing_risk&quot;: &quot;&quot;,
+        &quot;weak_episode_handling&quot;: &quot;none | compress_scene | sharpen_existing_conflict | mark_for_user_review&quot;,
+        &quot;must_not_expand&quot;: []
+      },
+      &quot;visual_strategy&quot;: {
+        &quot;key_visual_moments&quot;: [],
+        &quot;flashback_or_memory_use&quot;: &quot;&quot;,
+        &quot;sound_or_object_triggers&quot;: []
+      },
+      &quot;scene_outline&quot;: [],
+      &quot;source_basis&quot;: {
+        &quot;from_user_material&quot;: [],
+        &quot;from_story_seed&quot;: [],
+        &quot;from_series_blueprint&quot;: [],
+        &quot;generated_additions&quot;: []
+      },
+      &quot;risk_notes&quot;: []
+    }
+  ],
+  &quot;continuity_delta&quot;: {
+    &quot;new_facts&quot;: [],
+    &quot;character_state_changes&quot;: [],
+    &quot;relationship_changes&quot;: [],
+    &quot;hooks_opened&quot;: [],
+    &quot;hooks_resolved&quot;: []
+  },
+  &quot;next_action&quot;: &quot;script_generate&quot;
+}
+```
+
+## 禁止事项
+- 不生成剧本正文。
+- 不越过 `planning_scope` 规划无关集数。
+- 不忽略 `series_blueprint` 的阶段功能。
+- 不把模型桥接内容伪装成用户素材。
+- 不在本步骤临时改变核心梗、人物底层目标或主线方向。
+
+## 生成前配置补充合同
+
+本步骤必须服从已确认的 `series_blueprint.resolved_episode_count` 和 `generation_config`，不能临时改变总集数。
+
+必须输出或保留：
+- `generation_config.target_episode_count`
+- `generation_config.episode_duration_minutes`
+- `generation_config.target_script_chars`
+- 每集 `pacing_plan`
+- 每集 `source_basis`
+
+执行要求：
+1. 如果 `series_blueprint` 已确认 20 集，就生成 20 张分集卡；如果确认 2 集，就只生成 2 张。
+2. 如果用户在确认前提出修改，应先更新当前 `episode_cards` 或上游 `series_blueprint`，不能直接进入剧本生成。
+3. 每集卡片必须能被 `script_generate` 直接消费，且不得写剧本正文。
+</pre></section><section class='doc-section' id='file_视频-prompts_step1_video_script_extract'><h3>视频-prompts/step1_video_script_extract.md</h3><pre># step1_video_script_extract：视频转高还原剧本
+
+## 角色
+你是视频转短剧系统中的专业短剧 / 漫剧内容分析师和编剧还原 Agent。
+
+## 任务
+读取单集漫剧视频，综合画面、内嵌字幕、可辨认音频和关键屏幕文字，一次生成本集 `plot_summary` 与 `script_unit`。
+
+本步骤输出的是可编辑的高还原剧本初稿，不承诺逐帧 OCR 或 100% 逐字转录；不做亮点提要、爆款分析、剧本诊断、改编建议或剧情改写。
+
+## 引用 Rules
+- `video_to_script_extract/10_视频高还原剧本生成规则.md`
+
+## 输入
+```json
+{
+  &quot;project_id&quot;: &quot;项目 ID&quot;,
+  &quot;video_input&quot;: {
+    &quot;file_id&quot;: &quot;视频文件 ID&quot;,
+    &quot;file_name&quot;: &quot;原始文件名&quot;,
+    &quot;episode_id&quot;: 1,
+    &quot;duration_seconds&quot;: 0
+  },
+  &quot;extraction_context&quot;: {
+    &quot;known_characters&quot;: [],
+    &quot;previous_episode_end&quot;: &quot;&quot;,
+    &quot;user_confirmed_facts&quot;: [],
+    &quot;user_notes&quot;: []
+  },
+  &quot;generation_config&quot;: {
+    &quot;fidelity_level&quot;: &quot;high&quot;,
+    &quot;timecode_precision&quot;: &quot;second&quot;,
+    &quot;uncertain_content_policy&quot;: &quot;mark&quot;
+  }
+}
+```
+
+## 执行规则
+1. 只使用视频中可见、可读、可听，或由上下文明确指向的信息；不得新增关键剧情、人设、关系、能力、反转或设定。
+2. 优先保证核心剧情、因果关系、人物关系、关键动作、主要对白、反转和结尾钩子正确。
+3. 可确认的主要对白尽量保留原句，不润色成另一种表达，不使用“某人表示”“某人解释”等概述替代明确台词。
+4. 短暂字幕、弹幕或音频无法完整确认时，不得猜测缺失文字；使用 `［无法确认］`、`［听不清］`、`［看不清］` 或更保守的剧情表达。
+5. 台词明确但说话人不明时，`speaker` 使用 `未知人物`；不得把弹幕评价或模型推断当作人物姓名。
+6. 对白、OS、VO、旁白、系统提示和关键屏幕文字分开记录。
+7. 剧本按剧情场次组织，不按镜头、单句台词、短动作、字幕变化或系统弹窗拆场。
+8. 同一地点、同一时间段、同一组人物围绕同一剧情目标推进时，合并为同一场；单集场次数量服从实际剧情，不强制凑数。
+9. 动作行只写理解剧情所需的环境、人物状态、关系冲突、关键道具、表情和动作，不写“镜头转向”“特写”“推镜”等导演语言。
+10. 时间码尽量准确到秒，但不得为了制造精确感虚构无法确认的时间边界。
+11. `source_refs.file_id` 必须原样使用输入中的 `video_input.file_id`，不得输出“视频文件 ID”等占位符。
+12. `script_text` 与 `scenes[].blocks[]` 必须表达同一份剧本。
+
+## 输出
+只输出 JSON，不输出解释。顶层只允许 `plot_summary` 和 `script_unit` 两个字段。
+
+```json
+{
+  &quot;plot_summary&quot;: &quot;用 100 至 200 字概括本集核心剧情，包含主角、处境、主要冲突、关键反转和结尾钩子；不得加入视频中未明确呈现的信息。&quot;,
+  &quot;script_unit&quot;: {
+    &quot;episode_id&quot;: 1,
+    &quot;source_mode&quot;: &quot;video&quot;,
+    &quot;title&quot;: &quot;&quot;,
+    &quot;script_text&quot;: &quot;&quot;,
+    &quot;scenes&quot;: [
+      {
+        &quot;scene_id&quot;: &quot;scene_1_1&quot;,
+        &quot;heading&quot;: &quot;场 1-1 INT. 地点 - 日/夜&quot;,
+        &quot;location&quot;: &quot;&quot;,
+        &quot;interior_exterior&quot;: &quot;内 | 外&quot;,
+        &quot;time_of_day&quot;: &quot;日 | 夜 | 具体时间段&quot;,
+        &quot;time_range&quot;: {
+          &quot;start&quot;: &quot;00:00&quot;,
+          &quot;end&quot;: &quot;00:00&quot;
+        },
+        &quot;characters&quot;: [],
+        &quot;blocks&quot;: [
+          {
+            &quot;line_id&quot;: &quot;line_1_1_1&quot;,
+            &quot;block_type&quot;: &quot;action&quot;,
+            &quot;text&quot;: &quot;△简要建立场景，说明人物所处环境、状态和当前冲突。&quot;
+          },
+          {
+            &quot;line_id&quot;: &quot;line_1_1_2&quot;,
+            &quot;block_type&quot;: &quot;dialogue&quot;,
+            &quot;speaker&quot;: &quot;角色名&quot;,
+            &quot;delivery&quot;: &quot;冷笑&quot;,
+            &quot;text&quot;: &quot;视频中可确认的主要对白原句。&quot;
+          },
+          {
+            &quot;line_id&quot;: &quot;line_1_1_3&quot;,
+            &quot;block_type&quot;: &quot;scene_note&quot;,
+            &quot;text&quot;: &quot;屏幕文字：与剧情有关的可确认文字。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;source_refs&quot;: [
+      {
+        &quot;file_id&quot;: &quot;沿用输入 video_input.file_id&quot;,
+        &quot;time_range&quot;: {
+          &quot;start&quot;: &quot;00:00&quot;,
+          &quot;end&quot;: &quot;00:00&quot;
+        }
+      }
+    ]
+  }
+}
+```
+
+## 格式要求
+- 使用简体中文。
+- 输出是高还原编剧稿，不是导演分镜稿或改编稿。
+- 动作行必须以 `△` 开头。
+- 场次编号从 `1-1` 开始，按当前 `episode_id` 与场次顺序生成稳定 `scene_id` 和 `line_id`。
+- `block_type` 只使用现有剧本工作台支持的 `action`、`dialogue`、`transition`、`scene_note`。
+- OS、VO 和旁白使用 `dialogue`，通过 `speaker` 写为 `角色名OS`、`角色名VO` 或 `旁白VO`。
+- 系统提示和屏幕文字使用 `scene_note`。
+- 闪回开始和结束使用 `transition`，文本分别为 `【闪回】` 和 `【闪回结束】`。
+- `script_text` 必须按场景标题、人物列表、动作、人物名和台词清晰分行，可直接在剧本工作台阅读。
+
+## 禁止事项
+- 不输出亮点提要、剧本分析、爆款判断、改编建议或优化建议。
+- 不生成视频中不存在的关键剧情。
+- 不把无法确认的推断写成事实。
+- 不承诺或声称已经完成逐帧 OCR、完整字幕提取或逐字无遗漏。
+- 不按镜头拆场。
+- 不输出分析过程或自检过程。
+
+## 输出前自检
+1. 是否只输出 `plot_summary` 和 `script_unit`。
+2. 核心剧情、人物关系、主要对白、反转和结尾钩子是否与视频一致。
+3. 是否把不完整字幕自行补写成了确定台词。
+4. 是否把弹幕评价、人物外观或剧情推断误当作角色姓名。
+5. 是否存在导演语言、无依据的新事实或不合理拆场。
+6. `source_refs.file_id` 是否沿用了真实输入值。
+</pre></section><section class='doc-section' id='file_prompts_script_generate'><h3>prompts/script_generate.md</h3><pre># script_generate：公共剧本生成
+
+## 角色
+你是小说/非小说转短剧系统中的公共剧本生成 Agent。
+
+## 任务
+基于当前集 `episode_card`、统一 `script_context` 和连续性上下文，生成当前集短剧剧本正文。一次只生成一集。本 prompt 是小说链和非小说链共用的剧本生成入口；小说和非小说差异必须先由 runner 转换进统一 `script_context`。
+
+## 引用 Rules
+- `02_人物关系与声口.md`
+- `04_剧本写作技法.md`
+- `05_对白规则.md`
+- `06_转场_闪回_连续性_格式.md`
+- `07_小程序短剧适配.md`
+- `08_示例库.md`
+
+## 输入
+```json
+{
+  &quot;project_id&quot;: &quot;项目 ID&quot;,
+  &quot;source_mode&quot;: &quot;novel | non_novel&quot;,
+  &quot;episode_id&quot;: 1,
+  &quot;episode_card&quot;: {},
+  &quot;script_context&quot;: {
+    &quot;source_mode&quot;: &quot;novel | non_novel&quot;,
+    &quot;must_follow_facts&quot;: [],
+    &quot;allowed_additions&quot;: [],
+    &quot;forbidden_changes&quot;: [],
+    &quot;character_state&quot;: [],
+    &quot;relationship_state&quot;: [],
+    &quot;continuity_state&quot;: {},
+    &quot;source_material&quot;: {
+      &quot;text&quot;: &quot;小说模式下为当前集 source_refs 对应原文；非小说模式下可为空&quot;,
+      &quot;refs&quot;: [],
+      &quot;basis&quot;: []
+    },
+    &quot;style_constraints&quot;: {},
+    &quot;user_notes&quot;: []
+  },
+  &quot;context_pack&quot;: {
+    &quot;previous_episode_card&quot;: {},
+    &quot;next_episode_card&quot;: {},
+    &quot;recent_script_summaries&quot;: [],
+    &quot;continuity_state&quot;: {},
+    &quot;character_state&quot;: [],
+    &quot;open_foreshadowing&quot;: [],
+    &quot;open_hooks&quot;: []
+  },
+  &quot;generation_config&quot;: {
+    &quot;target_script_length&quot;: &quot;约 500 字剧本正文，可为空&quot;,
+    &quot;target_format&quot;: &quot;小程序短剧&quot;
+  },
+  &quot;user_notes&quot;: []
+}
+```
+
+## 执行规则
+1. 只生成当前 `episode_id` 的剧本。
+2. 必须遵守 `episode_card` 的剧情功能、冲突推进、节奏计划、视觉策略和结尾钩子。
+3. 必须消费 `script_context.must_follow_facts`、`forbidden_changes`、`source_material` 和 `continuity_state`。
+4. 必须根据 `source_mode` 选择来源约束：
+   - `novel`：必须消费 `script_context.source_material.text`、`source_material.refs` 和 `must_follow_facts`，保留原文关键事实，不改人物关系和因果顺序。
+   - `non_novel`：必须消费 `script_context.source_material.basis`、`allowed_additions` 和 `episode_card.source_basis`，不得把模型补全伪装成用户素材。
+5. 可以做短剧化表达，但新增内容必须服务 `episode_card.adaptation_suggestions` 或 `episode_card.source_basis.generated_additions`，并在输出中记录。
+6. 人物声口必须与 `script_context.character_state`、`script_context.relationship_state` 和 `context_pack.character_state` 一致；缺失时以 `episode_card` 和用户约束为准。
+7. 场景、转场、对白和动作必须可拍，不写小说式大段心理说明。
+8. 必须消费 `episode_card.pacing_plan`：低信息密度时压缩对白和场面，不用寒暄、空镜或重复解释撑长度。
+9. 必须消费 `episode_card.visual_strategy`：用动作、物件、声音、闪回或场面调度承接，不把表现策略改写成额外剧情。
+10. 长台词、独白和转场必须短而有功能；必要时拆成互动、动作或视听信息。
+11. 结尾必须停在 `episode_card.ending_hook` 指定的位置或同等功能位置。
+12. 输出必须包含本集对连续性的影响。
+
+## 输出
+只输出 JSON，不输出解释。
+
+```json
+{
+  &quot;script_unit&quot;: {
+    &quot;episode_id&quot;: 1,
+    &quot;source_mode&quot;: &quot;novel | non_novel&quot;,
+    &quot;title&quot;: &quot;&quot;,
+    &quot;script_text&quot;: &quot;&quot;,
+    &quot;scenes&quot;: [
+      {
+        &quot;scene_id&quot;: &quot;scene_1_1&quot;,
+        &quot;heading&quot;: &quot;场 1-1 INT. 地点 - 时间&quot;,
+        &quot;blocks&quot;: [
+          {
+            &quot;block_type&quot;: &quot;action&quot;,
+            &quot;text&quot;: &quot;△可拍的动作或场面信息。&quot;
+          },
+          {
+            &quot;block_type&quot;: &quot;dialogue&quot;,
+            &quot;speaker&quot;: &quot;角色名&quot;,
+            &quot;text&quot;: &quot;短对白。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;source_refs&quot;: [],
+    &quot;source_basis&quot;: {
+      &quot;from_source_text&quot;: [],
+      &quot;from_story_bible&quot;: [],
+      &quot;from_story_seed&quot;: [],
+      &quot;from_series_blueprint&quot;: [],
+      &quot;generated_additions&quot;: []
+    },
+    &quot;used_adaptation_suggestions&quot;: [],
+    &quot;used_generated_additions&quot;: [],
+    &quot;applied_visual_strategy&quot;: [],
+    &quot;pacing_execution_notes&quot;: [],
+    &quot;risk_notes&quot;: []
+  },
+  &quot;continuity_delta&quot;: {
+    &quot;new_facts&quot;: [],
+    &quot;character_state_changes&quot;: [],
+    &quot;relationship_changes&quot;: [],
+    &quot;foreshadowing_opened&quot;: [],
+    &quot;foreshadowing_resolved&quot;: [],
+    &quot;hooks_opened&quot;: [],
+    &quot;hooks_resolved&quot;: []
+  }
+}
+```
+
+## 格式要求
+- 使用中文短剧剧本格式。
+- 场景、人物动作、对白清晰分行。
+- 避免长段旁白和小说式解释。
+- 单集长度服从项目配置。
+
+## 禁止事项
+- 不生成其他集。
+- 不扩大到未提供的来源范围。
+- 不自行修改 episode card。
+- 不新增未标记的关键剧情。
+- 不把非小说链的原创补全写成用户素材或小说原文。
+- 不输出审稿说明。
+
+## 生成配置补充合同
+
+本步骤必须读取 `generation_config`，其中：
+- `episode_duration_minutes` 控制单集时长。
+- `target_script_chars` 控制单集剧本文字量。
+- `target_episode_count` 只用于校验当前集是否在确认的分集范围内，不允许本步骤改变总集数。
+
+执行要求：
+1. 一次只生成一个 `episode_id`，不得把多集混写进同一个 `script_unit`。
+2. 必须使用短剧剧本格式：场景标题、可拍动作、人物名、对白、必要转场；不得写成长篇小说段落。
+3. 如果模型输出更像小说正文，必须在 `self_check.format_risks` 标记，并重写为剧本格式后再返回。
+4. `script_text` 与 `scenes[].blocks[]` 必须同时可渲染；前端以 `scenes[].blocks[]` 优先。
+</pre></section><section class='doc-section' id='file_rules_shared_01_素材理解与故事圣经'><h3>rules/shared/01_素材理解与故事圣经.md</h3><pre># 01_素材理解与故事圣经
+
+## 名称
+01_素材理解与故事圣经
+
+## 用途描述
+仅用于小说链路 Step1 全文理解，提供原文事实整理、故事圣经、短剧化资产识别和改编风险识别的参考准则；后续步骤通过故事圣经间接消费其结果，不再直接引用本规则模块。
+
+## 准则
+### 全文理解准则
+### 要求规范
+
+1. 必须忠实基于已读原文，不得编造后续未出现剧情。
+2. 未完结或原文未覆盖的阶段，只能标记为素材未覆盖，不得补写后续剧情。
+3. 可以识别原文中的剧情功能、人物关系和明显风险点，但不要把高风险原文表达写成后续必须原样呈现的创作要求。
+4. 角色信息要服务短剧生产，重点写清身份、关系、目标、冲突、外貌、性格和可视化特征。
+5. 外貌描写必须具体，包含发型发色、眼睛、肤色、面部、身形，以及至少 2 套可拍摄服装。
+6. 人物梳理优先覆盖主角、主要对手、核心关系人物和高频配角。
+
+### 短剧化改编诊断
+
+
+### 参考范围
+
+素材已经进入改编流程时，可参考短剧化强化方向、改编风险和后续规划重点。
+
+参考素材：
+
+- 小说原文
+- 故事梗概
+- 灵感点子
+- 人物设定
+
+### 使用原则
+
+2. 优先诊断短剧观看价值，而不是文学价值。
+3. 优先识别核心情绪、强冲突、爽点、钩子和人物关系。
+4. 所有强化建议必须基于已提供材料，不得编造未出现设定。
+5. 诊断结果要能转化为 分集规划 的开头、冲突、爽点、尾钩和 剧本生成 的场面化写法。
+
+### 诊断维度
+
+#### 1. 核心梗是否需要提纯
+
+合格的短剧核心梗应能在一句话内讲清：
+
+- 主角是谁
+- 主角遇到什么压迫或诱惑
+- 最大反差是什么
+- 观众为什么想继续看
+
+如果核心梗不清楚，故事圣经应标记后续需要提纯：
+
+- 只有世界观，没有人物困境
+- 只有感情氛围，没有冲突事件
+- 只有设定新奇，没有追更机制
+- 需要大量解释才能理解卖点
+
+#### 2. 情绪驱动力要不要前置
+
+重点识别以下情绪：
+
+- 被轻视后的证明
+- 被背叛后的反击
+- 爱而不得
+- 被误解后的澄清
+- 身份落差
+- 阶层压迫
+- 家庭、爱情、事业中的强选择
+
+短剧不怕情绪直接，怕情绪模糊。
+
+如果情绪驱动埋得太晚，分集规划 应优先在前几集规划中前置可见的压迫、误会、诱惑、选择或反击动机。
+
+#### 3. 爽点和反转是否需要加密
+
+检查素材是否包含：
+
+- 打脸
+- 反击
+- 身份揭露
+- 证据出现
+- 危机逆转
+- 误会升级
+- 权力关系变化
+- 情感关系转向
+
+如果爽点稀疏，应标记为后续规划风险：分集规划 要在不新增关键事实的前提下，把已有局势变化改造成更清楚的爽点链。
+
+#### 4. 哪些内容适合场面化
+
+适合短剧的素材通常有明确场景、行动、对白和外部压力。
+
+需要改编处理的内容包括：
+
+- 大量心理描写
+- 大量设定说明
+- 大量抽象情绪
+- 场景昂贵或特效依赖强
+- 人物过多、支线过散
+
+故事圣经应标记哪些心理、说明和抽象情绪可以转化为可拍的动作、对话、物件、场景压力或人物选择。
+
+### 禁止越权
+
+2. 不生成剧本正文。
+3. 不改写原文事实。
+4. 不为了提高适配度新增关键设定。
+5. 不覆盖已经确定的素材边界。
+
+---
+
+### 网文转短剧改编
+
+
+### 参考范围
+
+小说原文、网文章节、小说大纲或长篇故事素材。
+
+### 使用原则
+
+1. 网文改短剧不是搬运原文，而是用短剧观看逻辑重组素材。
+2. 必须保留原文核心情绪、核心关系、关键因果和高价值爽点。
+3. 可以删减、合并、压缩低价值支线，但不得越过已经确定的素材边界。
+4. 心理描写应转化为动作、对白、选择、证据、误会或对抗。
+5. 不因短剧化而编造原文没有的关键事实。
+
+### 改编参考
+
+#### 1. 保留项
+
+优先保留：
+
+- 核心梗
+- 主角最强处境
+- 主要人物关系
+- 高点击事件
+- 情绪爆点
+- 身份或资源反转
+- 原文关键台词
+- 推动因果的桥段
+
+#### 2. 合并项
+
+可合并：
+
+- 功能重复的配角
+- 同质化反派
+- 重复误会
+- 重复打脸
+- 多条弱支线
+
+#### 3. 删除项
+
+可删除：
+
+- 纯环境描写
+- 无信息过渡
+- 反复解释设定
+- 不影响主线的副本
+- 低冲突日常
+
+#### 4. 前置项
+
+可前置：
+
+- 原文已有的高潮事件
+- 原文已有的身份线索
+- 原文已有的危机
+- 原文已有的关系破裂或情绪爆发
+
+不得前置不存在的关键设定。
+
+### 人物改编
+
+检查原作人物是否适合短剧观众：
+
+- 长期被动的主角需要增加阶段性行动。
+- 过度恋爱脑角色需要设计觉醒节点。
+- 反派需要明确利益和行动目标。
+- 配角要有明确剧情功能。
+
+人物重塑必须作为全局策略在前期确定，不应在剧本正文阶段临时改变人物底层设定。
+
+### 禁止越权
+
+1. 不把改编方案直接当成剧本正文。
+2. 不新增关键设定。
+3. 不破坏原文已建立的因果链。
+4. 不在分集规划中破坏既定素材边界。
+5. 不为了爽点删除关键情感铺垫或人物转变。
+</pre></section><section class='doc-section' id='file_rules_shared_02_人物关系与声口'><h3>rules/shared/02_人物关系与声口.md</h3><pre># 02_人物关系与声口
+
+## 名称
+02_人物关系与声口
+
+## 用途描述
+用于 Step1 的人物关系整理、Step3 的人物变化规划、Step4 的人物声口一致性控制。
+
+## 准则
+### 短剧人物引擎
+
+
+### 参考范围
+
+参考问题：
+
+- 主角目标不清
+- 人物被动
+- 反派脸谱化
+- 配角没有功能
+- 情感关系没有推进
+- 人物说话和行动不一致
+- 成长弧缺少节点
+
+### 使用原则
+
+1. 人物必须有欲望、阻力、行动和代价。
+2. 人物深度服务剧情推进，不写无用履历。
+3. 人物重塑要在前期设定中锁定，不在剧本正文阶段临时改底层设定。
+4. 人物行为必须符合当前集处境和前后集状态。
+5. 安静场景可以保留，但必须承载关系变化、态度变化、伏笔或情绪推进。
+
+### 人物检查项
+
+#### 1. 主角
+
+必须明确：
+
+- 想要什么
+- 害怕什么
+- 为什么不能退
+- 当前最缺什么
+- 什么时候第一次主动行动
+- 每个阶段如何变化
+
+主角不能长期只被压迫而不行动。
+
+#### 2. 主要对手
+
+必须明确：
+
+- 阻止主角的原因
+- 可见行动
+- 资源优势
+- 情绪弱点
+- 升级手段
+
+反派不能只靠骂人制造冲突。
+
+#### 3. 关键关系人物
+
+必须明确其功能：
+
+- 提供情感压力
+- 提供误会
+- 提供证据
+- 提供资源
+- 推动主角选择
+- 暴露真相
+
+没有功能的配角应减少戏份。
+
+### 禁止越权
+
+1. 不新增原文没有的核心人物关系。
+2. 不让人物为了钩子突然做违背动机的事。
+3. 不用人物小传替代剧情场景。
+4. 不把所有角色写成同一种爽文口吻。
+5. 不为了人物复杂度牺牲短剧清晰度。
+
+---
+
+### 人物声口提示
+
+声口规则不在此处压缩删除；完整对白规则保留在 05_对白规则.md。人物设定阶段只需要提前记录人物身份、关系位置、语言风格、攻击方式、隐瞒方式和情绪表达习惯。
+
+---
+
+### 地域/方言声口边界
+
+1. 只有原文、用户要求或人物设定明确给出地域、阶层、职业、年龄和成长背景时，才使用地域化声口。
+2. 方言或口音只能少量点到为止，优先体现在称谓、语气词、短句节奏和惯用表达，不整段改写成难读方言。
+3. 方言必须服务人物身份、亲密关系、冲突压迫或喜剧反差；如果不能服务剧情功能，就保持普通话表达。
+4. 同一人物的地域化表达要稳定，不在不同集数突然切换口音或语言风格。
+5. 严肃冲突、关键信息、证据揭示和情绪爆发场景，要优先保证观众读懂，不为方言牺牲信息清晰度。
+6. 不因地域声口制造刻板印象，不把地域标签当成人物性格本身。
+</pre></section><section class='doc-section' id='file_rules_shared_03_结构规划_开头_冲突_爽点_尾钩'><h3>rules/shared/03_结构规划_开头_冲突_爽点_尾钩.md</h3><pre># 03_结构规划_开头_冲突_爽点_尾钩
+
+## 名称
+03_结构规划_开头_冲突_爽点_尾钩
+
+## 用途描述
+用于 Step2 拆集断点判断、Step3 分集规划和尾钩设计；Step4 只在需要保持结尾功能和冲突节奏时参考。
+
+## 准则
+### 分集规划准则
+### 要求规范
+
+5. 在符合短剧快节奏的前提下，尽量保留原文中的有效场景。
+6. 只删掉真正没有叙事价值的废场景，例如纯环境描写、无信息量过渡。
+7. 推动剧情的对话和事件必须保留。
+8. 展现人物关系变化的安静场景可以保留，例如主动打电话、默默陪伴、态度变化。
+9. 角色做出重要决定或态度转变的时刻必须保留。
+10. 伏笔埋设或回收的片段必须保留。
+12. 反派密谋、阴谋推进、压力升级必须保留。
+13. EP1 第一个场景必须高冲击力，不允许慢热。
+14. EP1-3 必须让观众理解主角、核心矛盾、主要对手；如有力量体系，必须通过行动展示。
+15. 每集 1-4 个场景，场景长短可不均匀，整体保持短剧单集体感。
+16. 每集至少 1 个冲突或情感推进，但不是每个场景都必须有冲突。
+17. 结尾悬念必须是事件型，不能只是情绪余味。
+18. 结尾悬念在以下 6 类之间轮换：反转钩、危机钩、揭秘钩、情感爆发钩、悬疑钩、倒计时钩；同类尽量间隔至少 3 集。
+20. 如果原文已有羞辱、死亡重生、系统觉醒、身份反转、危机逼迫等高点击事件，优先把它们安排为本集开头钩子或关键场景；如果原文没有，只能选择等价的现有冲突点。
+21. 每集规划要明确本集爽点功能。爽点可以来自小人物逆袭、隐藏实力、步步反击、金手指兑现、危机边缘反转、对手误判或资源/身份/证据反转，但必须建立在原文事实和 故事圣经 设定上。
+22. `conflicts` 不只写抽象主题，要写清“谁要什么、谁阻止、如果失败会损失什么”。角色冲突应形成“冲突触发新动机、动机推动新行为、新行为带来成长或局势变化”的链条。
+24. `hook_type` 写一个具体类型名，不要写“其他”或“普通悬念”。同一 phase 内尽量避免连续重复同类尾钩。
+26. 
+27. 
+
+### 短剧开写前预检
+
+
+### 参考范围
+
+创作流程前的参考检查：
+
+- 核心梗是否成立
+- 主角目标是否清楚
+- 冲突是否可持续
+- 人物关系是否足够集中
+- 小程序短剧目标是否可执行
+- 是否缺少必要信息
+
+### 使用原则
+
+1. 先发现硬伤，再进入生成。
+2. 能用已有信息修复的，给出修复方向。
+3. 不能确定的信息，标记为待用户确认或待前期故事理解补充。
+4. 不要把预检写成泛泛建议，必须能影响后续写作。
+
+### 必查项
+
+#### 1. 主角目标
+
+检查主角是否有明确目标：
+
+- 想复仇
+- 想活下去
+- 想证明自己
+- 想守住关系
+- 想摆脱控制
+- 想获得资源或身份
+
+如果主角只是被动承受，需要标记。
+
+#### 2. 核心阻力
+
+检查是否存在稳定阻力：
+
+- 反派
+- 家族
+- 阶层
+- 误会
+- 规则
+- 资源差
+- 情感债
+
+阻力不能只出现一次，必须能持续制造剧情。
+
+#### 3. 追更机制
+
+检查是否有观众持续期待：
+
+- 身份何时曝光
+- 误会何时解除
+- 反派何时受惩罚
+- 主角何时翻身
+- 两人关系何时确认或破裂
+- 真相何时揭晓
+
+没有追更机制时，不应直接进入分集。
+
+#### 4. 素材完整度
+
+检查是否缺少：
+
+- 主角身份
+- 主要对手
+- 核心关系
+- 故事目标
+- 关键转折
+- 结局方向
+- 目标集数或单集时长
+
+### 禁止越权
+
+1. 不擅自替用户决定缺失的核心设定。
+3. 不跳过预检硬伤直接生成剧本。
+4. 不把风格偏好当成阻塞问题。
+
+---
+
+### 短剧大纲与分集规划
+
+
+### 参考范围
+
+- 故事理解结果
+- 小说改编方案
+- 原创短剧大纲
+- 每集原文块
+- 已完成的前序分集规划
+
+### 使用原则
+
+1. 每集都要有明确剧情功能。
+2. 每集至少推进剧情、关系、信息或情绪之一。
+3. 开头钩子、主要冲突、结尾悬念必须来自原文块、故事设定或已锁定规划。
+4. 不得为了结构完整而新增关键设定。
+5. 已有分集边界时，分集规划优先服从既定素材范围。
+
+### 分集规划要素
+
+#### 1. 本集功能
+
+每集应标明本集承担的功能：
+
+- 建立处境
+- 升级冲突
+- 埋设伏笔
+- 回收伏笔
+- 情感推进
+- 身份线索
+- 反击兑现
+- 危机加码
+- 真相揭露
+
+#### 2. 场景选择
+
+每集保留 1-4 个核心场景。
+
+优先保留：
+
+- 推动主线的事件
+- 推动关系变化的场景
+- 角色做出重要选择的场景
+- 伏笔埋设或回收
+- 反派行动
+- 原文关键台词触发的反应
+
+可删除：
+
+- 纯环境描写
+- 无信息寒暄
+- 重复心理独白
+- 与主线无关的日常过渡
+
+#### 3. 开头和结尾
+
+开头要快速进入压力、异常或冲突。
+
+结尾必须卡在：
+
+- 答案落地前
+- 危机爆发前
+- 反击兑现前
+- 身份揭露前
+- 证据出现后但未解释前
+- 情感选择即将发生前
+
+### 禁止越权
+
+1. 不随意合并、拆分、跳过或重排既定分集素材。
+2. 不把剧本正文提前写成完整剧本。
+3. 不新增原文没有的关键人物、身份、证据、死亡、系统或重生。
+4. 不把每集都写成同一种钩子。
+5. 不用情绪余味替代事件型尾钩。
+
+---
+
+### 短剧开头设计
+
+
+### 参考范围
+
+参考情况：
+
+- 开头慢
+- 前几集没有高冲击事件
+- 第一场戏只是背景介绍
+- 单集开头不承接上一集尾钩
+- 观众无法迅速理解主角处境
+- 开头缺少压力、悬念或行动
+
+### 使用原则
+
+1. 开头必须从压力、异常、冲突、证据、选择或强情绪进入。
+2. 开头可以倒序或高潮前置，但必须来自原文、故事设定或分集规划已有事件。
+3. 不得为了抓人新增原文没有的重生、系统、隐藏身份、死亡危机或关键证据。
+4. 当前集开头必须承接上一集尾钩，不重播、不跳过、不重置。
+5. 开头不是解释区，解释要放在行动和冲突之后。
+
+### 开头类型
+
+#### 1. 冲突式开头
+
+直接进入对峙、羞辱、逼问、争夺、拦截或威胁。
+
+适合：
+
+- 复仇
+- 逆袭
+- 豪门
+- 真假身份
+- 职场压迫
+- 家族冲突
+
+#### 2. 悬念式开头
+
+先给出异常、证据、人物反应或未解问题。
+
+适合：
+
+- 隐藏身份
+- 悬疑
+- 误会
+- 证据线
+- 关系秘密
+
+#### 3. 情绪式开头
+
+从主角被压迫、忍耐、背叛、崩溃或爆发的瞬间切入。
+
+适合：
+
+- 虐恋
+- 女性成长
+- 亲情压迫
+- 情感修复
+
+#### 4. 高潮前置开头
+
+把本集最强危机、反击前一秒或身份即将暴露的节点放在开头。
+
+只能用于已规划的本集事件。
+
+### 前 3 集参考重点
+
+前 3 集应让观众理解：
+
+- 主角是谁
+- 主角最痛的处境是什么
+- 谁在阻止主角
+- 主角为什么不能退
+- 观众等什么反转或回报
+
+如果前 3 集仍主要在解释背景，应标记为开局过慢。
+
+### 引用边界
+
+使用时应影响以下内容：
+
+- 分集规划中的开头钩子
+- 剧本正文的第一场戏
+- 上一集尾钩与本集开头的承接
+- 导语集、第 1 集和前 3 集的进入方式
+
+### 禁止越权
+
+1. 不新增关键设定。
+2. 不把上一集尾钩重演一遍。
+3. 不用纯环境描写开头。
+4. 不用长旁白交代背景开头。
+5. 不让开头钩子脱离本集主体事件。
+
+---
+
+### 短剧钩子与爽点引擎
+
+
+### 参考范围
+
+参考问题：
+
+- 观众没有继续看的理由
+- 每集结尾弱
+- 爽点不清
+- 反转太少
+- 付费点前缺少期待
+- 情绪回报没有落地
+- 冲突重复但没有升级
+
+### 使用原则
+
+1. 钩子必须绑定具体事件、证据、人物、危机、身份、选择或真相。
+2. 爽点必须通过局势变化落地，不靠口号。
+3. 付费点应卡在兑现前，不卡在兑现后。
+4. 同一类型钩子不要连续重复。
+5. 钩子和爽点都必须来自原文、故事设定或分集规划已有信息。
+
+### 钩子类型
+
+可使用：
+
+- 反转钩
+- 危机钩
+- 揭秘钩
+- 情感爆发钩
+- 悬疑钩
+- 倒计时钩
+- 身份钩
+- 证据钩
+- 反派视角钩
+- 爽点前卡
+
+弱钩子包括：
+
+- 沉默
+- 凝视
+- 走远
+- 情绪余味
+- 空镜
+- 准备做某事但没有风险
+
+### 爽点类型
+
+可使用：
+
+- 小人物反击
+- 对手误判
+- 隐藏实力兑现
+- 身份或资源反转
+- 证据亮出
+- 反派计划失败
+- 主角拿回主动权
+- 情感关系确认或反转
+
+爽点必须让局势发生可见变化。
+
+### 付费点设计
+
+付费点前应具备：
+
+- 明确期待
+- 明确风险
+- 明确未兑现答案
+- 明确下一集动作
+
+付费点不应只是“情绪很激烈”，而要让观众知道下一集会发生什么关键变化。
+
+### 引用边界
+
+使用时应影响以下内容：
+
+- 主线追更机制
+- 分集尾钩设计
+- 爽点兑现位置
+- 付费点前的期待设计
+- 钩子类型轮换
+
+### 禁止越权
+
+1. 不新增关键设定制造钩子。
+2. 不把情绪余味当成事件型尾钩。
+3. 不连续多集使用同一种钩子。
+4. 不为了爽点跳过人物转变过程。
+5. 不让爽点兑现后才切集尾。
+
+---
+
+### 短剧结构与冲突引擎
+
+
+### 参考范围
+
+参考问题：
+
+- 主线松散
+- 冲突重复
+- 反派行动弱
+- 每集只是过渡
+- 中段塌陷
+- 悬念没有递进
+- 角色行动缺少代价
+
+### 使用原则
+
+1. 冲突必须写清“谁要什么、谁阻止、失败损失什么”。
+2. 冲突应形成链条：触发新动机，动机推动新行为，新行为造成新局势。
+3. 结构服务当前素材，不强行套固定集数。
+4. 16 节拍只能作为软参考，不能覆盖已经确定的分集规划。
+5. 反派行动要升级，主角反应也要升级。
+
+### 冲突升级方式
+
+#### 1. 代价升级
+
+从小损失升级为身份、关系、资源、生命、名誉或自由风险。
+
+#### 2. 对手升级
+
+从小反派、误会、家族压力、职场压力，升级到真正掌权者或核心利益冲突。
+
+#### 3. 信息升级
+
+从局部误会升级为隐藏身份、旧案、秘密协议、亲缘真相或资源真相。
+
+#### 4. 情感升级
+
+从嘴上冲突升级为关系破裂、选择、背叛、牺牲或承认。
+
+#### 5. 行动升级
+
+从争吵升级为证据争夺、公开对抗、计划反制、倒计时任务或最终选择。
+
+### 悬念推进
+
+悬念必须逐步释放信息，不要长期只藏不露。
+
+每次释放应产生：
+
+- 新问题
+- 新风险
+- 新人物立场
+- 新行动目标
+
+### 引用边界
+
+使用时应影响以下内容：
+
+- 故事主线的冲突链
+- 每集的冲突功能
+- 对手行动的升级
+- 主角反击的递进
+- 悬念释放节奏
+
+### 禁止越权
+
+1. 不为了结构完整新增大反派或新世界观。
+2. 不重排已经锁定的分集素材。
+3. 不让冲突只停留在争吵，没有局势变化。
+4. 不把所有集都写成同一种打脸。
+5. 不用 16 节拍覆盖原文因果。
+
+---
+
+### 剧本生成 短剧节奏规则中的规划层规则
+
+### 剧本生成 短剧节奏规则
+
+### 参考范围
+
+当前集剧本参考维度：
+
+- 当前集应承担的节奏功能
+- 开头是否足够快
+- 中段是否有推进
+- 结尾是否有事件型悬念
+- 前后集是否承接
+- 钩子类型是否重复
+
+### 使用原则
+
+1. 总集数由 拆集边界和 分集规划决定，不固定为 60 集。
+2. 下面的 EP 区间是节奏参考，不是机械硬规则。
+3. 当前集必须优先遵守 分集规划。
+4. 如果实际总集数少于某个区间，按比例压缩节奏阶段。
+5. 不要为了套阶段规则而新增 分集规划 没有的剧情。
+6. 每集都要有明确推进，不能成为单纯过渡。
+7. 开头、爽点、反转和结尾钩子必须从当前集原文、故事圣经 故事设定和 分集规划中提炼，不得为了追求强刺激新增关键事实。
+
+### 全局尾钩与承接规则
+
+1. 每集结尾必须是事件型尾钩，不是情绪尾声。
+2. 尾钩必须指向具体物件、证据、人物、威胁、选择或下一步风险。
+3. 切在兑现前，不切在兑现后。
+4. 下一集开头优先承接上一集尾钩的后果链。
+5. 不要把上一集尾钩重新演一遍。
+6. 不要连续使用同一种钩子类型。
+7. 同类钩子尽量间隔至少 3 集。
+8. 结尾可以卡在主线期待、身份反转、情感冲突、悬念揭秘、危机升级或爽点兑现前，但必须有明确的下一集观看理由。
+
+禁止弱尾钩：
+
+- 平静反应
+- 余韵凝视
+- 走远
+- 沉默
+- 空镜式收尾
+- 单纯准备做某事但没有具体风险
+
+### 短视频留存节奏
+
+1. 每集前 3 秒必须抛出高能信息、强冲突、反转信号或能立刻理解的危机，避免从背景介绍进入。
+2. 单集 60-90 秒体感中，开头负责抓人，中段负责推进，结尾负责卡点；不要把所有高能都堆到最后。
+3. 每 30 秒左右应出现一次小反转、压力升级、关系变化、信息揭露或爽点动作，但不能为了凑节奏硬造新事件。
+4. 如果本集是轻铺垫集，也必须至少有一个可见的关系变化、信息变化、行动选择或风险加码。
+5. 如果本集是强爽点集，必须让观众看见“对手占优 → 主角抓住机会 → 局势反转 → 新风险出现”的节奏链。
+
+### 阶段节奏参考
+
+#### 1. 开局阶段
+
+目标：快速建立主角、核心冲突、主要对手和追更动机。
+
+要求：
+
+- 第一集第一秒必须有高冲击事件。
+- 前 3 集内观众必须理解“谁要什么、谁挡路、主角为什么不能退”。
+- 前几集要快速进入羞辱、反击、危机、身份差、证据、关系压迫等高点击事件。
+- 如果有世界观或能力体系，要通过行动展示，不要说明书式解释。
+- 开局阶段每集都要有明确的小爆点或悬念。
+
+#### 2. 冲突升级阶段
+
+目标：让对手行动频率提高，人物关系变紧，主角反击成本升高。
+
+要求：
+
+- 每 2-3 集形成一次小高潮或局势变化。
+- 冲突类型要升级换代，不要重复同一套误会或打脸方式。
+- 每集必须有实质推进，例如新证据、新关系变化、新压力、新代价。
+- 避免纯日常、纯回忆、纯心理独白拖节奏。
+
+#### 3. 中段反转阶段
+
+目标：揭露身份、动机、隐藏关系或关键真相，让故事进入更深层矛盾。
+
+要求：
+
+- 每 3 集左右引入一个新冲突维度。
+- 至少持续释放身份线索、关系变化、力量格局重组或秘密揭露。
+- 情绪基调可以交替，但不能连续多集同一种情绪。
+- 不能只重复前期打脸方式，必须让反派手段和主角应对都升级。
+
+#### 4. 终局危机阶段
+
+目标：集中回收伏笔，推动主要人物进入最终选择和最终对抗。
+
+要求：
+
+- 主要支线开始回收，不能留下明显无解悬念。
+- 每集事件密度高于前中期。
+- 主要人物都应被推到更危险或更明确的位置。
+- 结尾几集要让观众感到“大事将至”。
+
+#### 5. 结局阶段
+
+目标：完成阶段性圆满，释放情绪回报。
+
+要求：
+
+- 主角必须获得清晰的阶段性结果。
+- 主要冲突必须给出可理解的处理。
+- 情绪释放要具体，不要只靠总结性旁白。
+- 如果保留开放口，也必须先完成当前主线的基本回报。
+
+### 16 节拍软参考
+
+以下节拍用于参考全剧和当前集的功能，不得覆盖 分集规划，不得强行重排原文：
+
+1. 开场画面：展示主角现状和核心痛点。
+2. 主题陈述：用台词或事件点出核心价值冲突。
+3. 铺垫：快速交代人物关系、世界规则和隐藏矛盾。
+4. 催化剂：打破平衡的关键事件。
+5. 争执或犹豫：主角面对行动成本。
+6. 第二幕衔接点：主角下定决心进入反击或冒险。
+7. B 故事：情感线、友情线或副线进入。
+8. 游戏时间：主角初尝胜利、打脸小反派或获得资源。
+9. 中点：看似胜利或看似失败，引出更大危机。
+10. 反派逼近：压力升级，阴谋收紧。
+11. 一无所有：主角跌入阶段性低谷。
+12. 灵魂黑夜：主角产生崩溃、动摇或痛苦选择。
+13. 第三幕衔接点：顿悟、证据、贵人或计划出现。
+14. 最后一战：核心矛盾进入正面对抗。
+15. 高潮：真相、反转、惩罚或情绪回报落地。
+16. 终场画面：形成阶段性新平衡。
+
+短剧化应用：前 3 秒对应开场高能；中段每隔一段时间要有小反转或小爽点；集尾优先卡在第 8、10、13、14、15 类节拍的兑现前。
+
+### 钩子类型轮换指南
+
+可使用以下基础钩子：
+
+1. 反转钩：结尾出现意想不到的转折。
+2. 危机钩：主角陷入紧急困境。
+3. 揭秘钩：重要秘密或证据即将被看见。
+4. 情感爆发钩：强烈关系冲突即将失控。
+5. 悬疑钩：抛出具体待揭晓事项，并带出下一步动作或风险。
+6. 倒计时钩：设置紧迫时间线。
+
+也可以使用以下细分钩子，但必须基于原文和分集规划已有信息：
+
+1. 身份钩：角色真实身份、关系或权力位置即将暴露。
+2. 突发事件钩：角色突然遭遇困境、邀约、告白、袭击、任务或召唤。
+3. 冲突升级钩：误会、羞辱、争夺或对抗进入更高强度。
+4. 意外危机钩：角色陷入人身、名誉、资源或情感关系的紧急风险。
+5. 秘密揭示钩：只揭开一部分秘密，让答案尚未完全落地。
+6. 意外访客钩：新人物带来信息、威胁、证据或新关系压力。
+7. 重要物品钩：关键道具、证据、文件、信物、药物、照片、监控等出现。
+8. 未完成对话钩：关键问题刚问出口或关键回答被打断。
+9. 上帝视角钩：观众知道角色尚未察觉的信息，形成紧张感。
+10. 反派视角钩：反派计划、阴谋或下一步动作被展示。
+11. 角色独白钩：角色短 OS 暗示即将发生的行动或反转。
+12. 爽点前卡：主角即将反击、揭证据、亮身份或兑现惩罚前切断。
+
+不要把“留白”写成空泛沉默。留白必须绑定具体未揭开的证据、人物、威胁或选择。
+
+### 应用示例
+
+弱尾钩：
+
+△主角看着窗外，心里隐隐不安。
+
+强尾钩：
+
+△主角打开档案袋，里面掉出一张写着她名字的手术同意书。
+
+强尾钩具备具体物件、信息落点和下一集风险。
+
+---
+
+### 一卡高潮与节奏密度
+
+1. 全局规划要识别第一个可支撑付费/追更的全剧高潮候选点，通常应发生在观众已经理解主角困境、核心敌我关系和主要爽点承诺之后。
+2. “一卡”不是固定集数公式；如果项目目标约 20 集，可把第 10 集附近作为参考区间，但必须服从原文信息量、冲突成熟度和用户目标集数。
+3. 一卡候选必须来自原文事实、故事圣经或非小说链路中已确认的 story_seed / series_blueprint，不得为了付费点凭空制造关键事件。
+4. 分集或规划阶段发现某集信息量不足时，应标记节奏风险，并通过压缩场景、强化冲突功能、前置已有信息或提示用户确认解决；不能靠增加寒暄、空镜、重复解释来撑集数。
+5. 如果目标集数和素材体量明显不匹配，准则只能要求标记风险；是否改集数、合并拆分或重排剧情，应进入后续 agent/workflow 审批，不在单个写作步骤里擅自处理。
+6. 每集必须有明确功能：推进事件、改变关系、兑现爽点、制造危险、打开悬念或完成情绪转折。没有功能的集数应被标记为弱集风险。
+</pre></section><section class='doc-section' id='file_rules_shared_04_剧本写作技法'><h3>rules/shared/04_剧本写作技法.md</h3><pre># 04_剧本写作技法
+
+## 名称
+04_剧本写作技法
+
+## 用途描述
+用于 Step4 剧本生成，提供场景、动作、戏剧化表达、单集节奏和可拍性准则。
+
+## 准则
+
+
+### 执行边界
+
+1. 本规则模块 只负责把已经确定的 `episode_card`、上下文和素材约束写成可拍剧本正文。
+2. 开头、尾钩、爽点位置、阶段节奏和单集功能以 `03_结构规划_开头_冲突_爽点_尾钩.md` 为准；本规则模块 只负责把这些规划写成场景、动作和戏剧节拍，不重新设计结构。
+3. 对白功能、声口、长台词和潜台词以 `05_对白规则.md` 为准；本规则模块 只检查对白是否嵌入行动、冲突和场景压力。
+4. 转场、闪回、连续性和中文剧本格式以 `06_转场_闪回_连续性_格式.md` 为准；本规则模块 只负责让正文执行这些格式和连续性要求。
+5. 长示例统一参考 `08_示例库.md`；本规则模块 只保留必要的短对照示意，不重复维护完整示例。
+
+### 剧本初稿生成准则
+### 要求规范
+
+#### 优先级
+
+当多个要求冲突时，按以下顺序处理：
+
+| 优先级 | 规则 |
+|---|---|
+| P1 | 连续性与可拍性：场景之间、集与集之间必须承接清楚，不能让生产线或观众猜中间发生了什么。 |
+| P2 | 角色优先压缩：优先保留男主、女主、反派和关键关系人物；配角可简化，路人可删。 |
+| P4 | 短剧节奏：遵守钩子、冲突、爽点、悬念的节奏要求。 |
+| P5 | 篇幅控制：尽量控制在短剧单集体感内，但不能为了压字数牺牲 P1-P4。 |
+
+如果连续性与篇幅冲突，优先补齐连续性，再压缩弱中段。
+
+#### 基于分集规划改编
+
+1. 遵守分集规划，只戏剧化规划中的场景、冲突和钩子。
+3. 原文明确暗示的关键事件不能含糊跳过。可以合规降级表达，但不能让剧情功能消失。
+4. 不编造分集规划之外的新情节。
+5. 不编造原文没有的人物设定。
+6. 不破坏因果。
+
+#### 场景连续性硬规则
+
+剧本会直接进入 AI 漫剧/视频生产线。缺少因果、空间、状态交代会造成生产失败。以下规则是硬规则：
+
+1. 因果完整：角色受伤、昏迷、获救、拿到物品、知道信息，都必须有可见原因。
+2. 空间连续：角色从一个地点到另一个地点，必须有移动或过渡动作，例如冲进楼梯、推门、转身离开。
+3. 状态变化：能力、情绪、意识、立场变化，必须有触发过程。
+4. 决策有依据：角色做战术选择时，必须有环境、威胁或逻辑依据。
+5. 方案可信：路障、武器、逃跑路线等解决方案，必须交代来源和基本物理可行性。
+6. 判断有信息源：角色下判断时，必须有看见、听见、触碰、闻到等可感知依据。
+7. 场景衔接：上一场最后动作必须能接上下一场第一个动作。
+8. 人物去向：上一场在场的具名人物，进入下一场时必须交代去向，不能无声消失。
+9. 不重播上一集悬念：如果上一集结尾是危机、对峙或动作悬念，本集必须从下一个动作继续，不要重复描写同一瞬间。
+10. 不跳过悬念兑现：如果上一集切在未解决威胁或关键动作中，本集开头 1-3 个节拍必须继续或解决该局面。
+11. 时间跳跃要补桥：如果本集开头与上一集结尾时间不同，必须用伤痕、疲惫、换装、到达路径或环境时间标记补桥。
+12. 物理设定锁定：上一集建立的刑罚方式、束缚方式、武器、交通工具等，下一集必须保持，除非剧中明确展示变化过程。
+
+成稿前请在内部检查：每个新状态是否有原因、每次换地点是否有路径、每个决定是否有理由、每个判断是否有感知来源、每个场景首尾是否能接上、具名人物是否有去向、上一集悬念是否被即时承接。
+
+#### 核心生成要求
+
+1. 开头钩子：第一秒决定留存。不能慢热。可用强冲突台词、高冲击画面、名场面前置后倒叙。
+2. 冲突密度：通常每集 2-3 个有效冲突/反转/紧张点。铺垫集可 1-2 个，高潮集可 3-4 个。不要为了凑数量硬造冲突。
+3. 结尾悬念：遵守短剧节奏上下文中的全局尾钩与承接规则。
+4. 干净开场：直接从本集剧本开始。第一行必须是当前集标题或导语集标题。
+5. 不能无声：每集必须有台词、旁白、内心独白或画外音。动作戏也要用少量台词或 OS 承载心理。
+6. 补足隐含动作：如果缺失的动作/反应会影响拍摄理解，可以增加简短功能节拍，例如迟疑、目光变化、身体反应、撞击反馈、空间过渡、情绪落点。
+7. 信息密度：每场通常只承载一个重大戏剧变化，最多两个核心信息功能。
+8. 结果必须有载体：优先写可见载体和结果，不只写抽象结果。
+9. 把情绪可视化，例如“她觉得被抛弃”要转成低头、后退、攥紧手等行为。
+10. 适度补充可拍的环境与感官细节。
+11. 把对白压成短剧化的短句。
+12. 严格执行场景连续性规则，让每个节拍形成“触发 → 行动 → 结果 → 反应 → 新压力”的链条。
+
+#### 动作描写风格
+
+每一行 `△` 都是最小动作描述，只写“谁做了什么”。
+
+核心原则：一句一个动作，零装饰。
+
+可以写：
+
+△陈知冲进门，反手关上房门。
+△沈遥攥住账本，指节发白。
+△杯子摔在地上。
+
+不要写：
+
+△昏暗破败的长廊里，满身狼狈的陈知带着复杂又痛苦的神色冲进门，用尽全力关上门，声音震得所有人心口一颤。
+
+动作硬规则：
+
+- 每行 `△` 只写 1 个动作，1 个短句。
+- `△` 行尽量 25 字以内，最多不要超过 35 字。
+- `△` 行禁止堆砌颜色、材质、氛围、身体细节等装饰词。
+- 不写镜头术语，例如特写、中景、俯拍、推镜头。
+- 天气、光线、质感只有直接影响动作时才写。
+- 人物首次出现可写：`人物名（年龄，核心特征）`，特征控制在 12 字以内。
+- 人物再次出现只写名字，不重复外貌描述。
+- 动作戏中，连续 3 行 `△` 后必须插入台词、OS 或画外音，不要长段无声动作。
+
+#### 前三集世界观说明
+
+如果当前是正文第 1-3 集，必须自然加入至少 2 句 OS 或台词，帮助观众理解核心世界设定：
+
+- 这个世界发生了什么。
+- 能力、规则或阶层如何运转。
+- 主角的特殊能力、目标或困境是什么。
+
+不要说明书式堆设定，要融入人物当下处境。
+
+#### 台词风格
+
+- 台词要短、狠、有压力，避免解释腔。
+- 语气不明显时，台词可加 1-3 字动作/情绪括号，例如：`陈知：（冷声）让开。`
+- 括号只写说话方式，例如冷声、咬牙、低声、急切、讥笑。
+- 语境足够清楚时，可以不加括号。
+
+#### 改编禁止项
+
+- 不要写“错误”“应该为”“让我重新开始”等自我纠错内容。
+- 不要大量使用全知旁白。
+- 不要用纯画面解决所有台词需求。
+- 不要为了凑镜头数量填充文本。
+- 不要用不同角度重复同一个节拍。
+
+#### 单集长度控制
+
+1. 集数由 分集规划固定，不要新增集数。
+2. 单集体感通常控制在 60-75 秒，重场戏可接近 80-90 秒。
+3. 这是生成时的软约束。材料过多时，要先压缩弱节拍，而不是无限写长。
+4. 起草前先明确当前集属于轻铺垫、标准集还是强爽点集，再分配开头、中段、结尾空间。
+5. 每个新动作、台词、细节都必须有功能。
+6. 角色首次描述必须短。
+7. 台词避免长解释。
+8. 如果超长，按顺序压缩：重复反应、重复羞辱/氛围、相邻动作行、台词、弱中段。
+9. 开头钩子和结尾悬念最后再压缩。
+10. 如果某个动作需要观众脑补关键过程，宁可补 1-2 个短功能节拍。
+11. 悬念结尾要具体，必须指向某个物件、人物、证据、秘密或下一步风险。
+12. 停在答案完全落地之前，不要在爽点之后继续拖尾。
+
+#### 地点命名规则
+
+- 如果没有固定地点引用，地点第一次出现后就锁定名称，后续集必须复用同一名称。
+
+#### 人物与语气一致性
+
+- 如果提供了人物语气参考，必须保持说话方式和社会身份一致。
+- 具名人物首次进入本集某场景时，必须展示其进入、被看见、被提到或已在场的依据。不要让人物凭空出现。
+
+#### 平台合规执行
+
+2. 如果原文、分集规划和合规策略发生冲突，以合规策略为准，同时尽量保留原剧情功能。
+3. 平台合规与可上架优先级最高，其次是剧情功能、连续性、情绪钩子、冲突、爽点和结尾悬念。
+4. 不得原样呈现红线内容。
+5. 不得正向呈现后宫、重婚、一女多夫、一男多女或多配偶关系。
+6. 不得描写未成年人亲密关系或性化场景。
+7. 不得描写明确血腥暴力、酷刑细节、色情细节或硬擦边内容。
+8. 不得美化犯罪、教授违法方法，或让犯罪行为显得没有后果。
+9. 必须通过合规替代表达保留剧情功能，例如谣言、伪造文件、假协议、家族压力、误会、画外结果、法律后果、舆论压力、情绪冲突。
+10. 必须保持与前后集连续，不得为了单集合规改写而违背全局合规改编圣经。
+11. 不要写合规解释，不要在剧本文本里说明“为了合规所以改写”。
+
+---
+
+### 戏剧化写作增强技能
+### 参考范围
+
+生成当前集剧本时，以下规则用于指导：
+
+- 开头钩子
+- 场景推进
+- 人物行动目标
+- 台词短句化
+- 情绪递进
+- 集尾悬念
+- 爽点落地
+- 合规改编后的戏剧张力保留
+
+### 使用原则
+
+1. 先让观众感到“不对劲”，再解释发生了什么。
+2. 先给压力，再给原因。
+3. 先让人物行动，再让人物解释。
+4. 先制造选择，再制造后果。
+5. 每场戏都必须推动剧情、关系、信息或情绪中的至少一项。
+6. 不要用概括替代戏剧动作。
+7. 不要用长篇 OS 替代人物行动。
+8. 不要让冲突只停留在嘴上，必须有可见的局势变化。
+9. 所有强化都必须基于原文、故事圣经 故事设定和 分集规划；不得为了套类型新增关键人物、身份、系统、重生、死亡、证据或危机。
+
+### 技能规则
+
+#### 1. 开场写法
+
+开场必须快速给出压力点，避免铺垫式进入。
+
+可选开场类型：
+
+1. 冲突式开场：直接进入对峙、羞辱、逼问、争夺或阻拦。
+2. 悬念式开场：先给出可见异常、证据、人物反应或未解问题。
+3. 倒序开场：先放本集高压结果或高潮前一刻，再回到事件起点；只能用于 分集规划 已规划的本集事件。
+4. 情绪开场：从主角被压迫、被背叛、崩溃、忍耐或爆发的瞬间切入。
+5. 高潮前置开场：先把本集最强危机、反击前一秒或身份即将暴露的节点放在开头。
+
+常见开头功能：
+
+- 被羞辱开头：适合真假千金、豪门、复仇、逆袭等已有羞辱或舆论压迫的原文。
+- 死亡重生开头：仅当原文已有死亡重生设定时采用，不得凭空新增重生。
+- 系统觉醒开头：仅当原文已有系统、能力觉醒或类似金手指设定时采用。
+- 身份反转开头：仅当原文已有隐藏身份、神豪、战神、少爷、赘婿等设定时采用。
+
+这些开头类型是写法参考，不是剧情生成许可。
+
+优先使用：
+
+- 危机已经发生
+- 人物正在被逼问
+- 关键证据被亮出
+- 关系当场破裂
+- 反派正在行动
+- 主角被迫做选择
+- 上一集悬念的后果正在兑现
+
+避免使用：
+
+- 纯环境描写
+- 长背景介绍
+- 人物醒来后无目的闲逛
+- 角色独自回忆但没有外部压力
+- 用旁白概括说明上一集发生了什么
+
+#### 2. 每场戏必须有行动目标
+
+每场戏开始前，内部先明确：
+
+- 谁想要什么
+- 谁在阻止
+- 如果失败会损失什么
+- 这场戏结束后局势发生什么变化
+
+场景不能只是“人物聊天”。如果必须聊天，也要让聊天承担明确功能：
+
+- 逼问
+- 隐瞒
+- 试探
+- 撒谎
+- 威胁
+- 交换条件
+- 暴露关系
+- 触发下一步行动
+
+#### 3. 对白执行边界
+
+对白具体写法归 `05_对白规则.md`。本规则模块 只检查三件事：
+
+1. 对白必须嵌在场景行动和人物目标里，不能让剧情停下来解释。
+2. 对白前后要有对手反应、动作变化或场景压力，形成攻防节奏。
+3. 需要压缩对白时，优先删重复解释和寒暄；不能因此丢失 episode_card 要求保留的关键信息。
+
+
+#### 4. 用画面推进，少用总结型 OS
+
+OS 可以使用，但必须承担功能。
+
+可用 OS：
+
+- 角色表面不能说出口的判断
+- 角色看见关键信息后的内心反应
+- 观众必须知道但角色不能公开说的信息
+- 动作戏中的短心理补位
+
+避免 OS：
+
+- 复述画面已经表现的内容
+- 大段解释设定
+- 总结人物性格
+- 替代本该发生的动作
+
+#### 5. 配角和工具角色必须参与行动
+
+配角、路人、工作人员、保镖、护士、司机等角色不能只当背景。只要出场，就要承担至少一个功能：
+
+- 传递信息
+- 制造阻碍
+- 提供误会
+- 推动舆论
+- 暴露证据
+- 改变场面力量对比
+- 逼主角做选择
+
+#### 6. 情绪递进要一格一格升压
+
+不要让人物情绪突然从平静跳到崩溃。情绪递进应有台阶：
+
+1. 察觉异常
+2. 试探确认
+3. 被迫承认
+4. 情绪压住
+5. 外部压力加码
+6. 终于爆发或反击
+
+每一格都要有可见动作或台词触发。
+
+#### 7. 人物反差与成长
+
+人物张力来自反差、压力和选择。
+
+可用反差：
+
+- 性格反差：表面软弱、关键时刻强硬；表面冷漠、关键时刻保护。
+- 身份反差：被看低的人拥有隐藏资源、能力、血缘、证据或话语权。
+- 行为反差：前一刻退让，后一刻精准反击；前一刻被动，后一刻主动设局。
+
+塑造人物成长时，遵守以下链条：
+
+1. 冲突引发新动机。
+2. 动机推动新行为。
+3. 新行为带来局势变化。
+4. 局势变化反过来逼人物升级。
+
+不要用总结性旁白说“他成长了”，要通过行动、选择、台词和代价表现。
+
+#### 8. 规划内容的剧本化兑现
+
+开头钩子、爽点类型和集尾钩子由 `03_结构规划_开头_冲突_爽点_尾钩.md` 与当前 `episode_card` 决定。本规则模块 不重新设计这些结构，只负责执行成可拍正文：
+
+1. 开头要直接进入 `episode_card.opening_state` 指定的压力、异常、冲突或后果链。
+2. 爽点要通过证据出现、资源变化、站队变化、行动成功、反派误判或局势翻转落地，不靠角色口号说明。
+3. 集尾必须停在 `episode_card.ending_hook` 指定的位置或同等功能位置，不在爽点完全结束后拖尾。
+4. 如果 episode_card 的钩子或爽点不足，只能在 `risk_notes` 标记，不在剧本正文里临时新增关键事实。
+
+
+#### 9. 合规场景下的戏剧张力保留
+
+合规改编不是删除冲突，而是替换表达方式。
+
+高风险表达被降级后，必须保留：
+
+- 原剧情的压迫感
+- 人物羞辱或误会
+- 关系压力
+- 反派目的
+- 主角反击动机
+- 观众期待的回报
+
+可替代表达：
+
+- 谣言替代真实关系
+- 伪造协议替代高风险婚恋设定
+- 舆论压力替代硬性羞辱
+- 画外结果替代血腥细节
+- 法律后果替代犯罪美化
+- 情绪对峙替代擦边表达
+
+### 示例参考
+弱写法：
+
+△她很生气，觉得所有人都在欺负她。
+主角：你们太过分了。
+
+增强写法：
+
+△主角捡起地上的协议，指尖压住伪造签名。
+主角：（冷声）这笔字，谁替我写的？
+△反派脸上的笑僵住。
+
+该写法让“生气”变成证据、动作、质问和反派反应。
+</pre></section><section class='doc-section' id='file_rules_shared_05_对白规则'><h3>rules/shared/05_对白规则.md</h3><pre># 05_对白规则
+
+## 名称
+05_对白规则
+
+## 用途描述
+用于 Step4 剧本生成，提供对白功能、人物声口、冲突台词和潜台词准则。
+
+## 准则
+### 短剧对白引擎
+
+### 参考范围
+
+参考问题：
+
+- 对白太长
+- 对白解释过多
+- 人物说话同质化
+- 对白不能推动剧情
+- 爽点靠喊口号
+- 情绪只靠 OS
+- 人物行动和对白不一致
+
+### 使用原则
+
+1. 每句对白尽量只表达一个意图。
+2. 少解释，多逼迫。
+3. 少说结论，多制造对方反应。
+4. 重要信息尽量通过质问、证据、隐瞒、打断或选择表达。
+5. 台词要符合人物身份、关系位置和当下处境。
+6. 对白必须服务剧情、关系、信息、爽点或悬念。
+
+### 对白功能
+
+#### 1. 逼问
+
+用于迫使对方暴露信息或态度。
+
+示例功能：追问证据、追问关系、追问动机。
+
+#### 2. 威胁
+
+用于加压，让人物必须行动。
+
+威胁必须绑定具体代价，不要只说狠话。
+
+#### 3. 隐瞒
+
+用于制造悬念或误会。
+
+隐瞒不能破坏观众理解，至少要让观众知道有信息差。
+
+#### 4. 反击
+
+用于完成局势翻转。
+
+反击台词要配合证据、动作或资源变化，不能只靠气势。
+
+#### 5. 情感推进
+
+用于关系确认、破裂、试探、道歉或拒绝。
+
+情感台词要具体，避免空泛表白和大段抒情。
+
+### 人物声口
+
+设计人物声口时，至少区分：
+
+- 说话长短
+- 情绪外露程度
+- 攻击方式
+- 是否爱解释
+- 是否直接表达需求
+- 是否回避真实情绪
+
+不要让所有角色都用同一种短剧爽文口吻。
+
+### 引用边界
+
+使用时应直接影响剧本正文：
+
+- 人物对白更短、更准、更有信息量
+- 不同角色的声口更容易区分
+- 对白推动冲突、关系、信息或情绪
+- 减少解释性对白和无效寒暄
+
+### 禁止越权
+
+1. 不为了金句牺牲人物动机。
+2. 不用台词解释本该被画面展示的事件。
+3. 不在对白里新增原文没有的证据或秘密。
+4. 不让人物突然知道自己无从得知的信息。
+5. 不把全部 OS 改成对白；必要的内心信息可以保留短 OS。
+
+---
+
+### 长台词与独白控制
+
+1. 单角色连续表达过长时，优先拆成“对方打断、反问、行动反应、信息递进、沉默压力”组成的互动冲突。
+2. 独白只保留无法通过动作、表情、物件或对手反应表达的必要心理信息，且必须短。
+3. 解释型台词要转成场面信息：证据、物件、手机内容、第三方反应、动作选择或当场冲突。
+4. 台词不能为了解释设定而暂停剧情；每段对白都要推动关系、信息、冲突、爽点或悬念至少一项。
+5. 角色连续发言如果超过两三句，必须检查是否可以插入对手反应、动作变化或场景压力。
+6. 拆分长台词不能新增关键事实；只能改变表达方式和冲突节奏。
+</pre></section><section class='doc-section' id='file_rules_shared_06_转场_闪回_连续性_格式'><h3>rules/shared/06_转场_闪回_连续性_格式.md</h3><pre># 06_转场_闪回_连续性_格式
+
+## 名称
+06_转场_闪回_连续性_格式
+
+## 用途描述
+用于 Step4 剧本生成，提供转场、闪回、连续性和中文剧本格式准则。
+
+## 准则
+### 短剧时间与转场引擎
+
+
+### 参考范围
+
+参考情况：
+
+- 有闪回
+- 有倒序开头
+- 有跨时间段叙事
+- 场景地点频繁切换
+- 角色从 A 地突然到 B 地
+- 需要补充关键因果
+- 上一集尾钩与下一集开头需要承接
+
+### 使用原则
+
+1. 转场必须保证观众知道时间、地点和人物状态。
+2. 闪回必须服务当前冲突，不做纯回忆。
+3. 倒序只能使用本集或已知事件，不能新增真相。
+4. 时间跳跃必须交代触发点和后果。
+5. 连续性优先于节奏压缩。
+
+### 转场类型
+
+#### 1. 动作转场
+
+用人物行动连接场景，例如离开、赶往、打开门、接电话后切场。
+
+#### 2. 物件转场
+
+用证据、信物、照片、药、合同、手机信息等连接。
+
+#### 3. 声音转场
+
+用电话、广播、敲门、警报、音乐或对白尾音连接。
+
+#### 4. 情绪转场
+
+用人物情绪从上一场延续到下一场，但必须有具体动作承接。
+
+#### 5. 时间标识转场
+
+用于必要跳时，例如“翌日清晨”“三小时后”。不能用时间标识跳过关键因果。
+
+### 闪回使用规则
+
+闪回只能用于：
+
+- 揭示人物动机
+- 补充关键因果
+- 展示过去创伤
+- 解释当前误会
+- 释放部分真相
+
+避免：
+
+- 连续大段闪回
+- 闪回中再套闪回
+- 用闪回替代当前行动
+- 用闪回解释观众已理解的信息
+
+### 引用边界
+
+使用时应影响以下内容：
+
+- 场景之间的连接方式
+- 闪回是否必要
+- 闪回如何自然引出
+- 时间跳跃是否清楚
+- 跨场和跨集连续性
+
+### 禁止越权
+
+1. 不用转场跳过关键因果。
+2. 不让角色无解释瞬移。
+3. 不让闪回新增原文没有的核心事实。
+4. 不把倒序开头写成本集以外的未知大事件。
+5. 不为了节奏牺牲观众理解。
+
+---
+
+### 中文剧本格式规范
+### 参考范围
+
+本规范约束：
+
+- 集标题
+- 场景标题
+- 人物列表
+- 人物首次出场
+- 舞台指示 / 动作描写
+- 对白
+- OS / VO / 画外声
+- 闪回
+- 场景转换
+- 音效
+- 屏幕文字 / 插入画面
+
+### 制作铁律
+
+#### 1. 禁用镜头清单
+
+1. 空镜 / 建立镜头：纯风景、纯环境、无人物动作。
+2. 慢镜头：任何形式的慢动作回放。
+3. 发呆镜头：角色呆站、沉思、望向远方、白日梦。
+4. 背影镜头：拍摄人物后脑勺或背面作为主要表达。
+5. 让观众猜角色意图的模糊镜头。
+6. 淡入、淡出、叠化等软转场。
+7. 纯回忆、纯闪回集。
+8. 纯铺垫、纯独白、纯日常镜头。
+
+说明：禁止的是无功能废镜头。必要的动作桥、反应桥、空间确认、信息落点、结果反馈可以保留。
+
+#### 2. 场景连续性
+
+场景之间必须保证行动、空间、人物状态连续。不得让人物、物品、地点、伤势、关系状态突然变化。
+
+#### 3. 对白格式边界
+
+本规则模块 只规定对白在剧本中的呈现格式和连续性位置；对白功能、声口、长短、潜台词和独白控制归 `05_对白规则.md`。
+
+1. 对白必须标明说话角色。
+2. 同一场景中对白要和人物动作、位置、转场状态保持连续。
+3. 画外音、OS 和普通对白必须区分清楚。
+4. 不在本规则模块 中重复维护对白写法准则。
+
+
+### 格式规范
+
+#### 1. 语言要求
+
+全部使用简体中文。所有场景描写、对白、舞台指示、标注全部使用中文。
+
+例外：`VO` / `OS` 作为结构缩写允许保留。
+
+#### 2. 集标题
+
+每集以集标题独立成行。
+
+格式：
+
+第{EP}集
+
+规则：
+
+- 使用阿拉伯数字，不使用中文数字。
+- 第一个非空行必须是当前请求集数的标题。
+- 集标题与第一场之间保留一个空行。
+
+#### 3. 场景标题
+
+格式：
+
+场{EP}-{SCENE} 地点 时间 内/外
+
+示例：
+
+场3-1 医院走廊 夜 内
+场3-2 小区门口 黄昏 外
+
+规则：
+
+- `场` 后的前半段必须等于当前集号。
+- 当前是第 3 集时，只能写 `场3-1`、`场3-2`，不能写 `场1-1`。
+- 地点名称要稳定，首次出现后后续复用。
+- 时间优先使用：日、夜、清晨、上午、中午、下午、傍晚、深夜、黎明、黄昏。
+- 室内外用 `内`、`外` 或 `内/外` 标明。
+
+#### 4. 人物列表
+
+场景标题后紧跟人物列表。
+
+格式：
+
+人物：角色A、角色B、保镖*2
+
+规则：
+
+- 群众演员用 `*N` 表示。
+- 仅以声音出现的角色加 `VO`，例如 `助理（VO）`。
+- 人物列表中只写本场实际出现或发声的人物。
+
+#### 5. 人物首次出场
+
+角色在全剧首次出场时，在动作行内简要标注：
+
+△林夏（24岁，白衬衫）推开病房门。
+
+规则：
+
+- 标注控制在 16 字以内。
+- 年龄必须保持一致。
+- 后续再次出现直接使用角色名，不重复外貌描述。
+- 只有外貌发生剧情相关变化时，才重新补充描述。
+
+#### 6. 舞台指示 / 动作描写
+
+使用 `△` 标记动作行。
+
+规则：
+
+1. 使用现在时。
+2. 描写具体、可视化、适合拍摄。
+3. 每个 `△` 行优先只承载一个核心动作变化。
+4. 不写空泛抒情句。
+5. 不只写结果，要尽量写清结果如何发生。
+6. 不堆叠过多新设定、新能力、情绪翻转或他人反应。
+7. 每集最多 2 行纯氛围/环境描写。
+
+#### 7. 镜头标注
+
+`△` 行不写镜头类型，不写运镜指令。
+
+禁止：
+
+- 特写
+- 中景
+- 远景
+- 俯拍
+- 推镜头
+- 慢动作
+- 色调
+- 构图
+
+#### 8. 对白
+
+格式：
+
+角色名：（语气）台词。
+角色名：台词。
+
+规则：
+
+- 语气括号可选，只写说话方式，例如冷声、咬牙、低声、急切、讥笑。
+- 对白内容遵守 `05_对白规则.md`，本处只规定呈现格式。
+
+#### 9. 画外音与画外声
+
+格式：
+
+角色名OS：内心独白。
+角色名VO：画外音。
+
+规则：
+
+- OS 用于内心判断、隐藏动机、关键信息反应。
+- VO 用于画外声音、电话声、广播声等。
+- 不要用 OS 复述画面。
+
+#### 10. 闪回
+
+闪回必须穿插在当前剧情中，不能整集纯闪回。
+
+格式：
+
+闪回：三年前，医院走廊。
+
+规则：
+
+- 闪回必须有触发物或触发台词。
+- 闪回结束后必须回到当前场景。
+
+#### 11. 场景转换
+
+只允许硬切式转换。
+
+可写：
+
+△林夏推门冲出病房。
+
+场3-2 医院楼梯间 夜 内
+人物：林夏
+△林夏扶着墙停下。
+
+禁止写：
+
+- 淡入
+- 淡出
+- 叠化
+- 镜头切换到
+
+#### 12. 音效
+
+音效只在推动剧情或制造压力时使用。
+
+格式：
+
+音效：手机震动。
+
+#### 13. 屏幕文字 / 插入画面
+
+格式：
+
+屏幕文字：银行卡余额不足。
+插入画面：监控截图显示林夏进入医院。
+
+规则：
+
+- 必须是观众需要看见的信息。
+- 不要滥用。
+
+#### 14. 通用排版
+
+1. 场与场之间保留一个空行。
+2. 同一场内不要出现无意义空行。
+3. 不使用 Markdown 标题。
+4. 不使用代码围栏。
+
+### 示例引用边界
+
+完整剧本示例统一参考 `08_示例库.md`。本规则模块 只维护转场、闪回、连续性和格式准则，不重复保存完整示例片段。
+
+---
+
+### 干净转场与视听表达
+
+1. 转场必须短、清楚、有功能；不要为了表现“电影感”写长铺垫、长空镜或无信息镜头。
+2. 场景切换优先使用动作、物件、声音、手机信息、门铃、脚步、警报、证据露出等可拍触发点。
+3. 回忆和前情信息优先考虑闪回、物件触发、声音触发、画面反差或角色即时反应，不只依赖角色口头解释。
+4. 音效、光影、镜头提示只能在推动压力、悬念、记忆触发或信息揭示时使用；不能作为装饰性描写堆叠。
+5. 需要承接上一集尾钩时，转场要直接进入尾钩后果，不重播、不绕远、不用大段解释稀释紧张感。
+6. 视听表达必须服务剧情可拍性和观众理解，不牺牲因果清晰度。
+</pre></section><section class='doc-section' id='file_rules_shared_07_小程序短剧适配'><h3>rules/shared/07_小程序短剧适配.md</h3><pre># 07_小程序短剧适配
+
+## 名称
+07_小程序短剧适配
+
+## 用途描述
+用于 Step2 拆集节奏、Step3 分集节奏和 Step4 小程序短剧表达适配。
+
+## 准则
+
+
+### 平台适配边界
+
+1. 本规则模块 是平台适配层，只约束小程序短剧的观看体感、信息密度、留存压力和表达速度。
+2. 开头、冲突、爽点、尾钩的具体结构设计归 `03_结构规划_开头_冲突_爽点_尾钩.md`。
+3. 对白写法归 `05_对白规则.md`；转场、闪回、格式归 `06_转场_闪回_连续性_格式.md`。
+4. 本规则模块 不能以平台节奏为理由新增关键事实、改人物关系、跳过因果链或替代上游规划决策。
+
+### 小程序短剧默认目标配置
+
+
+### 参考范围
+
+默认启用场景：
+
+- 用户没有另行指定平台
+- 当前产品流程默认服务小说或灵感转小程序短剧
+- 故事圣经 需要确定故事理解的目标方向
+- 分集规划 需要确定分集节奏、爽点和尾钩密度
+- 剧本生成 需要确定剧本正文的进入速度、对白密度和场面化程度
+
+不适用场景：
+
+- 用户明确指定精品短剧、横屏剧、长剧、电影或海外短剧
+- 用户要求先做多个平台方向对比
+- 用户要求做投稿或市场报告
+
+### 使用原则
+
+1. 用户明确指定平台时，以用户指定为准。
+2. 未指定时，默认按小程序竖屏短剧处理。
+3. 目标配置只约束表达方式、节奏和规划重点，不新增剧情事实。
+4. 不用市场标签替代人物、冲突和因果判断。
+5. 不为了迎合热门题材新增原文没有的系统、重生、战神、神豪、隐藏身份或关键关系。
+
+### 默认目标
+
+#### 1. 观看体验
+
+小程序短剧优先满足：
+
+- 开头快进入人物困境
+- 冲突表达直观
+- 关系张力清楚
+- 每集都有推进
+- 爽点、虐点、反转或悬念高频出现
+- 结尾停在观众想继续看的变化点前后
+
+#### 2. 分集策略
+
+分集规划 规划时优先保证：
+
+- 每集有明确行动目标
+- 每集有可见阻力
+- 每集有局势变化
+- 前几集尽快建立主角困境、核心关系和追看问题
+- 尾钩不是空喊悬念，而是绑定下一集的关键变化
+- 不把大量世界观、背景或心理解释堆在开头
+
+#### 3. 剧本表达
+
+剧本生成 生成时优先保证：
+
+- 场景切入要快
+- 台词短、直接、有动作目的
+- 情绪尽量通过动作、对话和局势变化呈现
+- 反击、误会、真相、选择、危机要有明确画面承载
+- 可以保留必要的铺垫，但铺垫必须服务本集推进
+
+### 引用边界
+
+如果用户明确切换目标平台，应改用，改用用户指定的平台目标。
+
+### 禁止越权
+
+1. 不覆盖用户指定的目标平台和受众。
+2. 不根据平台目标强行改变原作核心人物关系。
+3. 不为了追求强刺激新增关键设定、关键证据或关键人物。
+4. 不让节奏规则破坏因果链、人物行动逻辑和场景连续性。
+
+---
+
+### 小程序短剧适配
+
+
+### 参考范围
+
+小程序短剧、竖屏付费短剧、强转化短剧或默认未指定平台。
+
+### 核心目标
+
+小程序短剧优先服务：
+
+- 快速进入
+- 强冲突
+- 强追看
+- 高爽点密度
+- 明确情绪回报
+- 明确单集尾钩
+- 付费点前卡
+
+### 使用原则
+
+1. 情绪必须直观，关系必须清楚。
+2. 每集要有推进，不能只铺垫。
+3. 开头要快，中段要有局势变化，结尾要有事件型钩子。
+4. 爽点和虐点要服务主线，不机械堆叠。
+5. 逻辑可以压缩，但因果不能断。
+6. 连续性和可拍性高于刺激强度。
+
+### 故事理解阶段适配
+
+在故事理解阶段，补充：
+
+- 核心追更机制
+- 主要爽点类型
+- 主角反击路径
+- 目标观众
+- 高点击关系
+- 可前置的原文已有爆点
+
+不得在故事理解阶段写成完整分集。
+
+### 分集规划阶段适配
+
+在分集规划阶段，检查每集：
+
+- 是否有开头钩子
+- 是否有主要冲突
+- 是否有爽点或情绪推进
+- 是否有事件型尾钩
+- 是否承接上一集尾钩
+- 是否避免重复同类钩子
+
+已有分集边界时，仍必须尊重既定素材范围。
+
+### 剧本生成阶段适配
+
+在剧本生成阶段，强化：
+
+- 前 3 秒高能信息
+- 行动先于解释
+- 对白短句化
+- 冲突外化
+- 情绪递进
+- 反击可见
+- 结尾卡在兑现前
+
+不得为了小程序节奏跳过人物得知信息、抵达地点、做出选择的必要过程。
+
+### 小程序风险检查
+
+需要标记：
+
+- 开头慢
+- 单集无冲突
+- 尾钩弱
+- 爽点兑现太晚
+- 反派手段重复
+- 主角长期被动
+- 对白太文学化
+- 情绪只有 OS 没有行动
+- 因果链被压缩断裂
+
+### 引用边界
+
+使用时应影响以下内容：
+
+- 故事理解中的追更机制
+- 分集规划中的开头、冲突、爽点和尾钩
+- 剧本正文的节奏、对白和情绪密度
+- 生成后的自查和返修方向
+
+### 禁止越权
+
+1. 不以小程序节奏为理由新增关键设定。
+2. 不以强爽点为理由破坏原文因果。
+3. 不以付费点为理由让尾钩脱离本集事件。
+4. 不把所有人物写成标签化工具人。
+5. 不让逻辑断裂来换取快节奏。
+
+---
+
+### 信息密度与集数匹配
+
+1. 小程序短剧可以快，但不能把一个无足够信息量的原文片段硬撑成完整一集。
+2. 如果单集只剩铺垫、寒暄、重复解释或弱情绪，应标记为节奏风险，优先考虑压缩表达或交给上游流程确认。
+3. 目标集数与素材体量冲突时，技能准则只能提示风险；是否改集数、合并拆分、重排剧情，需要由 prompt 字段和后续 agent/workflow 决策承接。
+4. 单集内部节奏要优先保留“压力进入—冲突推进—信息变化—钩子离场”的链路，不用无功能桥段填满长度。
+5. 追更节奏来自持续变化，而不是持续吵闹；每集必须让观众获得新的危险、证据、关系变化、爽点承诺或情绪债。
+</pre></section><section class='doc-section' id='file_rules_shared_08_示例库'><h3>rules/shared/08_示例库.md</h3><pre># 08_示例库
+
+## 名称
+08_示例库
+
+## 用途描述
+用于 Step4 剧本生成的格式、表达和节奏参考；仅作示例参考，不作为硬性剧情规则。
+
+## 准则
+### 中文示例库
+### 参考范围
+
+生成当前集剧本时，参考以下示例的：
+
+- 场景标题格式
+- 人物列表格式
+- `△` 动作行写法
+- OS / VO 用法
+- 短句对白节奏
+- 冲突推进方式
+- 集尾钩子写法
+
+### 使用原则
+
+1. 学习示例的写法，不要照抄示例人物、地点、台词或剧情。
+2. 示例只提供风格参考，实际剧本必须服从当前集分集规划。
+3. 示例中的台词密度、动作密度、悬念位置可以参考。
+4. 不要写“参考示例”“以下为剧本”等解释文字。
+
+### 示例 1：都市情感，对白密集 + OS 展现心理
+
+第5集
+
+场5-1 会议室 日 内
+人物：林夏、周曼、顾沉、员工*3
+△周曼把一份协议摔到会议桌中央。
+周曼：（冷笑）你不是说没人能证明吗？
+△林夏低头，看见协议末尾的签名。
+林夏OS：这不是我的字。
+△员工们交头接耳。
+员工甲：（小声）签名都在，她还怎么解释？
+△顾沉伸手拿起协议，目光停在印章边缘。
+顾沉：（低声）这章，盖反了。
+△周曼脸上的笑僵住。
+林夏抬眼，看向周曼。
+林夏：（平静）你急着逼我认，是怕我查到谁替我签的？
+△周曼后退半步，手指按住桌沿。
+
+写法要点：
+
+- 开场直接给证据压力。
+- OS 只补关键信息，不解释情绪。
+- 爽点来自证据反转，不靠人物喊赢。
+- 集尾可继续接“谁替签”形成追更。
+
+### 示例 2：动作危机，动作场景中用 OS 补心理
+
+第8集
+
+场8-1 废弃楼梯间 夜 内
+人物：陈知、黑衣人*2、沈遥
+△陈知扶着栏杆往上冲。
+△黑衣人从下方追上来，伸手抓住他的外套。
+陈知：（咬牙）松手！
+△陈知反手砸向墙边的消防箱。
+音效：玻璃碎裂。
+△沈遥站在楼梯平台，手里攥着手机。
+沈遥：（急切）我已经报警了！
+△黑衣人停了一瞬。
+陈知OS：他们怕警察。
+△陈知抓起消防箱里的扳手，挡在沈遥身前。
+△楼下传来另一阵脚步声。
+沈遥：（低声）不止两个。
+△陈知抬头，看见楼梯转角出现第三个人。
+
+写法要点：
+
+- 动作行短，连续动作中穿插台词和 OS。
+- OS 承担判断功能。
+- 结尾给出新威胁。
+
+### 示例 3：合规改编，保留羞辱和反击功能
+
+第12集
+
+场12-1 小区广场 傍晚 外
+人物：林夏、王阿姨、邻居*4
+△王阿姨把一张照片举到众人面前。
+王阿姨：（尖声）你还敢说自己清白？
+△照片上，林夏站在陌生车旁。
+邻居甲：（小声）这车不是她家的吧？
+△林夏看着照片，忽然笑了一下。
+林夏：（冷声）你截掉了后半张。
+△林夏点开手机，把完整监控投到物业屏幕上。
+屏幕文字：社区志愿接送记录。
+△王阿姨脸色一白。
+林夏：造谣前，至少把图修干净。
+
+写法要点：
+
+- 用“照片造谣”替代高风险关系表达。
+- 保留公开羞辱、围观压力和反击爽点。
+- 证据落地后反派当场失去主动权。
+
+### 示例 4：集尾钩子，停在答案落地前
+
+第16集
+
+场16-3 档案室 夜 内
+人物：顾沉、林夏
+△顾沉拉开最底层抽屉。
+△一个旧档案袋掉到地上。
+林夏：（低声）这是我母亲的名字。
+△顾沉拆开封口，里面露出一张泛黄的出生证明。
+△林夏伸手去拿。
+音效：门锁轻响。
+△两人同时回头。
+
+写法要点：
+
+- 已经亮出关键物件，但答案未完全落地。
+- 外部威胁打断揭秘。
+- 下一集可以直接承接门外来人。
+</pre></section><section class='doc-section' id='file_rules_shared_09_非小说素材与故事种子'><h3>rules/shared/09_非小说素材与故事种子.md</h3><pre># 09_非小说素材与故事种子
+
+## 名称
+09_非小说素材与故事种子
+
+## 用途描述
+用于非小说链路的素材整理和故事种子开发，提供灵感、梗概、零散文案、人物设定、桥段、台词、卖点和世界观材料转短剧故事的参考准则。
+
+## 准则
+### 非小说素材整理准则
+
+1. 用户明确提供的事实、限制、口吻、人物关系、卖点和禁区必须优先保留。
+2. 零散素材要先判断类型：灵感、梗概、人物设定、情节点、台词、世界观、卖点、风格参考、限制条件或待确认信息。
+3. 不把用户没有明确提供的内容写成用户事实；模型推断、原创补全和待确认信息必须分开处理。
+4. 素材不足时可以指出缺口，但不要为了完整性强行写死关键主线、人物底层动机或结局方向。
+5. 用户给出的高价值表达，包括原句、口吻、卖点、人物关系、反差设定和情绪方向，应优先作为后续故事开发依据。
+6. 没有功能的素材不要硬塞进主线；可暂存为候选，不影响核心故事判断。
+
+### 故事种子开发准则
+
+1. 故事种子必须围绕主角目标、核心阻力、情绪驱动力、关系张力、爽点承诺和追更钩子建立。
+2. 原创补全只能服务用户素材的放大和连贯，不得偏离用户提供的核心梗、目标受众和禁区。
+3. 非小说输入没有原文边界，因此不能假装存在小说章节或原文断点；体量、阶段和分集应交给后续规划步骤决定。
+4. 故事种子阶段可以提出体量倾向和风险，但不直接拆单集、不写完整分集卡、不进入剧本正文写作。
+5. 需要补人物时，优先补功能明确的人物：推动目标、制造阻力、暴露信息、承接情绪或兑现爽点。
+6. 需要补桥段时，优先补因果桥段、选择压力、误会/信息差、证据露出和关系变化，不补无功能日常。
+7. 非小说故事可以原创，但每个关键新增都要能解释它服务的剧情功能。
+
+### 短剧化判断准则
+
+1. 优先寻找一句话能讲清的核心梗，以及能让观众立刻理解的主角困境。
+2. 优先建立强目标、强阻力、强情绪债和清晰的阶段爽点。
+3. 如果素材偏散，先收束为一条主线；不要同时展开多个同等重要的方向。
+4. 如果素材偏概念，优先补人物、关系和具体事件；不要停留在抽象主题。
+5. 如果素材偏设定，优先找到可拍冲突和人物选择；不要把故事写成设定说明。
+6. 如果素材偏台词或金句，必须判断它适合哪个人物、哪个场景和哪个冲突功能。
+7. 所有短剧化强化都要服务后续系列体量设计、分集规划和剧本生成，而不是单独追求概念好看。
+
+### 禁止越权
+
+1. 不把素材整理写成完整故事。
+2. 不把故事种子写成分集规划。
+3. 不把原创补全伪装成用户提供素材。
+4. 不为了强爽点偏离用户给定的核心方向。
+5. 不用大量世界观说明替代人物目标和冲突。</pre></section><section class='doc-section' id='file_rules_video_to_script_extract_10_视频高还原剧本生成规则'><h3>rules/video_to_script_extract/10_视频高还原剧本生成规则.md</h3><pre># 10_视频高还原剧本生成规则
+
+## 名称
+10_视频高还原剧本生成规则
+
+## 用途描述
+仅供 `video_to_script_extract` Skill 使用，约束单集漫剧视频到高还原剧本初稿的生成。该规则模块服务剧情和主要对白还原，不承诺逐帧 OCR 或 100% 逐字转录，也不服务剧情改编或爆款分析。
+
+## 准则
+
+### 信息来源与目标
+
+1. 画面用于理解剧情、人物、地点、动作、表情、关键道具和事件结果。
+2. 内嵌字幕与清晰音频共同用于还原主要对白；音频可辅助断句和识别说话人。
+3. 屏幕文字、系统提示和弹幕仅在与剧情理解相关且内容可确认时记录。
+4. 第一目标是核心剧情、因果、人物关系、主要对白、反转和结尾钩子正确。
+5. 任何来源无法确认时使用不确定标记或保守表达，不得根据剧情常识补写。
+
+### 忠实还原
+
+1. 可确认的主要对白尽量保留原句，不润色成另一种表达。
+2. 不使用“某人表示”“某人解释”“某人质问”“两人争吵”等概述替代明确台词。
+3. 短暂字幕或音频片段无法完整确认时，不拼接成看似完整但未经确认的台词。
+4. 不要求为了形式完整而记录与剧情无关、重复出现或无法确认的屏幕文字。
+5. 不声称输出是逐帧 OCR 结果或完整逐字稿。
+
+### 不确定信息
+
+1. 台词明确但说话人不明时使用 `未知人物`。
+2. 无法确认人物身份时不得擅自使用角色名；不得把弹幕评价、人物外观或模型推断当作姓名。
+3. 分别使用 `［听不清］`、`［看不清］`、`［字幕遮挡］`、`［多人重叠，无法辨认］` 和 `［无法确认说话人］`。
+4. 视频没有明确呈现的信息写“视频中未明确呈现”。
+
+### 场次组织
+
+1. 按剧情单元拆场，不按镜头、单句台词、短动作、系统弹窗或表情变化拆场。
+2. 同一地点、同一时间段、同一组人物围绕同一剧情目标推进的内容合并为同一场。
+3. 场次数量服从实际剧情，不强制凑满 2 至 5 场。
+4. 短视频可以只有一场；不足 20 秒的连续片段优先并入前后相关场次。
+5. 每场记录地点、内外景、时间段、整体时间码、出现人物和至少一条场景建立动作。
+
+### 编剧提取稿格式
+
+1. 动作行以 `△` 开头，只记录理解剧情所需的环境、状态、关系冲突、关键道具、伤势、表情和动作。
+2. 不使用镜头转向、特写、近景、远景、推镜、航拍、慢动作、色调等导演分镜语言。
+3. 表情或动作提示只用于情绪变化、冲突升级、伪装、威胁或反击，控制在 2 至 8 个字。
+4. 对白、OS、VO、旁白、系统提示和屏幕文字必须分开记录。
+5. `script_text` 与结构化 `scenes[].blocks[]` 必须表达同一份完整剧本。
+
+### 闪回
+
+1. 过去时间线、回忆、前情或想象式回看必须用 `【闪回】` 与 `【闪回结束】` 完整包裹。
+2. 短闪回嵌入当前场，不单独编号。
+3. 闪回内部继续使用动作、对白、OS 和 VO。
+4. 闪回结束后必须明确回到当前时间线。
+
+### 追溯要求
+
+1. 时间码尽量准确到秒。
+2. 每个场次必须绑定原视频及对应时间范围。
+3. `file_id` 必须沿用输入中的真实值，不得输出占位符。
+4. 剧情概要只能概括已还原剧本中存在的事实。
+
+### 使用边界
+
+1. 本规则模块只用于视频到高还原剧本初稿。
+2. 不用于小说转剧本或非小说素材创作。
+3. 不输出亮点、爆款分析、传播价值、改编建议或优化建议。
+4. 不参与主 Agent 的 Skill 路由，仅由 `video_to_script_extract` Skill 的提取步骤按需加载。
+</pre></section><section class='category' id='cat_09_API_事件协议'><div class='cat-head'><h2>09. API / 事件协议</h2><span>初版具备</span></div><p>前后端正式开发最需要的协议层：接口、事件流、错误码、审批、文件。</p><h4>支撑文档</h4><ul><li><a class='doc-link' href='#file_api-event-contract'>api-event-contract.md<span>接口合同</span></a></li><li><a class='doc-link' href='#file_runtime-state-api-map'>runtime-state-api-map.md<span>状态到 API 落地清单</span></a></li><li><a class='doc-link' href='#file_workflow-state'>workflow-state.md<span>事件类型草案</span></a></li><li><a class='doc-link' href='#file_go-mock-runtime'>go-mock-runtime.md<span>mock runtime</span></a></li><li><a class='doc-link' href='#file_local-file-attachments'>local-file-attachments.md<span>文件上传</span></a></li></ul><h4>缺口</h4><ul><li>Go handler 对齐</li><li>TypeScript client 对齐</li><li>API 测试</li><li>SSE 实现细节</li></ul></section><section class='doc-section missing-doc' id='file_api-event-contract'><h3>api-event-contract.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_runtime-state-api-map'><h3>runtime-state-api-map.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_go-mock-runtime'><h3>go-mock-runtime.md</h3><p>文件不存在，需要补齐。</p></section><section class='category' id='cat_10_模型与运行时策略'><div class='cat-head'><h2>10. 模型与运行时策略</h2><span>初版具备</span></div><p>定义控制模型、生成模型、Eino runtime、上下文裁剪、失败兜底和 mock 切换。</p><h4>支撑文档</h4><ul><li><a class='doc-link' href='#file_model-runtime-eino-contract'>model-runtime-eino-contract.md<span>Eino / 模型运行时合同</span></a></li><li><a class='doc-link' href='#file_main-agent-model-runtime'>main-agent-model-runtime.md<span>模型运行时</span></a></li><li><a class='doc-link' href='#file_agent-startup-contract'>agent-startup-contract.md<span>Eino 路线</span></a></li><li><a class='doc-link' href='#file_backend-implementation-plan'>backend-implementation-plan.md<span>Go 后端实现计划</span></a></li><li><a class='doc-link' href='#file_go-mock-runtime'>go-mock-runtime.md<span>mock 阶段</span></a></li></ul><h4>缺口</h4><ul><li>Eino SDK 实现细化</li><li>runtime adapter 代码</li><li>model call 测试</li><li>上下文预算实测</li></ul></section><section class='doc-section missing-doc' id='file_model-runtime-eino-contract'><h3>model-runtime-eino-contract.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_main-agent-model-runtime'><h3>main-agent-model-runtime.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_backend-implementation-plan'><h3>backend-implementation-plan.md</h3><p>文件不存在，需要补齐。</p></section><section class='category' id='cat_11_权限_数据与安全'><div class='cat-head'><h2>11. 权限、数据与安全</h2><span>初版具备</span></div><p>涉及文件、模型上下文、日志、密钥、用户数据保留与删除的安全边界。</p><h4>支撑文档</h4><ul><li><a class='doc-link' href='#file_data-security-contract'>data-security-contract.md<span>数据安全合同</span></a></li><li><a class='doc-link' href='#file_local-file-attachments'>local-file-attachments.md<span>文件上传局部说明</span></a></li></ul><h4>缺口</h4><ul><li>后端权限校验实现</li><li>日志脱敏实现</li><li>删除实现</li><li>生产账号/权限模型</li></ul></section><section class='doc-section missing-doc' id='file_data-security-contract'><h3>data-security-contract.md</h3><p>文件不存在，需要补齐。</p></section><section class='category' id='cat_12_验收用例与测试清单'><div class='cat-head'><h2>12. 验收用例与测试清单</h2><span>初版具备</span></div><p>把产品规则变成可执行测试：正常流、异常流、确认、暂停、上传、局部修改。</p><h4>支撑文档</h4><ul><li><a class='doc-link' href='#file_acceptance-test-contract'>acceptance-test-contract.md<span>验收合同</span></a></li><li><a class='doc-link' href='#file_fixtures_script-editor-spike-fixture'>fixtures/script-editor-spike-fixture.json<span>剧本编辑器 fixture</span></a></li><li><a class='doc-link' href='#file_product-review-checklist'>product-review-checklist.md<span>人工审查清单</span></a></li><li><a class='doc-link' href='#file_frontend-interaction-audit'>frontend-interaction-audit.md<span>前端验收项</span></a></li><li><a class='doc-link' href='#file_go-mock-runtime'>go-mock-runtime.md<span>mock 验证</span></a></li></ul><h4>缺口</h4><ul><li>Playwright E2E 落地</li><li>API 测试落地</li><li>mock runtime 测试</li><li>UI 状态回归</li></ul></section><section class='doc-section missing-doc' id='file_acceptance-test-contract'><h3>acceptance-test-contract.md</h3><p>文件不存在，需要补齐。</p></section><section class='category' id='cat_历史参考_待归档'><div class='cat-head'><h2>历史参考 / 待归档</h2><span>参考</span></div><p>这些资料保留上下文，但不作为正式开发准入包主合同。</p><h4>支撑文档</h4><ul><li><a class='doc-link' href='#file_frontend-visual-mock'>frontend-visual-mock.html<span>旧单状态视觉稿</span></a></li><li><a class='doc-link' href='#file_frontend-mock-shell'>frontend-mock-shell.md<span>旧前端壳记录</span></a></li><li><a class='doc-link' href='#file_agent-shell-wireframe'>agent-shell-wireframe.html<span>早期线框稿</span></a></li><li><a class='doc-link' href='#file_agent-framework'>agent-framework.html<span>架构可视化参考</span></a></li></ul><h4>缺口</h4><p class='ok'>暂无关键缺口。</p></section><section class='doc-section missing-doc' id='file_frontend-visual-mock'><h3>frontend-visual-mock.html</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_frontend-mock-shell'><h3>frontend-mock-shell.md</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_agent-shell-wireframe'><h3>agent-shell-wireframe.html</h3><p>文件不存在，需要补齐。</p></section><section class='doc-section missing-doc' id='file_agent-framework'><h3>agent-framework.html</h3><p>文件不存在，需要补齐。</p></section></main>
+</div>
+</body>
+</html>

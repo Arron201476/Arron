@@ -1,0 +1,54 @@
+{
+  "execution_id": "3922dd12-8814-486e-ab46-2dd90ca9979b",
+  "started_at": "2026-08-06T16:05:58.179Z",
+  "finished_at": "2026-08-06T16:06:10.094Z",
+  "environment": "trusted_demo_runtime_via_ssh_tunnel",
+  "base_url": "http://127.0.0.1:8850",
+  "project_id": "prj_4434256760ebe7868c292e5c2ffe531d",
+  "checks": [
+    {
+      "name": "health",
+      "status": "pass",
+      "available_capability_count": 3
+    },
+    {
+      "name": "capability_registry",
+      "status": "pass",
+      "capability_ids": [
+        "non_novel_to_script",
+        "novel_to_script",
+        "video_reference_creation"
+      ]
+    },
+    {
+      "name": "create_project",
+      "status": "pass",
+      "project_id": "prj_4434256760ebe7868c292e5c2ffe531d"
+    },
+    {
+      "name": "project_snapshot",
+      "status": "pass"
+    },
+    {
+      "name": "general_agent_chat",
+      "status": "pass",
+      "intent": "chat",
+      "response_length": 7
+    },
+    {
+      "name": "rename_project",
+      "status": "pass",
+      "version": 2
+    },
+    {
+      "name": "project_delete_preview",
+      "status": "pass",
+      "source_files_will_be_deleted": false,
+      "derived_records_retained_for_audit": true
+    }
+  ],
+  "summary": {
+    "pass": 7,
+    "fail": 0
+  }
+}

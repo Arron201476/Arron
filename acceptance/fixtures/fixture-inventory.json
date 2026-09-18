@@ -1,0 +1,58 @@
+{
+  "inventory_version": "1.0.0",
+  "generated_at": "2026-08-06",
+  "repository_fixtures": [
+    {
+      "fixture_id": "fixture_novel_stable_source",
+      "path": "./novel/stable-source-sample.txt",
+      "size_bytes": 5702,
+      "sha256": "16a74ef2be2bed00efe323c117c61b288cc2e0ad14730c8127201a104e34e53f"
+    },
+    {
+      "fixture_id": "fixture_non_novel_brief",
+      "path": "./non-novel/brief-synopsis.txt",
+      "size_bytes": 770,
+      "sha256": "2de46488f53e9503f59b9c6e572eaa4adf27b4628afd343e2cd9cd76e05b7e3c"
+    },
+    {
+      "fixture_id": "fixture_non_novel_complete",
+      "path": "./non-novel/complete-outline.txt",
+      "size_bytes": 3560,
+      "sha256": "69fb5e04dd78a19b65c7d23be3187f6a9d4915ed05e7ee65d413345e91b5ac3b"
+    },
+    {
+      "fixture_id": "fixture_non_novel_fragmented",
+      "path": "./non-novel/fragmented-notes.txt",
+      "size_bytes": 337,
+      "sha256": "071a2f06c94ff2f9378a0f8999a4ebfbcbce004f5edf00ad6d0a409da2c4892d"
+    },
+    {
+      "fixture_id": "fixture_video_stage9_single_episode",
+      "path": "./video/stage9-video-episode-01.mp4",
+      "size_bytes": 7571350,
+      "sha256": "6ae36c2ebb9f852d136fb565263de8f51264d07f6c673c3da3c3505616ed4799"
+    }
+  ],
+  "external_fixtures": [
+    {
+      "fixture_id": "fixture_video_single_probe",
+      "display_name": "穷剑修1-修改.mov",
+      "size_bytes": 69222428,
+      "status": "available_external",
+      "location_policy": "absolute_path_not_committed"
+    },
+    {
+      "fixture_id": "fixture_video_series_real",
+      "display_name": "我帮始皇造火箭正片.zip",
+      "size_bytes": 1774909357,
+      "status": "available_archive_unverified",
+      "location_policy": "absolute_path_not_committed"
+    },
+    {
+      "fixture_id": "fixture_novel_regression",
+      "display_name": "产品真实小说固定样本",
+      "status": "required_before_stage9_real_provider",
+      "location_policy": "absolute_path_not_committed"
+    }
+  ]
+}

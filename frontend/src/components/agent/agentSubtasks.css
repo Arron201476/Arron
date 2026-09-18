@@ -1,0 +1,9 @@
+.agent-subtask-result { min-width: 0; margin-top: 6px; }
+.agent-subtask-result summary { cursor: pointer; font-size: 12px; }
+.agent-subtask-result pre { max-height: 480px; overflow: auto; margin: 8px 0; white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; font-size: 13px; line-height: 1.7; }
+.agent-subtask-result dl { display: grid; gap: 6px; margin: 8px 0; font-size: 11px; }
+.agent-subtask-result dd { margin: 2px 0 0; color: var(--muted); }
+.agent-subtask-error { display: flex; align-items: center; gap: 8px; }
+.agent-subtask-error p { min-width: 0; flex: 1; }
+.agent-subtask-reads { min-width: 0; margin-top: 6px; padding-left: 10px; border-left: 2px solid var(--line); }
+.agent-subtask-reads > summary { cursor: pointer; font-size: 12px; }

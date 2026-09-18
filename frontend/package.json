@@ -1,0 +1,39 @@
+{
+  "name": "content-production-agent-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --configLoader native --host 127.0.0.1 --port 8860",
+    "build": "tsc -b && vite build --configLoader native",
+    "test": "node node_modules/vitest/vitest.mjs run --configLoader native --pool=threads --maxWorkers=1",
+    "test:predeploy-browser": "node scripts/predeploy-browser-smoke.mjs",
+    "test:three-path-ui": "node scripts/three-path-ui-audit.mjs",
+    "test:four-mode-ui": "node scripts/four-mode-ui-smoke.mjs",
+    "test:upload-state": "node scripts/upload-state-smoke.mjs",
+    "test:revision-ui": "node scripts/revision-interaction-smoke.mjs",
+    "test:generic-document-ui": "node scripts/generic-document-editor-smoke.mjs",
+    "test:agent-continuity": "node scripts/general-agent-continuity-audit.mjs",
+    "test:agent-tool-approval-ui": "node scripts/agent-tool-approval-ui-smoke.mjs",
+    "test:real-backend": "node scripts/real-backend-smoke.mjs",
+    "serve": "vite preview --configLoader native --host 127.0.0.1 --port 8860"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^6.0.3",
+    "lucide-react": "^1.21.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "fake-indexeddb": "6.2.5",
+    "jsdom": "^29.1.1",
+    "playwright": "^1.61.1",
+    "vitest": "^4.1.10"
+  }
+}

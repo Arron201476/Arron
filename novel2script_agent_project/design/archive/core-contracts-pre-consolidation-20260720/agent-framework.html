@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Novel2Script Agent 整体框架</title>
+<style>
+:root{
+  --bg:#f6f7fb;
+  --card:#ffffff;
+  --line:#d9e2ef;
+  --text:#111827;
+  --muted:#667085;
+  --blue:#2563eb;
+  --green:#059669;
+  --amber:#d97706;
+  --red:#dc2626;
+  --purple:#7c3aed;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Segoe UI,Microsoft YaHei,Arial,sans-serif;line-height:1.65}
+header{padding:28px 36px;background:#0f172a;color:#fff;border-bottom:1px solid #111827}
+header h1{margin:0 0 8px;font-size:28px}
+header p{margin:0;color:#cbd5e1;font-size:15px}
+main{padding:28px 36px;max-width:1440px;margin:0 auto}
+section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:22px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+h2{margin:0 0 14px;font-size:22px}
+h3{margin:18px 0 8px;font-size:16px}
+p{margin:6px 0;color:#344054}
+ul{margin:8px 0 0 22px;padding:0}
+li{margin:5px 0}.muted{color:var(--muted)}
+.grid{display:grid;gap:14px}.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{border:1px solid var(--line);border-radius:14px;background:#fff;padding:14px}.card h3{margin-top:0}.tag{display:inline-flex;align-items:center;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600;background:#eef4ff;color:#1d4ed8;margin-right:6px}.tag.green{background:#ecfdf3;color:#047857}.tag.amber{background:#fffbeb;color:#b45309}.tag.purple{background:#f5f3ff;color:#6d28d9}.tag.red{background:#fef2f2;color:#b91c1c}
+.flow{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap;margin-top:12px}.node{min-width:150px;flex:1;border:1px solid var(--line);border-radius:12px;background:#f8fafc;padding:12px}.node strong{display:block;margin-bottom:4px}.arrow{display:flex;align-items:center;color:#64748b;font-weight:700}.lane{border-left:4px solid var(--blue);padding-left:14px;margin:12px 0}.lane.non{border-left-color:var(--green)}.lane.common{border-left-color:var(--purple)}
+.code{background:#0b1220;color:#d1e7ff;border-radius:12px;padding:14px;font-family:Consolas,Menlo,monospace;font-size:13px;white-space:pre-wrap;overflow:auto}
+.mock{display:grid;grid-template-columns:230px minmax(420px,1fr) 340px;gap:16px;min-height:560px}.panel{border:1px solid var(--line);border-radius:16px;background:#fff;overflow:hidden}.panel-title{padding:12px 14px;border-bottom:1px solid var(--line);font-weight:700;background:#f8fafc}.nav-list{padding:10px}.nav-item{display:flex;justify-content:space-between;align-items:center;padding:9px 10px;border-radius:10px;margin-bottom:6px;color:#344054}.nav-item.active{background:#eef4ff;color:#1d4ed8;font-weight:700}.nav-item.generated-last{border:1px dashed #93c5fd;background:#f8fbff}.nav-item small{font-size:11px;color:#667085}.editor-area{height:386px;margin:14px;border:1px dashed #98a2b3;border-radius:12px;padding:14px;color:#667085;background:#fcfcfd}.artifact-tabs{display:flex;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);background:#fff}.artifact-tab{padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:#475467;background:#fff}.artifact-tab.active{background:#ecfdf3;color:#047857;border-color:#a7f3d0}.agent-panel{display:flex;flex-direction:column;height:100%;min-height:560px;background:#fff}.agent-topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line);background:#fff}.agent-title{font-weight:800}.agent-subtitle{font-size:12px;color:#667085}.agent-chat{flex:1;padding:14px;background:#fbfcfe;overflow:auto}.agent-msg{border:1px solid #e5e7eb;background:#fff;border-radius:14px;padding:10px 12px;margin-bottom:10px;font-size:13px}.agent-msg.user{margin-left:28px;background:#eef4ff;border-color:#bfdbfe}.agent-msg.agent{margin-right:20px}.agent-approval{border:1px solid #f59e0b;background:#fffbeb;border-radius:14px;padding:10px 12px;margin:10px 0}.agent-approval strong{display:block;margin-bottom:4px}.approval-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.approval-actions span{border:1px solid #fbbf24;border-radius:999px;padding:3px 8px;background:#fff;font-size:12px}.agent-composer{border-top:1px solid var(--line);padding:12px;background:#fff}.quick-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}.quick-actions span{border:1px solid #d0d5dd;border-radius:999px;padding:5px 9px;font-size:12px;background:#fff}.composer-box{min-height:82px;border:1px solid #d0d5dd;border-radius:14px;padding:10px;color:#667085;background:#fff;display:flex;flex-direction:column;justify-content:space-between}.composer-bottom{display:flex;justify-content:space-between;align-items:center;color:#98a2b3;font-size:12px}.send-dot{width:28px;height:28px;border-radius:999px;background:#059669;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700}.status{font-size:12px;color:#475467}.ok{color:var(--green);font-weight:700}.warn{color:var(--amber);font-weight:700}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}th,td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}th{background:#f8fafc}
+@media(max-width:900px){.grid-2,.grid-3,.grid-4,.mock{grid-template-columns:1fr}.arrow{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Novel2Script Agent 整体框架</h1>
+  <p>当前设计目标：把“主 Agent 自主计划 + prompts 作为内部能力 + 可配置审批点 + artifacts 工作台”定义清楚，再进入 SDK 或工程实现。</p>
+</header>
+<main>
+  <section>
+    <h2>当前结论</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <span class="tag">已具备</span>
+        <h3>小说转剧本主流程</h3>
+        <p>已有 `小说-prompts`：全文理解、拆集、分集规划。这些不是前端按钮，而是 Main Agent 可调用的内部能力；剧本生成需要抽成通用能力。</p>
+      </div>
+      <div class="card">
+        <span class="tag green">已补齐</span>
+        <h3>非小说转剧本主流程</h3>
+        <p>已有 `非小说-prompts`：素材库、故事种子、系列蓝图、分集规划。之后与小说链在 `episode_cards` 汇合。</p>
+      </div>
+    </div>
+    <div class="lane common">
+      <strong>统一汇合点：</strong> 两条链路都产出 `episode_cards`，再经 `script_context_adapter` 转成统一 `script_context`，最后调用通用 `script_generate`。
+    </div>
+  </section>
+
+  <section>
+    <h2>整体 Agent 架构</h2>
+    <div class="flow">
+      <div class="node"><strong>用户输入</strong><span class="muted">大文本 / 文件 / 局部修改 / 聊天指令</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>Main Agent</strong><span class="muted">意图识别、路由、状态管理</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>Subagents</strong><span class="muted">按流程调用 prompts + skills</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>Artifacts</strong><span class="muted">中间产物、上下文、可恢复点</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>前端 Agent 面板</strong><span class="muted">展示计划、进度、结果、可打断</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Main Agent 职责边界</h2>
+    <div class="grid grid-3">
+      <div class="card"><h3>1. 意图识别</h3><p>判断用户是小说转剧本、非小说转剧本、修改已有产物、局部改写、项目管理，还是普通问答。</p></div>
+      <div class="card"><h3>2. 自主计划</h3><p>根据目标和当前 artifacts 制定执行计划，选择要调用的 capabilities、subagents 和审批点。</p></div>
+      <div class="card"><h3>3. Artifacts 管理</h3><p>记录每一步输入、输出、用户确认版本、可恢复 checkpoint，避免后续步骤读错旧产物。</p></div>
+      <div class="card"><h3>4. 上下文装配</h3><p>每次调用模型前装配最新 `context_pack`，而不是把所有上下文逻辑塞进 prompt。</p></div>
+      <div class="card"><h3>5. 打断与继续</h3><p>支持暂停、取消、用户插话、局部重跑；恢复时从 checkpoint 和 artifact 状态继续。</p></div>
+      <div class="card"><h3>6. 风险提示</h3><p>当输入不足、集数不匹配、原文钩子弱、用户修改影响下游时，先提示风险再执行。</p></div>
+    </div>
+  </section>
+
+  
+  <section>
+    <h2>审批策略：不是按钮流，是运行模式</h2>
+    <p>Agent 可以连续执行，也可以像当前 Codex 一样在关键动作前请求用户批准。审批点属于运行策略，不属于固定 UI 步骤。</p>
+    <div class="grid grid-3">
+      <div class="card">
+        <span class="tag green">自动执行</span>
+        <h3>Auto Run</h3>
+        <p>Agent 自己制定计划并连续调用 capabilities；只在失败、风险高或需要用户输入时暂停。</p>
+      </div>
+      <div class="card">
+        <span class="tag amber">关键点审批</span>
+        <h3>Checkpoint Approval</h3>
+        <p>在覆盖已有产物、重排结构、改集数、批量修改、多 artifact 级联影响时请求确认。</p>
+      </div>
+      <div class="card">
+        <span class="tag purple">每步审批</span>
+        <h3>Step Approval</h3>
+        <p>每生成一个关键 artifact 就暂停，用户确认后再继续，适合高控制场景。</p>
+      </div>
+    </div>
+    <h3>审批卡片应该长这样</h3>
+    <div class="code">[审批请求]
+Agent 准备执行：build_story_bible
+将生成 / 更新：story_bible, characters
+可能影响：episode_split, episode_cards, script_context
+风险：人物关系一旦确认，后续拆集和剧本会继承
+操作：[继续] [修改要求] [暂停] [自动执行后续]</div>
+  </section>
+  <section>
+    <h2>意图路由</h2>
+    <table>
+      <thead><tr><th>用户意图</th><th>判断依据</th><th>进入流程</th><th>首个产物</th></tr></thead>
+      <tbody>
+        <tr><td>小说转剧本</td><td>完整小说、章节、长篇连续原文</td><td>小说链</td><td>`story_bible`</td></tr>
+        <tr><td>非小说转剧本</td><td>灵感、梗概、设定、爽点、台词、短文案</td><td>非小说链</td><td>`material_bank`</td></tr>
+        <tr><td>修改已有产物</td><td>用户指定某一步、某集、某段、某个字段要改</td><td>change_router</td><td>`change_plan`</td></tr>
+        <tr><td>局部文本改写</td><td>用户选中文本并给出修改指令</td><td>selection_edit</td><td>`selection_patch`</td></tr>
+        <tr><td>项目管理 / 查询</td><td>查看进度、打开项目、继续执行、导出</td><td>project_control</td><td>`agent_response`</td></tr>
+        <tr><td>普通问答</td><td>不需要生成或修改剧本产物</td><td>chat</td><td>`agent_response`</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>两条主能力链：内部工具，不是按钮流</h2>
+    <div class="lane">
+      <h3>小说链：原文约束型改编</h3>
+      <div class="code">source_text
+→ capability: build_story_bible
+→ capability: split_episodes
+→ approval/artifact: confirmed episode_split
+→ capability: plan_episode_cards
+→ capability: build_script_context
+→ capability: generate_script</div>
+      <p class="muted">核心约束：原文顺序、原文事实、source_refs、用户确认后的拆集结果优先。</p>
+    </div>
+    <div class="lane non">
+      <h3>非小说链：故事生成型开发</h3>
+      <div class="code">user_material
+→ capability: build_material_bank
+→ capability: expand_story_seed
+→ capability: design_series_blueprint
+→ capability: plan_episode_cards
+→ capability: build_script_context
+→ capability: generate_script</div>
+      <p class="muted">核心约束：允许原创补全，但必须标记来源；不能把 inferred 内容伪装成用户素材。</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>通用剧本生成层</h2>
+    <p>小说和非小说输入不同，所以不应该让 `script_generate` 自己判断一堆分支。更稳定的方式是先走 `script_context_adapter`。</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>script_context_adapter</h3>
+        <ul>
+          <li>识别来源：`novel` / `non_novel`</li>
+          <li>把不同链路产物转成统一 `script_context`</li>
+          <li>明确事实约束、允许补全、禁止改动、上下文状态</li>
+          <li>把判断从写作 prompt 中剥离</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>script_generate</h3>
+        <ul>
+          <li>只负责把单集卡写成剧本</li>
+          <li>只读取统一 `episode_card + script_context`</li>
+          <li>不负责判断用户输入类型</li>
+          <li>不负责修改上游规划</li>
+        </ul>
+      </div>
+    </div>
+    <h3>统一输入草案</h3>
+    <div class="code">{
+  "project_id": "项目 ID",
+  "episode_id": 1,
+  "episode_card": {},
+  "script_context": {
+    "source_type": "novel | non_novel",
+    "must_follow_facts": [],
+    "allowed_additions": [],
+    "forbidden_changes": [],
+    "character_state": [],
+    "relationship_state": [],
+    "continuity_state": {},
+    "source_material": {
+      "text": "小说链可有，非小说链可为空",
+      "refs": [],
+      "basis": []
+    },
+    "style_constraints": {}
+  },
+  "user_notes": []
+}</div>
+  </section>
+
+  <section>
+    <h2>核心 Subagents</h2>
+    <div class="grid grid-4">
+      <div class="card"><h3>input_router_agent</h3><p>识别用户意图和输入类型。</p></div>
+      <div class="card"><h3>novel_story_bible_agent</h3><p>小说全文理解，生成故事圣经。</p></div>
+      <div class="card"><h3>novel_split_agent</h3><p>基于全文理解拆集。</p></div>
+      <div class="card"><h3>novel_episode_planner_agent</h3><p>基于确认后的拆集做分集卡。</p></div>
+      <div class="card"><h3>material_bank_agent</h3><p>非小说素材整理。</p></div>
+      <div class="card"><h3>story_seed_agent</h3><p>灵感扩写为故事种子。</p></div>
+      <div class="card"><h3>series_blueprint_agent</h3><p>设计体量和阶段结构。</p></div>
+      <div class="card"><h3>script_writer_agent</h3><p>消费统一上下文，生成单集剧本。</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Artifacts 与状态</h2>
+    <div class="grid grid-3">
+      <div class="card">
+        <span class="tag">小说链</span>
+        <ul>
+          <li>`source_text`</li>
+          <li>`story_bible`</li>
+          <li>`episode_split_draft`</li>
+          <li>`episode_split` confirmed version</li>
+          <li>`episode_cards`</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag green">非小说链</span>
+        <ul>
+          <li>`user_material`</li>
+          <li>`material_bank`</li>
+          <li>`story_seed`</li>
+          <li>`series_blueprint`</li>
+          <li>`episode_cards`</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag purple">通用层</span>
+        <ul>
+          <li>`script_context`</li>
+          <li>`script_unit`</li>
+          <li>`context_pack`</li>
+          <li>`continuity_delta`</li>
+          <li>`run_log`</li>
+        </ul>
+      </div>
+    </div>
+    <h3>最小状态文件</h3>
+    <div class="code">agent_state.json
+- current_project_id
+- current_intent
+- active_flow
+- current_step
+- artifact_versions
+- confirmed_artifacts
+- resumable_checkpoint
+- pause_or_cancel_state
+- latest_user_instruction</div>
+  </section>
+
+  <section>
+    <h2>前端构思：左目录，中编辑器，右 Agent</h2>
+    <p>这里按内容工作台形态调整：左侧不是输入框，而是项目 artifact 目录；中间是当前 artifact 编辑器；右侧是 Agent 聊天入口；执行流、审批卡和当前信息都嵌在聊天面板里。Agent 执行、生成或请求确认时只更新状态和提醒，不自动切换用户正在查看的中间内容。</p>
+    <div class="mock">
+      <div class="panel">
+        <div class="panel-title">左侧：项目目录 / Artifacts</div>
+        <div class="nav-list">
+          <div class="nav-item generated-last"><span>剧本 Scripts</span><small>置顶 / 最后生成</small></div>
+          <div class="nav-item active"><span>故事圣经 Story Bible</span><small>当前步骤</small></div>
+          <div class="nav-item"><span>角色 Characters</span><small>从故事圣经拎出</small></div>
+          <div class="nav-item"><span>分集卡 Episode Cards</span><small>规划</small></div>
+          <div class="nav-item"><span>原始输入 Source / Material</span><small>来源</small></div>
+          <div class="nav-item"><span>上下文 Context Pack</span><small>执行态</small></div>
+        </div>
+        <div style="padding:0 14px 14px;color:#667085;font-size:13px">剧本虽然是最后一步生成，但放在目录最上方，因为它是用户最终最关心的主产物。</div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">中间：当前 Artifact 编辑器</div>
+        <div class="artifact-tabs">
+          <div class="artifact-tab active">Story Bible</div>
+          <div class="artifact-tab">Characters</div>
+          <div class="artifact-tab">Episode Cards</div>
+          <div class="artifact-tab">Scripts</div>
+        </div>
+        <div class="editor-area">
+          当前显示：`story_bible`。
+          <br><br>
+          Main Agent 调用生成能力时，左侧目录和右侧 Agent 显示最新状态；中间继续保留用户当前查看位置。只有用户从目录主动选择，才切到对应 artifact。
+          <br><br>
+          用户也可以从左侧目录手动切换 artifact，进行确认、编辑、重跑或局部修改。
+        </div>
+        <div style="padding:0 14px 14px;color:#667085;font-size:13px">编辑器不是单一文本框，而是 artifact editor：不同产物可以有不同展示和编辑形态。</div>
+      </div>
+      <div class="panel">
+        <div class="agent-panel">
+          <div class="agent-topbar">
+            <div>
+              <div class="agent-title">Agent</div>
+              <div class="agent-subtitle">聊天入口 + 执行流 + 审批卡</div>
+            </div>
+            <div class="status ok">Ready</div>
+          </div>
+          <div class="agent-chat">
+            <div class="agent-msg user">把这篇小说改成 20 集短剧，先按短剧逻辑做改编。</div>
+            <div class="agent-msg agent">我会先判断输入类型和当前项目状态，然后生成执行计划。不会直接覆盖已有产物。</div>
+            <div class="agent-approval">
+              <strong>审批请求：生成故事圣经</strong>
+              将更新：`story_bible`、`characters`。后续拆集和分集卡会继承这些设定。
+              <div class="approval-actions"><span>继续</span><span>补充要求</span><span>暂停</span><span>后续自动执行</span></div>
+            </div>
+            <div class="agent-msg agent">执行中：调用 `build_story_bible`，中间编辑器会自动切到故事圣经。</div>
+          </div>
+          <div class="agent-composer">
+            <div class="quick-actions"><span>继续执行</span><span>总结当前产物</span><span>重跑这一步</span></div>
+            <div class="composer-box">
+              <div>告诉 Agent 你要生成、修改、继续、暂停，或选中左/中内容后局部改写。</div>
+              <div class="composer-bottom"><span>＋ 附件 / 引用选区</span><span class="send-dot">↑</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section>
+    <h2>Eino Runtime 与前端壳子</h2>
+    <p>当前主方案是 Go 后端内置 Eino Agent Runtime。正确顺序是先定义最小壳子契约，再让 Go mock runtime 按这个契约输出事件和 artifacts；闭环稳定后替换为真实 Eino runtime。</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>Runtime 侧先做什么</h3>
+        <ul>
+          <li>Main Agent：意图识别、计划、审批点、工具调用。</li>
+          <li>Capabilities：把 prompts 包成可调用工具。</li>
+          <li>Artifact Store：保存版本、确认态、上下游依赖。</li>
+          <li>Run Events：输出 thinking、tool_call、artifact_update、approval_request。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>前端壳子最少要有什么</h3>
+        <ul>
+          <li>左侧 artifact 目录。</li>
+          <li>中间 artifact editor。</li>
+          <li>右侧 Agent chat 为主，timeline 和审批卡嵌入聊天流。</li>
+          <li>审批卡片：继续、修改要求、暂停、自动执行。</li>
+        </ul>
+      </div>
+    </div>
+    <p class="muted">结论：不需要先做完整前端，但需要一个薄壳子，否则 runtime 生成的审批请求、工具调用过程和 artifact 更新没有稳定展示位置。</p>
+  </section>
+  <section>
+    <h2>下一步落地顺序</h2>
+    <ol>
+      <li>补 `agents/main_agent_router.md`，定义意图识别、计划输出、审批策略和 run events。</li>
+      <li>新增 `schemas/artifacts.md`，统一 artifact 字段、版本、确认态和依赖关系。</li>
+      <li>新增 `通用-prompts/script_context_adapter.md`，把小说/非小说产物转成统一剧本上下文。</li>
+      <li>把当前小说 `step4_script_generate.md` 抽成 `通用-prompts/script_generate.md`。</li>
+      <li>搭一个最小前端壳子：左目录、中编辑器、右 Agent timeline/审批卡。</li>
+      <li>基于 Go mock agent runtime 接入 Main Agent runner，先跑端到端最小闭环；稳定后替换为 Eino。</li>
+    </ol>
+  </section>
+  <section>
+    <h2>技术路线更新：Go + Eino</h2>
+    <p>当前项目已经定为 TypeScript 前端 + Go 后端 + CloudWeGo Eino Agent Runtime。此前提到的 Claude Agent SDK 只作为历史候选方案，不再作为主 Agent 框架。Claude 仍可作为模型 provider 使用，但 Main Agent 的状态机、审批、事件流和 artifact 管理都放在 Go 后端。</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>为什么改为 Eino</h3>
+        <ul>
+          <li>后端主体是 Go，Agent Runtime 放在 Go 内更自然。</li>
+          <li>Eino 支持 agent、workflow、streaming、interrupt/resume 和 callback，和当前设计契约更贴合。</li>
+          <li>避免额外维护 TypeScript Agent Worker 与 Go 后端之间的状态同步。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>下一步</h3>
+        <ul>
+          <li>先做 Go mock agent runtime。</li>
+          <li>mock 返回 run events、artifact updates 和 approval requests。</li>
+          <li>前端和 Go 状态机闭环稳定后，再把 mock runtime 替换为 Eino。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

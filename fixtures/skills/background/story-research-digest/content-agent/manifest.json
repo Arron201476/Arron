@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "id": "story_research_digest",
+  "version": "1.0.0",
+  "execution_mode": "background_task",
+  "accepted_asset_kinds": ["text", "document"],
+  "required_providers": ["content_model_provider", "document_parser"],
+  "commands": ["inspect", "invoke", "cancel", "retry_failed"],
+  "requires_user_confirmation": false,
+  "explicit_aliases": ["创作调研", "后台调研", "story_research_digest"],
+  "intent_examples": [
+    "后台整理这些资料并给我一份创作调研摘要",
+    "这个调研比较慢，完成后保存成文档"
+  ],
+  "ui": {
+    "icon_key": "search",
+    "sort_order": 60,
+    "entry_view_key": "source_materials"
+  }
+}

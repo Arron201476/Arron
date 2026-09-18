@@ -1,0 +1,118 @@
+{
+  "contract_version": "1.0.0",
+  "status": "test_plan",
+  "target": "internal_interactive_demo",
+  "source_matrix": "./stage-2-matrix.json",
+  "result_template": "./stage-9-demo-result.template.json",
+  "environments": [
+    {
+      "id": "local_compile_only",
+      "purpose": "合同、前端和 Go 编译门禁",
+      "can_execute_go_binaries": false,
+      "blocker": "企业 WDAC 拒绝新生成且未签名的 Go 可执行文件"
+    },
+    {
+      "id": "trusted_demo_runtime",
+      "purpose": "确定性 Runtime、API、浏览器 E2E 和重启恢复",
+      "can_execute_go_binaries": true,
+      "requirements": [
+        "可运行当前源码构建的 Server",
+        "可使用独立临时 SQLite 和 Blob 目录",
+        "可运行 Node.js 浏览器自动化",
+        "测试完成后删除临时凭据和媒体副本"
+      ]
+    },
+    {
+      "id": "real_provider_demo",
+      "purpose": "三条真实生成链和内容质量抽查",
+      "can_execute_go_binaries": true,
+      "requirements": [
+        "服务端注入模型和 MediaKit 凭据",
+        "凭据不写入源码、数据库、浏览器或测试报告",
+        "记录 Provider、Model Variant、Fixture 哈希和调用时间"
+      ]
+    }
+  ],
+  "suites": [
+    {
+      "id": "completed_design_contracts",
+      "blocking": false,
+      "selector": { "required_by": "stage2_design" },
+      "expected_case_count": 6
+    },
+    {
+      "id": "demo_automated_blocking",
+      "blocking": true,
+      "selector": { "required_by": "implementation", "priority": "P0" },
+      "expected_case_count": 65
+    },
+    {
+      "id": "demo_nonblocking",
+      "blocking": false,
+      "selector": { "required_by": "implementation", "priority": "P1" },
+      "expected_case_count": 1
+    },
+    {
+      "id": "demo_real_sample_and_manual",
+      "blocking": true,
+      "case_ids": [
+        "SHELL-004",
+        "UI-006",
+        "NOVEL-001",
+        "NOVEL-002",
+        "NOVEL-003",
+        "NOVEL-004",
+        "NON-001",
+        "NON-002",
+        "VIDEO-001",
+        "VIDEO-002",
+        "VIDEO-007",
+        "VIDEO-008",
+        "VIDEO-009",
+        "SEC-003",
+        "SEC-004",
+        "NFR-002",
+        "NFR-003"
+      ],
+      "expected_case_count": 17
+    },
+    {
+      "id": "deferred_formal_release",
+      "blocking": false,
+      "case_ids": [
+        "API-005",
+        "SSE-004",
+        "MIG-001",
+        "MIG-002",
+        "MIG-003",
+        "MIG-004",
+        "MIG-005",
+        "MIG-006",
+        "MIG-007",
+        "NFR-001"
+      ],
+      "expected_case_count": 10,
+      "reason": "旧系统正式迁移、慢客户端保护、40 集压力和发布兼容不属于内部功能 Demo"
+    }
+  ],
+  "stage9_entry_gate": {
+    "required": [
+      "测试套件机器校验通过",
+      "Go 全量编译和 Runtime 测试编译通过",
+      "前端单测与生产构建通过",
+      "Capability 合同校验通过",
+      "受信 Demo Runtime 环境可用",
+      "真实小说、非小说和视频样本位置与授权明确"
+    ]
+  },
+  "stage9_exit_rule": {
+    "allowed_results": ["pass", "fail", "blocked", "not_run"],
+    "pass_condition": "所有 blocking 套件 P0 用例为 pass，P1 缺陷有负责人和期限，三条真实链均形成最终剧本 Candidate。",
+    "forbidden_shortcuts": [
+      "blocked 或 not_run 计为 pass",
+      "用编译通过替代 Runtime 执行",
+      "用 Mock Provider 替代真实内容抽查",
+      "用单集视频替代多集排序、聚合和改编确认"
+    ]
+  }
+}

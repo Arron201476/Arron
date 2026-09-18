@@ -1,0 +1,62 @@
+{
+  "schema_version": "agent_sdk_compatibility.v1",
+  "endpoint": "https://api.example.com/v1",
+  "model": "gpt-5p6-terra",
+  "versions": {
+    "openai_agents": "0.21.1",
+    "openai": "3.3.1"
+  },
+  "live_requested": false,
+  "checks": [
+    {
+      "capability": "responses.create",
+      "layer": "python_sdk",
+      "status": "supported"
+    },
+    {
+      "capability": "responses.stream",
+      "layer": "python_sdk",
+      "status": "supported"
+    },
+    {
+      "capability": "responses.compact",
+      "layer": "python_sdk",
+      "status": "supported"
+    },
+    {
+      "capability": "skills.list",
+      "layer": "python_sdk",
+      "status": "supported"
+    },
+    {
+      "capability": "session.responses_compaction",
+      "layer": "agents_sdk",
+      "status": "supported"
+    },
+    {
+      "capability": "mcp.streamable_http",
+      "layer": "agents_sdk",
+      "status": "supported"
+    },
+    {
+      "capability": "mcp.stdio",
+      "layer": "agents_sdk",
+      "status": "supported"
+    },
+    {
+      "capability": "skills.metadata_mapping",
+      "layer": "application_adapter",
+      "status": "supported"
+    },
+    {
+      "capability": "mcp.stdio_tool_call",
+      "layer": "local_sdk",
+      "status": "supported",
+      "latency_ms": 1978,
+      "evidence": [
+        "tools=2",
+        "read_call_completed=true"
+      ]
+    }
+  ]
+}

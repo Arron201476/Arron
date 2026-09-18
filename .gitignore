@@ -1,0 +1,49 @@
+# Local toolchains and dependency stores
+/.tools/
+/.pnpm-store/
+/frontend/node_modules/
+**/.venv/
+**/.deps/
+**/node_modules/
+
+# Build and test caches
+/.cache/
+/.tmp/
+**/.gocache/
+**/.gotmp/
+/backend/.cache/
+/backend/.tmp/
+/frontend/dist/
+/frontend/coverage/
+**/.pytest_cache/
+**/.pytest-tmp-*/
+**/__pycache__/
+**/*.egg-info/
+**/.tmp/
+*.tsbuildinfo
+
+# Local runtime data and generated outputs
+/data/
+/artifacts/
+/exports/
+/logs/
+/.backups/
+/backend/*.test.exe
+/backend/*.test
+/backend/coverage*.out
+/backend/coverage*.html
+/backend/content-agent-server.exe
+/backend/*.exe
+*.db
+*.db-shm
+*.db-wal
+
+# Local credentials
+/backend/.env
+/backend/.env.local
+
+# Logs and editor residue
+*.log
+*.orig
+*.rej
+*~

@@ -1,0 +1,753 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://content-agent.internal/schemas/v1/novel-to-script.schema.json",
+  "title": "Novel To Script Capability Schemas",
+  "$defs": {
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "project_id",
+        "source_type",
+        "assets",
+        "user_request_message_id"
+      ],
+      "properties": {
+        "project_id": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "source_type": {
+          "const": "novel"
+        },
+        "assets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "common.schema.json#/$defs/assetInputRef"
+          }
+        },
+        "user_request_message_id": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "user_notes": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        }
+      }
+    },
+    "config": {
+      "$ref": "common.schema.json#/$defs/generationConfig"
+    },
+    "sourceAnalysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_kind",
+        "units",
+        "coverage_check",
+        "source_trace"
+      ],
+      "properties": {
+        "source_kind": {
+          "const": "novel"
+        },
+        "units": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source_unit_id",
+              "summary",
+              "key_events",
+              "character_changes",
+              "conflict_stage",
+              "hook_or_suspense_potential",
+              "source_refs",
+              "claims"
+            ],
+            "properties": {
+              "source_unit_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "summary": {
+                "type": "string",
+                "minLength": 1
+              },
+              "key_events": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "character_changes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "conflict_stage": {
+                "type": "string"
+              },
+              "hook_or_suspense_potential": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "source_refs": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "source_type",
+                    "asset_id",
+                    "asset_snapshot_id",
+                    "source_unit_id",
+                    "range_label"
+                  ],
+                  "properties": {
+                    "source_type": {
+                      "const": "asset_text_range"
+                    },
+                    "asset_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "asset_snapshot_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "source_unit_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "range_label": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "evidence_excerpt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "claims": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "coverage_check": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "covered_source_unit_ids",
+            "missing_source_unit_ids",
+            "order_issues"
+          ],
+          "properties": {
+            "covered_source_unit_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "missing_source_unit_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "order_issues": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "source_trace": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "grounded",
+            "inferred",
+            "claims"
+          ],
+          "properties": {
+            "grounded": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "inferred": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "claims": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "storyBible": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "story_overview",
+        "source_structure",
+        "characters",
+        "relationships",
+        "world_rules",
+        "major_plotline",
+        "climax_map",
+        "foreshadowing_and_payoff",
+        "must_keep_facts",
+        "short_drama_assets",
+        "adaptation_risks",
+        "source_trace"
+      ],
+      "properties": {
+        "story_overview": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "one_sentence_logline",
+            "core_conflict",
+            "main_emotional_drive",
+            "genre_tags"
+          ],
+          "properties": {
+            "one_sentence_logline": {
+              "type": "string"
+            },
+            "core_conflict": {
+              "type": "string"
+            },
+            "main_emotional_drive": {
+              "type": "string"
+            },
+            "genre_tags": {
+              "$ref": "common.schema.json#/$defs/stringList"
+            }
+          }
+        },
+        "source_structure": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source_unit_id",
+              "source_range",
+              "summary",
+              "key_events",
+              "character_changes",
+              "conflict_stage",
+              "hook_or_suspense_potential",
+              "source_refs"
+            ],
+            "properties": {
+              "source_unit_id": {
+                "$ref": "common.schema.json#/$defs/nonEmptyString"
+              },
+              "source_range": {
+                "$ref": "common.schema.json#/$defs/nonEmptyString"
+              },
+              "summary": {
+                "type": "string"
+              },
+              "key_events": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              },
+              "character_changes": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              },
+              "conflict_stage": {
+                "type": "string"
+              },
+              "hook_or_suspense_potential": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "source_refs": {
+                "$ref": "common.schema.json#/$defs/sourceRefs"
+              }
+            }
+          }
+        },
+        "characters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "role",
+              "goal",
+              "relationship_position",
+              "speech_profile",
+              "source_refs"
+            ],
+            "properties": {
+              "name": {
+                "$ref": "common.schema.json#/$defs/nonEmptyString"
+              },
+              "role": {
+                "type": "string"
+              },
+              "goal": {
+                "type": "string"
+              },
+              "relationship_position": {
+                "type": "string"
+              },
+              "speech_profile": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "base_style",
+                  "regional_speech",
+                  "usage_boundary"
+                ],
+                "properties": {
+                  "base_style": {
+                    "type": "string"
+                  },
+                  "regional_speech": {
+                    "type": "string"
+                  },
+                  "usage_boundary": {
+                    "type": "string"
+                  }
+                }
+              },
+              "source_refs": {
+                "$ref": "common.schema.json#/$defs/sourceRefs"
+              }
+            }
+          }
+        },
+        "relationships": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "world_rules": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "major_plotline": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "climax_map": {
+          "type": "object"
+        },
+        "foreshadowing_and_payoff": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "must_keep_facts": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "short_drama_assets": {
+          "type": "object"
+        },
+        "adaptation_risks": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "source_trace": {
+          "$ref": "common.schema.json#/$defs/sourceTrace"
+        }
+      }
+    },
+    "episodeSplit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_episode_count",
+        "actual_episode_count",
+        "split_strategy",
+        "episodes",
+        "coverage_check",
+        "global_risks",
+        "source_trace"
+      ],
+      "properties": {
+        "target_episode_count": {
+          "$ref": "common.schema.json#/$defs/positiveInteger"
+        },
+        "actual_episode_count": {
+          "$ref": "common.schema.json#/$defs/positiveInteger"
+        },
+        "split_strategy": {
+          "$ref": "common.schema.json#/$defs/nonEmptyString"
+        },
+        "episodes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "episode_no",
+              "source_refs",
+              "source_summary",
+              "core_event",
+              "character_turn",
+              "boundary_reason",
+              "boundary_check",
+              "hook_strength",
+              "hook_type",
+              "information_density",
+              "pacing_risk",
+              "split_confidence",
+              "requires_user_attention",
+              "adaptation_added"
+            ],
+            "properties": {
+              "episode_no": {
+                "$ref": "common.schema.json#/$defs/positiveInteger"
+              },
+              "source_refs": {
+                "$ref": "common.schema.json#/$defs/sourceRefs"
+              },
+              "source_summary": {
+                "type": "string"
+              },
+              "core_event": {
+                "type": "string"
+              },
+              "character_turn": {
+                "type": "string"
+              },
+              "boundary_reason": {
+                "type": "string"
+              },
+              "boundary_check": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "previous_episode_end",
+                  "next_episode_start",
+                  "cut_after_anchor",
+                  "cut_before_anchor",
+                  "continuity_risk",
+                  "manual_review_required"
+                ],
+                "properties": {
+                  "previous_episode_end": {
+                    "type": "string"
+                  },
+                  "next_episode_start": {
+                    "type": "string"
+                  },
+                  "cut_after_anchor": {
+                    "type": "string"
+                  },
+                  "cut_before_anchor": {
+                    "type": "string"
+                  },
+                  "continuity_risk": {
+                    "type": "string"
+                  },
+                  "manual_review_required": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "hook_strength": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "hook_type": {
+                "type": "string"
+              },
+              "risk": {
+                "type": "string"
+              },
+              "information_density": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "pacing_risk": {
+                "type": "string"
+              },
+              "split_confidence": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "weak_episode_reason": {
+                "type": "string"
+              },
+              "requires_user_attention": {
+                "type": "boolean"
+              },
+              "adaptation_added": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "coverage_check": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "covered_ranges",
+            "missing_ranges",
+            "duplicated_ranges",
+            "order_issues"
+          ],
+          "properties": {
+            "covered_ranges": {
+              "$ref": "common.schema.json#/$defs/stringList"
+            },
+            "missing_ranges": {
+              "$ref": "common.schema.json#/$defs/stringList"
+            },
+            "duplicated_ranges": {
+              "$ref": "common.schema.json#/$defs/stringList"
+            },
+            "order_issues": {
+              "$ref": "common.schema.json#/$defs/stringList"
+            }
+          }
+        },
+        "global_risks": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "source_trace": {
+          "$ref": "common.schema.json#/$defs/sourceTrace"
+        }
+      }
+    },
+    "episodeCards": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "episodes",
+        "continuity_delta"
+      ],
+      "properties": {
+        "episodes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "episode_no",
+              "source_refs",
+              "source_summary",
+              "episode_function",
+              "opening_state",
+              "main_conflict",
+              "payoff_or_reversal",
+              "character_turn",
+              "ending_hook",
+              "card_point_function",
+              "pacing_plan",
+              "visual_strategy",
+              "must_keep_facts",
+              "must_keep_dialogue_or_moments",
+              "scene_outline",
+              "adaptation_suggestions",
+              "risk_notes"
+            ],
+            "properties": {
+              "episode_no": {
+                "$ref": "common.schema.json#/$defs/positiveInteger"
+              },
+              "source_refs": {
+                "$ref": "common.schema.json#/$defs/sourceRefs"
+              },
+              "source_summary": {
+                "type": "string"
+              },
+              "episode_function": {
+                "type": "string"
+              },
+              "opening_state": {
+                "type": "string"
+              },
+              "main_conflict": {
+                "type": "string"
+              },
+              "payoff_or_reversal": {
+                "type": "string"
+              },
+              "character_turn": {
+                "type": "string"
+              },
+              "ending_hook": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "hook_text",
+                  "hook_strength",
+                  "hook_source"
+                ],
+                "properties": {
+                  "hook_text": {
+                    "type": "string"
+                  },
+                  "hook_strength": {
+                    "enum": [
+                      "high",
+                      "medium",
+                      "low"
+                    ]
+                  },
+                  "hook_source": {
+                    "type": "string"
+                  }
+                }
+              },
+              "card_point_function": {
+                "type": "string"
+              },
+              "pacing_plan": {
+                "type": "object"
+              },
+              "visual_strategy": {
+                "type": "object"
+              },
+              "must_keep_facts": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              },
+              "must_keep_dialogue_or_moments": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              },
+              "scene_outline": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "adaptation_suggestions": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              },
+              "risk_notes": {
+                "$ref": "common.schema.json#/$defs/stringList"
+              }
+            }
+          }
+        },
+        "continuity_delta": {
+          "$ref": "common.schema.json#/$defs/continuityDelta"
+        }
+      }
+    },
+    "episodeCardsProviderResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "episode_cards"
+      ],
+      "properties": {
+        "episode_cards": {
+          "$ref": "#/$defs/episodeCards"
+        }
+      }
+    },
+    "scriptContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_kind",
+        "episode_no",
+        "generation_config",
+        "must_follow_facts",
+        "allowed_additions",
+        "forbidden_changes",
+        "character_state",
+        "relationship_state",
+        "continuity_state",
+        "source_material",
+        "style_constraints",
+        "user_notes"
+      ],
+      "properties": {
+        "source_kind": {
+          "const": "novel"
+        },
+        "episode_no": {
+          "$ref": "common.schema.json#/$defs/positiveInteger"
+        },
+        "generation_config": {
+          "$ref": "common.schema.json#/$defs/generationConfig"
+        },
+        "must_follow_facts": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "allowed_additions": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "forbidden_changes": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "character_state": {
+          "type": "object"
+        },
+        "relationship_state": {
+          "type": "object"
+        },
+        "continuity_state": {
+          "type": "object"
+        },
+        "source_material": {
+          "type": "object"
+        },
+        "style_constraints": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "user_notes": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        }
+      }
+    },
+    "scriptUnit": {
+      "$ref": "common.schema.json#/$defs/scriptUnit"
+    },
+    "scriptHandoff": {
+      "$ref": "common.schema.json#/$defs/scriptHandoff"
+    },
+    "scripts": {
+      "$ref": "common.schema.json#/$defs/scriptsAggregate"
+    }
+  }
+}

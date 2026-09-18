@@ -1,0 +1,25 @@
+{
+  "output_contracts": [
+    {"artifact_type": "generic_document", "schema_ref": "../schemas/result.json", "schema_version": "1.0.0", "schema": {
+      "type": "object", "additionalProperties": false, "required": ["title", "content"],
+      "properties": {"title": {"type": "string", "minLength": 1}, "content": {"type": "string", "minLength": 1}}
+    }},
+    {"artifact_type": "review_notes", "schema_ref": "../schemas/notes.json", "schema_version": "1.0.0", "schema": {
+      "type": "object", "additionalProperties": false, "required": ["title", "content"],
+      "properties": {"title": {"type": "string", "minLength": 1}, "content": {"type": "string", "minLength": 1}}
+    }}
+  ],
+  "provider_schema": {"type": "object", "properties": {"review_notes": {"type": "object", "properties": {"title": {"minLength": 6}}}}},
+  "valid": {
+    "generic_document": {"title": "Overview", "content": "Keep the central conflict."},
+    "review_notes": {"title": "Review", "content": "Clarify the protagonist's motivation."}
+  },
+  "invalid": [
+    {"generic_document": {"title": "Overview", "content": "Missing the second output."}},
+    {"review_notes": {"title": "Review", "content": "Missing the first output."}},
+    {"generic_document": {"title": "Overview", "content": "Valid."}, "review_notes": {"title": "Review"}},
+    {"generic_document": {"title": "Overview", "content": "Valid."}, "review_notes": {"title": "Review", "content": "Valid."}, "undeclared": {}},
+    {"generic_document": {"title": "Overview", "content": "Valid."}, "review_notes": {"title": "Short", "content": "Only the provider constraint rejects this."}},
+    {"artifact": {"generic_document": {"title": "Overview", "content": "Wrong envelope."}, "review_notes": {"title": "Review", "content": "Wrong envelope."}}}
+  ]
+}

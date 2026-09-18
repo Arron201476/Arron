@@ -1,0 +1,94 @@
+{
+  "execution_id": "4ef7d845-72c3-4676-8c29-2669f0f4806a",
+  "started_at": "2026-08-06T12:00:49.383Z",
+  "finished_at": "2026-08-06T12:06:54.807Z",
+  "environment": "real_provider_demo_via_ssh_tunnel",
+  "capability": {
+    "id": "non_novel_to_script"
+  },
+  "fixture": {
+    "name": "brief-synopsis.txt",
+    "extension": ".txt",
+    "bytes": 770,
+    "sha256": "2de46488f53e9503f59b9c6e572eaa4adf27b4628afd343e2cd9cd76e05b7e3c"
+  },
+  "project_id": "prj_898d82d56e4f0b45f787dec83689692e",
+  "run_id": "run_35ff5bb1a380dedfe0969fecc0a0decc",
+  "final_status": "failed",
+  "error": "Run ended with status cancelled: {\"status\":\"cancelled\",\"step\":\"build_material_bank\",\"approval\":null,\"tasks\":[]}",
+  "timeline": [
+    {
+      "at": "2026-08-06T12:00:50.018Z",
+      "event": "project_created",
+      "project_id": "prj_898d82d56e4f0b45f787dec83689692e"
+    },
+    {
+      "at": "2026-08-06T12:00:50.186Z",
+      "event": "source_uploaded",
+      "asset_id": "ast_19721b8b9b0ea780cc30dfb949643ab9",
+      "asset_snapshot_id": "ass_b5990fbc2c84c6fecc39ba97d72cbf1c"
+    },
+    {
+      "at": "2026-08-06T12:00:50.216Z",
+      "event": "proposed_action_created",
+      "proposed_action_id": "pac_9cc94a4bb7a9e4cad698da916cdbd51d",
+      "intent": "propose_capability"
+    },
+    {
+      "at": "2026-08-06T12:00:50.266Z",
+      "event": "proposed_action_configured",
+      "version": 2
+    },
+    {
+      "at": "2026-08-06T12:00:50.300Z",
+      "event": "run_started",
+      "run_id": "run_35ff5bb1a380dedfe0969fecc0a0decc",
+      "status": "waiting_approval"
+    },
+    {
+      "at": "2026-08-06T12:00:50.343Z",
+      "event": "run_state",
+      "status": "waiting_approval",
+      "step": "ingest_source",
+      "approval": "apr_e7626b2a30fd8eabf506158448d1866e",
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:00:50.383Z",
+      "event": "approval_resolved",
+      "approval_request_id": "apr_e7626b2a30fd8eabf506158448d1866e",
+      "scope": "transition",
+      "subject_kind": "artifact_version",
+      "subject_ref_id": "av_2107ce86d398b8079e17200b0038a89f"
+    },
+    {
+      "at": "2026-08-06T12:00:52.431Z",
+      "event": "run_state",
+      "status": "paused",
+      "step": "build_source_manifest",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:00:52.466Z",
+      "event": "run_resumed",
+      "run_id": "run_35ff5bb1a380dedfe0969fecc0a0decc"
+    },
+    {
+      "at": "2026-08-06T12:00:54.543Z",
+      "event": "run_state",
+      "status": "running",
+      "step": "build_material_bank",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:06:54.804Z",
+      "event": "run_state",
+      "status": "cancelled",
+      "step": "build_material_bank",
+      "approval": null,
+      "tasks": []
+    }
+  ]
+}

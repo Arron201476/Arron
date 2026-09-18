@@ -1,0 +1,38 @@
+{
+  "name": "novel2script-agent-frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --configLoader native --host 127.0.0.1 --port 8832",
+    "build": "tsc -b && vite build --configLoader native",
+    "test": "vitest run --configLoader native --pool=vmThreads --maxWorkers=1 --no-file-parallelism",
+    "test:coverage": "vitest run --coverage --configLoader native --pool=vmThreads --maxWorkers=1 --no-file-parallelism",
+    "gate:editor": "vitest run --configLoader native --pool=vmThreads --maxWorkers=1 --no-file-parallelism src/components/artifacts/ScriptWorkbench.test.tsx",
+    "serve": "vite preview --configLoader native --host 127.0.0.1 --port 8832"
+  },
+  "dependencies": {
+    "@lexical/history": "^0.46.0",
+    "@lexical/react": "^0.46.0",
+    "@lexical/rich-text": "^0.46.0",
+    "@lexical/selection": "^0.46.0",
+    "@lexical/text": "^0.46.0",
+    "@lexical/utils": "^0.46.0",
+    "@vitejs/plugin-react": "^6.0.3",
+    "lexical": "^0.46.0",
+    "lucide-react": "^1.21.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitest/coverage-v8": "^4.1.10",
+    "jsdom": "^29.1.1",
+    "playwright": "^1.61.1",
+    "vitest": "^4.1.10"
+  }
+}

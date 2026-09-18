@@ -1,0 +1,156 @@
+{
+  "audited_at": "2026-07-09T05:39:31.806Z",
+  "base_url": "http://127.0.0.1:8833",
+  "fixture": "C:\\Users\\egois\\Desktop\\novel2script_agent_project\\design\\fixtures\\script-editor-spike-fixture.json",
+  "target_line_id": "ln_001_001_002",
+  "results": [
+    {
+      "mode": "tiptap",
+      "url": "http://127.0.0.1:8833/?spike=tiptap",
+      "expected_line_count": 12,
+      "screenshot": "C:\\Users\\egois\\Desktop\\novel2script_agent_project\\design\\audits\\script-editor-selection-gate\\tiptap-after-patch.png",
+      "checks": [
+        {
+          "name": "renders editor shell",
+          "passed": true,
+          "detail": "The spike app loaded and displayed its editor shell."
+        },
+        {
+          "name": "renders all fixture lines with line anchors",
+          "passed": true,
+          "detail": "Expected 12 line anchors, found 12."
+        },
+        {
+          "name": "retains target line anchor",
+          "passed": true,
+          "detail": "Target line ln_001_001_002 exists before patch."
+        },
+        {
+          "name": "renders toolbar actions",
+          "passed": true,
+          "detail": "Toolbar buttons: 7."
+        },
+        {
+          "name": "renders JSON/state side panel",
+          "passed": true,
+          "detail": "Side panel text length: 534."
+        },
+        {
+          "name": "reports selection ref for selected line",
+          "passed": true,
+          "detail": "Side panel includes ln_001_001_002."
+        },
+        {
+          "name": "patch action is clickable",
+          "passed": true,
+          "detail": "Clicked the patch preview button by toolbar position."
+        },
+        {
+          "name": "patch keeps target line anchor",
+          "passed": true,
+          "detail": "Target line ln_001_001_002 still exists after patch."
+        },
+        {
+          "name": "patch writes suggested text into target line",
+          "passed": true,
+          "detail": "Target line text after patch: 三年冷宫，我等的不是恩准，是你们亲手把门打开。（建议）"
+        },
+        {
+          "name": "patch remains visibly reviewable",
+          "passed": true,
+          "detail": "Patch markers: 0; target contains suggestion label: true."
+        },
+        {
+          "name": "save action is clickable",
+          "passed": true,
+          "detail": "Clicked the save button by toolbar position."
+        },
+        {
+          "name": "save does not remove line anchors",
+          "passed": true,
+          "detail": "Line anchors after save: 12."
+        },
+        {
+          "name": "screenshot evidence saved",
+          "passed": true,
+          "detail": "Saved C:\\Users\\egois\\Desktop\\novel2script_agent_project\\design\\audits\\script-editor-selection-gate\\tiptap-after-patch.png (112163 bytes)."
+        }
+      ],
+      "passed": true
+    },
+    {
+      "mode": "lexical",
+      "url": "http://127.0.0.1:8833/?spike=lexical",
+      "expected_line_count": 12,
+      "screenshot": "C:\\Users\\egois\\Desktop\\novel2script_agent_project\\design\\audits\\script-editor-selection-gate\\lexical-after-patch.png",
+      "checks": [
+        {
+          "name": "renders editor shell",
+          "passed": true,
+          "detail": "The spike app loaded and displayed its editor shell."
+        },
+        {
+          "name": "renders all fixture lines with line anchors",
+          "passed": true,
+          "detail": "Expected 12 line anchors, found 12."
+        },
+        {
+          "name": "retains target line anchor",
+          "passed": true,
+          "detail": "Target line ln_001_001_002 exists before patch."
+        },
+        {
+          "name": "renders toolbar actions",
+          "passed": true,
+          "detail": "Toolbar buttons: 7."
+        },
+        {
+          "name": "renders JSON/state side panel",
+          "passed": true,
+          "detail": "Side panel text length: 534."
+        },
+        {
+          "name": "reports selection ref for selected line",
+          "passed": true,
+          "detail": "Side panel includes ln_001_001_002."
+        },
+        {
+          "name": "patch action is clickable",
+          "passed": true,
+          "detail": "Clicked the patch preview button by toolbar position."
+        },
+        {
+          "name": "patch keeps target line anchor",
+          "passed": true,
+          "detail": "Target line ln_001_001_002 still exists after patch."
+        },
+        {
+          "name": "patch writes suggested text into target line",
+          "passed": true,
+          "detail": "Target line text after patch: 三年冷宫，我等的不是恩准，是你们亲手把门打开。（建议）"
+        },
+        {
+          "name": "patch remains visibly reviewable",
+          "passed": true,
+          "detail": "Patch markers: 0; target contains suggestion label: true."
+        },
+        {
+          "name": "save action is clickable",
+          "passed": true,
+          "detail": "Clicked the save button by toolbar position."
+        },
+        {
+          "name": "save does not remove line anchors",
+          "passed": true,
+          "detail": "Line anchors after save: 12."
+        },
+        {
+          "name": "screenshot evidence saved",
+          "passed": true,
+          "detail": "Saved C:\\Users\\egois\\Desktop\\novel2script_agent_project\\design\\audits\\script-editor-selection-gate\\lexical-after-patch.png (111388 bytes)."
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

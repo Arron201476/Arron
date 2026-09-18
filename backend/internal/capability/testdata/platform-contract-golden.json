@@ -1,0 +1,4097 @@
+{
+  "capabilities": [
+    {
+      "ID": "novel_to_script",
+      "Version": "1.4.0",
+      "Label": "小说转剧本",
+      "Description": "将小说原文按已确认配置转换为可编辑、逐步确认的分集剧本。",
+      "Kind": "domain_workflow",
+      "ExecutionMode": "stateful_workflow",
+      "InputBinding": {
+        "source_type": "novel",
+        "asset_role": "primary_source"
+      },
+      "AcceptedAssetKinds": [
+        "text",
+        "document"
+      ],
+      "RequiredProviders": [
+        "content_model_provider",
+        "document_parser"
+      ],
+      "InputSchemaRef": "../../schemas/v1/novel-to-script.schema.json#/$defs/input",
+      "ConfigSchemaRefs": {
+        "creation": "../../schemas/v1/novel-to-script.schema.json#/$defs/config"
+      },
+      "EntryPolicy": {
+        "explicit_invocation": true,
+        "auto_route": true,
+        "requires_user_confirmation": true,
+        "input_collection_modes": [
+          "fixed"
+        ]
+      },
+      "Routing": {
+        "explicit_aliases": [
+          "小说转剧本",
+          "novel_to_script"
+        ],
+        "intent_examples": [
+          "把这本小说改成短剧剧本",
+          "根据上传的小说生成分集剧本"
+        ],
+        "ambiguity_policy": "ask_user"
+      },
+      "Commands": [
+        "inspect",
+        "start",
+        "pause",
+        "resume",
+        "cancel",
+        "retry_failed",
+        "approve",
+        "edit_artifact",
+        "request_ai_revision",
+        "regenerate_artifact",
+        "inspect_impact",
+        "set_episode_execution_mode"
+      ],
+      "UI": {
+        "icon_key": "book_open_text",
+        "sort_order": 10,
+        "entry_view_key": "source_materials",
+        "config_view_key": "script_generation",
+        "default_prompt": "请将我提供的小说改编成短剧剧本。"
+      },
+      "Completion": {
+        "terminal_step_ids": [
+          "aggregate_scripts"
+        ],
+        "required_artifacts": [
+          {
+            "artifact_type": "script_unit",
+            "required_status": "confirmed",
+            "coverage": "target_episode_count"
+          },
+          {
+            "artifact_type": "scripts",
+            "required_status": "confirmed",
+            "coverage": "one"
+          }
+        ],
+        "requires_terminal_approval": false
+      },
+      "StateContract": {
+        "scope": "run",
+        "snapshot_schema_ref": "../../schemas/v1/structured-run-state.schema.json",
+        "reducer_ref": "structured_state_reducer.v1",
+        "max_snapshot_characters": 100000
+      },
+      "Steps": [
+        {
+          "ID": "ingest_source",
+          "Kind": "system",
+          "ExecutorRef": "runtime.ingest_source",
+          "ConfigRef": "creation",
+          "InputRefs": [],
+          "OutputRefs": [
+            {
+              "artifact_type": "source_input",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/common.schema.json#/$defs/sourceInput"
+            }
+          ],
+          "PromptRef": null,
+          "RuleRefs": [],
+          "ResponseAdapterRef": null,
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "asset_snapshot",
+            "config_snapshot"
+          ],
+          "ContextPolicyRef": "context.novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "transition_checkpoint",
+            "Scope": "transition",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve"
+            ]
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "build_source_manifest"
+            }
+          ]
+        },
+        {
+          "ID": "build_source_manifest",
+          "Kind": "system",
+          "ExecutorRef": "runtime.build_source_manifest",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "source_input",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "source_manifest",
+              "cardinality": "one",
+              "initial_status": "confirmed",
+              "schema_ref": "../../schemas/v1/common.schema.json#/$defs/sourceManifest"
+            }
+          ],
+          "PromptRef": null,
+          "RuleRefs": [],
+          "ResponseAdapterRef": null,
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "asset_snapshot",
+            "approval_snapshot"
+          ],
+          "ContextPolicyRef": "context.novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "none",
+            "Scope": "none",
+            "Required": false,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": []
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "build_story_bible"
+            }
+          ]
+        },
+        {
+          "ID": "build_story_bible",
+          "Kind": "batch",
+          "ExecutorRef": "worker.structured_content",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "source_input",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "source_manifest",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "story_bible",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/novel-to-script.schema.json#/$defs/storyBible"
+            }
+          ],
+          "PromptRef": "../../design/prompts/novel-to-script/story-bible.v1.md",
+          "RuleRefs": [
+            "../../design/rules/shared/source-understanding-story-bible.v1.md",
+            "../../design/rules/shared/character-relationships-voice.v1.md",
+            "../../design/rules/shared/structure-hook-conflict-payoff-cliffhanger.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.legacy_story_bible_to_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": [
+            "source_analysis",
+            "story_bible"
+          ],
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot"
+          ],
+          "ContextPolicyRef": "context.novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "checkpoint",
+            "Scope": "artifact",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": {
+            "item_key": "source_analysis",
+            "execution": "sequential",
+            "failure_policy": "preserve_success_retry_failed",
+            "ordering": "source_order",
+            "max_items_per_task": 1,
+            "concurrency_policy": "single_active_task",
+            "preparation": {
+              "id": "source_analysis",
+              "prompt_ref": "../../design/prompts/novel-to-script/source-analysis.v1.md",
+              "schema_ref": "../../schemas/v1/novel-to-script.schema.json#/$defs/sourceAnalysis",
+              "result_mode": "checkpoint"
+            },
+            "task_stage": {
+              "id": "story_bible_aggregate",
+              "prompt_ref": "../../design/prompts/novel-to-script/story-bible.v1.md",
+              "schema_ref": "../../schemas/v1/novel-to-script.schema.json#/$defs/storyBible",
+              "result_mode": "artifact"
+            }
+          },
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "review_volume_fit"
+            }
+          ]
+        },
+        {
+          "ID": "review_volume_fit",
+          "Kind": "approval",
+          "ExecutorRef": "runtime.review_volume_fit",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "story_bible",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [],
+          "PromptRef": null,
+          "RuleRefs": [],
+          "ResponseAdapterRef": null,
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": null,
+          "ContextPolicyRef": "context.novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "transition_checkpoint",
+            "Scope": "transition",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": "volume_fit_insufficient",
+            "AllowedActions": [
+              "approve"
+            ]
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "volume_fit_sufficient",
+              "To": "split_episodes"
+            },
+            {
+              "When": "expansion_strategy_confirmed",
+              "To": "split_episodes"
+            }
+          ]
+        },
+        {
+          "ID": "split_episodes",
+          "Kind": "batch",
+          "ExecutorRef": "workflow.novel_episode_split",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "source_input",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "story_bible",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "source_manifest",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "episode_split",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/novel-to-script.schema.json#/$defs/episodeSplit"
+            }
+          ],
+          "PromptRef": "../../design/prompts/novel-to-script/episode-split.v1.md",
+          "RuleRefs": [
+            "../../design/rules/shared/structure-hook-conflict-payoff-cliffhanger.v1.md",
+            "../../design/rules/shared/transition-flashback-continuity-format.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.legacy_episode_split_to_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": [
+            "episode_plan"
+          ],
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "checkpoint",
+            "Scope": "artifact",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": {
+            "item_key": "episode_no",
+            "execution": "sequential",
+            "failure_policy": "preserve_success_retry_failed",
+            "ordering": "natural_episode_order",
+            "max_items_per_task": 5,
+            "concurrency_policy": "novel_split_default",
+            "preparation": {
+              "id": "global_plan",
+              "prompt_ref": "../../design/prompts/novel-to-script/episode-split-global.v1.md",
+              "schema_ref": "../../schemas/v1/internal-task-checkpoints.schema.json#/$defs/episodeSplitGlobalPlan"
+            },
+            "task_stage": {
+              "id": "boundary_batch",
+              "prompt_ref": "../../design/prompts/novel-to-script/episode-split-batch.v1.md",
+              "schema_ref": "../../schemas/v1/internal-task-checkpoints.schema.json#/$defs/episodeSplitBoundaryBatch"
+            }
+          },
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "build_episode_cards"
+            }
+          ]
+        },
+        {
+          "ID": "build_episode_cards",
+          "Kind": "batch",
+          "ExecutorRef": "workflow.episode_cards",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "episode_split",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "story_bible",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "episode_cards",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/novel-to-script.schema.json#/$defs/episodeCards"
+            }
+          ],
+          "PromptRef": "../../design/prompts/novel-to-script/episode-cards.v1.md",
+          "RuleRefs": [
+            "../../design/rules/shared/structure-hook-conflict-payoff-cliffhanger.v1.md",
+            "../../design/rules/shared/transition-flashback-continuity-format.v1.md",
+            "../../design/rules/shared/miniprogram-short-drama.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.legacy_novel_episode_cards_to_v1",
+          "ProviderResultSchemaRef": "../../schemas/v1/novel-to-script.schema.json#/$defs/episodeCardsProviderResult",
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "batch_checkpoint",
+            "Scope": "batch",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": {
+            "item_key": "episode_no",
+            "execution": "sequential",
+            "failure_policy": "preserve_success_retry_failed",
+            "ordering": "natural_episode_order",
+            "max_items_per_task": 5,
+            "concurrency_policy": "episode_cards_default"
+          },
+          "StateTransition": {
+            "mode": "read_write",
+            "delta_artifact_type": "episode_cards",
+            "delta_pointer": "/continuity_delta",
+            "previous_output_policy": "adjacent",
+            "field_mappings": [
+              {
+                "delta_field": "new_facts",
+                "state_field": "facts",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "character_state_changes",
+                "state_field": "character_state",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "relationship_changes",
+                "state_field": "relationship_state",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "hooks_opened",
+                "state_field": "open_hooks",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "hooks_resolved",
+                "state_field": "open_hooks",
+                "operation": "remove"
+              },
+              {
+                "delta_field": "hooks_resolved",
+                "state_field": "resolved_hooks",
+                "operation": "append_unique"
+              }
+            ]
+          },
+          "Next": [
+            {
+              "When": "completed",
+              "To": "build_script_contexts"
+            }
+          ]
+        },
+        {
+          "ID": "build_script_contexts",
+          "Kind": "system",
+          "ExecutorRef": "runtime.build_script_contexts",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "source_input",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "story_bible",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "episode_split",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "episode_cards",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "script_context",
+              "cardinality": "many",
+              "initial_status": "confirmed",
+              "schema_ref": "../../schemas/v1/novel-to-script.schema.json#/$defs/scriptContext"
+            }
+          ],
+          "PromptRef": null,
+          "RuleRefs": [],
+          "ResponseAdapterRef": "adapter.novel_script_context_to_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.novel_to_script.v1",
+          "Visibility": "internal",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "none",
+            "Scope": "none",
+            "Required": false,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": false,
+            "Condition": null,
+            "AllowedActions": []
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "generate_script_units"
+            }
+          ]
+        },
+        {
+          "ID": "generate_script_units",
+          "Kind": "shared_workflow",
+          "ExecutorRef": "workflow.shared_script_generation",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "episode_cards",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "script_context",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "exact"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "script_unit",
+              "cardinality": "many",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/common.schema.json#/$defs/scriptUnit"
+            },
+            {
+              "artifact_type": "script_handoff",
+              "cardinality": "many",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/common.schema.json#/$defs/scriptHandoff"
+            }
+          ],
+          "PromptRef": "../../design/prompts/shared/script-generate.v1.md",
+          "RuleRefs": [
+            "../../design/rules/shared/script-writing.v1.md",
+            "../../design/rules/shared/dialogue.v1.md",
+            "../../design/rules/shared/transition-flashback-continuity-format.v1.md",
+            "../../design/rules/shared/miniprogram-short-drama.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.legacy_script_unit_to_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": [
+            "script_generation",
+            "user"
+          ],
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "batch_checkpoint",
+            "Scope": "batch",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": {
+            "item_key": "episode_no",
+            "execution": "sequential",
+            "failure_policy": "preserve_success_retry_failed",
+            "ordering": "natural_episode_order",
+            "max_items_per_task": 1,
+            "concurrency_policy": "script_continuity_sequential"
+          },
+          "StateTransition": {
+            "mode": "read_write",
+            "delta_artifact_type": "script_handoff",
+            "delta_pointer": "/continuity_delta",
+            "previous_output_policy": "adjacent",
+            "field_mappings": [
+              {
+                "delta_field": "new_facts",
+                "state_field": "facts",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "character_state_changes",
+                "state_field": "character_state",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "relationship_changes",
+                "state_field": "relationship_state",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "hooks_opened",
+                "state_field": "open_hooks",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "hooks_resolved",
+                "state_field": "open_hooks",
+                "operation": "remove"
+              },
+              {
+                "delta_field": "hooks_resolved",
+                "state_field": "resolved_hooks",
+                "operation": "append_unique"
+              }
+            ]
+          },
+          "Next": [
+            {
+              "When": "completed",
+              "To": "review_script_set"
+            }
+          ]
+        },
+        {
+          "ID": "review_script_set",
+          "Kind": "review",
+          "ExecutorRef": "workflow.shared_script_quality_review",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "script_unit",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "script_handoff",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "script_context",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "exact"
+            }
+          ],
+          "OutputRefs": [],
+          "PromptRef": "../../design/prompts/shared/quality-review-batch.v1.md",
+          "RuleRefs": [
+            "../../design/rules/shared/quality-review.v1.md"
+          ],
+          "ResponseAdapterRef": null,
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": "../../schemas/v1/quality-review.schema.json",
+          "GatePolicyRef": "quality.script.v1",
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.novel_to_script.v1",
+          "Visibility": "internal",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "conditional_review",
+            "Scope": "quality_review",
+            "Required": true,
+            "RequiredWhen": "action_required",
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "ai_revise",
+              "manual_edit",
+              "confirm_change",
+              "accept_with_risk"
+            ]
+          },
+          "Batch": {
+            "item_key": "episode_range",
+            "execution": "parallel",
+            "failure_policy": "preserve_success_retry_failed",
+            "ordering": "natural_episode_order",
+            "max_items_per_task": 5,
+            "concurrency_policy": "quality_review_bounded_parallel"
+          },
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "aggregate_scripts"
+            }
+          ]
+        },
+        {
+          "ID": "aggregate_scripts",
+          "Kind": "aggregate",
+          "ExecutorRef": "runtime.aggregate_scripts",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "script_unit",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "scripts",
+              "cardinality": "one",
+              "initial_status": "confirmed",
+              "schema_ref": "../../schemas/v1/novel-to-script.schema.json#/$defs/scripts"
+            }
+          ],
+          "PromptRef": null,
+          "RuleRefs": [],
+          "ResponseAdapterRef": null,
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": null,
+          "ContextPolicyRef": "context.novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "none",
+            "Scope": "none",
+            "Required": false,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": false,
+            "Condition": null,
+            "AllowedActions": []
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": []
+        }
+      ]
+    },
+    {
+      "ID": "non_novel_to_script",
+      "Version": "1.3.0",
+      "Label": "非小说文本转剧本",
+      "Description": "将故事大纲、集纲等非小说文本按已确认配置转换为可编辑、逐步确认的分集剧本。",
+      "Kind": "domain_workflow",
+      "ExecutionMode": "stateful_workflow",
+      "InputBinding": {
+        "source_type": "non_novel",
+        "asset_role": "primary_source"
+      },
+      "AcceptedAssetKinds": [
+        "text",
+        "document"
+      ],
+      "RequiredProviders": [
+        "content_model_provider",
+        "document_parser"
+      ],
+      "InputSchemaRef": "../../schemas/v1/non-novel-to-script.schema.json#/$defs/input",
+      "ConfigSchemaRefs": {
+        "creation": "../../schemas/v1/non-novel-to-script.schema.json#/$defs/config"
+      },
+      "EntryPolicy": {
+        "explicit_invocation": true,
+        "auto_route": true,
+        "requires_user_confirmation": true,
+        "input_collection_modes": [
+          "fixed"
+        ]
+      },
+      "Routing": {
+        "explicit_aliases": [
+          "非小说文本转剧本",
+          "non_novel_to_script"
+        ],
+        "intent_examples": [
+          "把这个故事大纲写成分集剧本",
+          "根据上传的集纲生成剧本"
+        ],
+        "ambiguity_policy": "ask_user"
+      },
+      "Commands": [
+        "inspect",
+        "start",
+        "pause",
+        "resume",
+        "cancel",
+        "retry_failed",
+        "approve",
+        "edit_artifact",
+        "request_ai_revision",
+        "regenerate_artifact",
+        "inspect_impact",
+        "set_episode_execution_mode"
+      ],
+      "UI": {
+        "icon_key": "file_text",
+        "sort_order": 20,
+        "entry_view_key": "source_materials",
+        "config_view_key": "script_generation",
+        "default_prompt": "请将我提供的故事大纲、集纲或其他非小说文本改编成短剧剧本。"
+      },
+      "Completion": {
+        "terminal_step_ids": [
+          "aggregate_scripts"
+        ],
+        "required_artifacts": [
+          {
+            "artifact_type": "script_unit",
+            "required_status": "confirmed",
+            "coverage": "target_episode_count"
+          },
+          {
+            "artifact_type": "scripts",
+            "required_status": "confirmed",
+            "coverage": "one"
+          }
+        ],
+        "requires_terminal_approval": false
+      },
+      "StateContract": {
+        "scope": "run",
+        "snapshot_schema_ref": "../../schemas/v1/structured-run-state.schema.json",
+        "reducer_ref": "structured_state_reducer.v1",
+        "max_snapshot_characters": 100000
+      },
+      "Steps": [
+        {
+          "ID": "ingest_source",
+          "Kind": "system",
+          "ExecutorRef": "runtime.ingest_source",
+          "ConfigRef": "creation",
+          "InputRefs": [],
+          "OutputRefs": [
+            {
+              "artifact_type": "source_input",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/common.schema.json#/$defs/sourceInput"
+            }
+          ],
+          "PromptRef": null,
+          "RuleRefs": [],
+          "ResponseAdapterRef": null,
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "asset_snapshot",
+            "config_snapshot"
+          ],
+          "ContextPolicyRef": "context.non_novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "transition_checkpoint",
+            "Scope": "transition",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve"
+            ]
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "build_source_manifest"
+            }
+          ]
+        },
+        {
+          "ID": "build_source_manifest",
+          "Kind": "system",
+          "ExecutorRef": "runtime.build_source_manifest",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "source_input",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "source_manifest",
+              "cardinality": "one",
+              "initial_status": "confirmed",
+              "schema_ref": "../../schemas/v1/common.schema.json#/$defs/sourceManifest"
+            }
+          ],
+          "PromptRef": null,
+          "RuleRefs": [],
+          "ResponseAdapterRef": null,
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "approval_snapshot",
+            "asset_snapshot"
+          ],
+          "ContextPolicyRef": "context.non_novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "none",
+            "Scope": "none",
+            "Required": false,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": false,
+            "Condition": null,
+            "AllowedActions": []
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "build_material_bank"
+            }
+          ]
+        },
+        {
+          "ID": "build_material_bank",
+          "Kind": "model",
+          "ExecutorRef": "worker.structured_content",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "source_input",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "source_manifest",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "exact"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "material_bank",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/non-novel-to-script.schema.json#/$defs/materialBank"
+            }
+          ],
+          "PromptRef": "../../design/prompts/non-novel-to-script/material-bank.v1.md",
+          "RuleRefs": [
+            "../../design/rules/shared/non-novel-material-story-seed.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.legacy_material_bank_to_v1",
+          "ProviderResultSchemaRef": "../../schemas/v1/non-novel-to-script.schema.json#/$defs/materialBankProviderResult",
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": [
+            "source_analysis"
+          ],
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot"
+          ],
+          "ContextPolicyRef": "context.non_novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "checkpoint",
+            "Scope": "artifact",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "review_volume_fit"
+            }
+          ]
+        },
+        {
+          "ID": "review_volume_fit",
+          "Kind": "approval",
+          "ExecutorRef": "runtime.review_volume_fit",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "material_bank",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [],
+          "PromptRef": null,
+          "RuleRefs": [],
+          "ResponseAdapterRef": null,
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": null,
+          "ContextPolicyRef": "context.non_novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "transition_checkpoint",
+            "Scope": "transition",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": "volume_fit_insufficient",
+            "AllowedActions": [
+              "approve"
+            ]
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "volume_fit_sufficient",
+              "To": "build_story_seed"
+            },
+            {
+              "When": "expansion_strategy_confirmed",
+              "To": "build_story_seed"
+            }
+          ]
+        },
+        {
+          "ID": "build_story_seed",
+          "Kind": "model",
+          "ExecutorRef": "worker.structured_content",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "material_bank",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "story_seed",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/non-novel-to-script.schema.json#/$defs/storySeed"
+            }
+          ],
+          "PromptRef": "../../design/prompts/non-novel-to-script/story-seed.v1.md",
+          "RuleRefs": [
+            "../../design/rules/shared/character-relationships-voice.v1.md",
+            "../../design/rules/shared/structure-hook-conflict-payoff-cliffhanger.v1.md",
+            "../../design/rules/shared/non-novel-material-story-seed.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.legacy_story_seed_to_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": [
+            "story_bible"
+          ],
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot"
+          ],
+          "ContextPolicyRef": "context.non_novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "checkpoint",
+            "Scope": "artifact",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "build_series_blueprint"
+            }
+          ]
+        },
+        {
+          "ID": "build_series_blueprint",
+          "Kind": "model",
+          "ExecutorRef": "worker.structured_content",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "story_seed",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "material_bank",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "series_blueprint",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/non-novel-to-script.schema.json#/$defs/seriesBlueprint"
+            }
+          ],
+          "PromptRef": "../../design/prompts/non-novel-to-script/series-blueprint.v1.md",
+          "RuleRefs": [
+            "../../design/rules/shared/structure-hook-conflict-payoff-cliffhanger.v1.md",
+            "../../design/rules/shared/miniprogram-short-drama.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.legacy_series_blueprint_to_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.non_novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "checkpoint",
+            "Scope": "artifact",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "build_episode_cards"
+            }
+          ]
+        },
+        {
+          "ID": "build_episode_cards",
+          "Kind": "batch",
+          "ExecutorRef": "workflow.episode_cards",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "series_blueprint",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "story_seed",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "episode_cards",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/non-novel-to-script.schema.json#/$defs/episodeCards"
+            }
+          ],
+          "PromptRef": "../../design/prompts/non-novel-to-script/episode-cards.v1.md",
+          "RuleRefs": [
+            "../../design/rules/shared/structure-hook-conflict-payoff-cliffhanger.v1.md",
+            "../../design/rules/shared/transition-flashback-continuity-format.v1.md",
+            "../../design/rules/shared/miniprogram-short-drama.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.legacy_episode_cards_to_v1",
+          "ProviderResultSchemaRef": "../../schemas/v1/non-novel-to-script.schema.json#/$defs/episodeCardsProviderResult",
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": [
+            "episode_plan"
+          ],
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.non_novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "batch_checkpoint",
+            "Scope": "batch",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": {
+            "item_key": "episode_no",
+            "execution": "sequential",
+            "failure_policy": "preserve_success_retry_failed",
+            "ordering": "natural_episode_order",
+            "max_items_per_task": 5,
+            "concurrency_policy": "episode_cards_default"
+          },
+          "StateTransition": {
+            "mode": "read_write",
+            "delta_artifact_type": "episode_cards",
+            "delta_pointer": "/continuity_delta",
+            "previous_output_policy": "adjacent",
+            "field_mappings": [
+              {
+                "delta_field": "new_facts",
+                "state_field": "facts",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "character_state_changes",
+                "state_field": "character_state",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "relationship_changes",
+                "state_field": "relationship_state",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "hooks_opened",
+                "state_field": "open_hooks",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "hooks_resolved",
+                "state_field": "open_hooks",
+                "operation": "remove"
+              },
+              {
+                "delta_field": "hooks_resolved",
+                "state_field": "resolved_hooks",
+                "operation": "append_unique"
+              }
+            ]
+          },
+          "Next": [
+            {
+              "When": "completed",
+              "To": "build_script_contexts"
+            }
+          ]
+        },
+        {
+          "ID": "build_script_contexts",
+          "Kind": "system",
+          "ExecutorRef": "runtime.build_script_contexts",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "source_input",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "material_bank",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "story_seed",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "series_blueprint",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "episode_cards",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "script_context",
+              "cardinality": "many",
+              "initial_status": "confirmed",
+              "schema_ref": "../../schemas/v1/non-novel-to-script.schema.json#/$defs/scriptContext"
+            }
+          ],
+          "PromptRef": null,
+          "RuleRefs": [],
+          "ResponseAdapterRef": "adapter.non_novel_script_context_to_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.non_novel_to_script.v1",
+          "Visibility": "internal",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "none",
+            "Scope": "none",
+            "Required": false,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": false,
+            "Condition": null,
+            "AllowedActions": []
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "generate_script_units"
+            }
+          ]
+        },
+        {
+          "ID": "generate_script_units",
+          "Kind": "shared_workflow",
+          "ExecutorRef": "workflow.shared_script_generation",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "episode_cards",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "script_context",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "exact"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "script_unit",
+              "cardinality": "many",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/common.schema.json#/$defs/scriptUnit"
+            },
+            {
+              "artifact_type": "script_handoff",
+              "cardinality": "many",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/common.schema.json#/$defs/scriptHandoff"
+            }
+          ],
+          "PromptRef": "../../design/prompts/shared/script-generate.v1.md",
+          "RuleRefs": [
+            "../../design/rules/shared/script-writing.v1.md",
+            "../../design/rules/shared/dialogue.v1.md",
+            "../../design/rules/shared/transition-flashback-continuity-format.v1.md",
+            "../../design/rules/shared/miniprogram-short-drama.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.legacy_script_unit_to_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": [
+            "script_generation",
+            "user"
+          ],
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.non_novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "batch_checkpoint",
+            "Scope": "batch",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": {
+            "item_key": "episode_no",
+            "execution": "sequential",
+            "failure_policy": "preserve_success_retry_failed",
+            "ordering": "natural_episode_order",
+            "max_items_per_task": 1,
+            "concurrency_policy": "script_continuity_sequential"
+          },
+          "StateTransition": {
+            "mode": "read_write",
+            "delta_artifact_type": "script_handoff",
+            "delta_pointer": "/continuity_delta",
+            "previous_output_policy": "adjacent",
+            "field_mappings": [
+              {
+                "delta_field": "new_facts",
+                "state_field": "facts",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "character_state_changes",
+                "state_field": "character_state",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "relationship_changes",
+                "state_field": "relationship_state",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "hooks_opened",
+                "state_field": "open_hooks",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "hooks_resolved",
+                "state_field": "open_hooks",
+                "operation": "remove"
+              },
+              {
+                "delta_field": "hooks_resolved",
+                "state_field": "resolved_hooks",
+                "operation": "append_unique"
+              }
+            ]
+          },
+          "Next": [
+            {
+              "When": "completed",
+              "To": "review_script_set"
+            }
+          ]
+        },
+        {
+          "ID": "review_script_set",
+          "Kind": "review",
+          "ExecutorRef": "workflow.shared_script_quality_review",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "script_unit",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "script_handoff",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "script_context",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "exact"
+            }
+          ],
+          "OutputRefs": [],
+          "PromptRef": "../../design/prompts/shared/quality-review-batch.v1.md",
+          "RuleRefs": [
+            "../../design/rules/shared/quality-review.v1.md"
+          ],
+          "ResponseAdapterRef": null,
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": "../../schemas/v1/quality-review.schema.json",
+          "GatePolicyRef": "quality.script.v1",
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.non_novel_to_script.v1",
+          "Visibility": "internal",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "conditional_review",
+            "Scope": "quality_review",
+            "Required": true,
+            "RequiredWhen": "action_required",
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "ai_revise",
+              "manual_edit",
+              "confirm_change",
+              "accept_with_risk"
+            ]
+          },
+          "Batch": {
+            "item_key": "episode_range",
+            "execution": "parallel",
+            "failure_policy": "preserve_success_retry_failed",
+            "ordering": "natural_episode_order",
+            "max_items_per_task": 5,
+            "concurrency_policy": "quality_review_bounded_parallel"
+          },
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "aggregate_scripts"
+            }
+          ]
+        },
+        {
+          "ID": "aggregate_scripts",
+          "Kind": "aggregate",
+          "ExecutorRef": "runtime.aggregate_scripts",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "script_unit",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "scripts",
+              "cardinality": "one",
+              "initial_status": "confirmed",
+              "schema_ref": "../../schemas/v1/non-novel-to-script.schema.json#/$defs/scripts"
+            }
+          ],
+          "PromptRef": null,
+          "RuleRefs": [],
+          "ResponseAdapterRef": null,
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": null,
+          "ContextPolicyRef": "context.non_novel_to_script.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "none",
+            "Scope": "none",
+            "Required": false,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": false,
+            "Condition": null,
+            "AllowedActions": []
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": []
+        }
+      ]
+    },
+    {
+      "ID": "video_reference_creation",
+      "Version": "1.2.0",
+      "Label": "视频参考创作",
+      "Description": "解析已爆视频为逐集参考剧本，完成分析和改编决策后复用非小说后续链生成新剧本。",
+      "Kind": "domain_workflow",
+      "ExecutionMode": "stateful_workflow",
+      "InputBinding": {
+        "source_type": "video_reference",
+        "asset_role": "primary_source",
+        "asset_set_purpose": "video_reference_source"
+      },
+      "AcceptedAssetKinds": [
+        "video"
+      ],
+      "RequiredProviders": [
+        "content_model_provider",
+        "multimodal_video_provider",
+        "subtitle_ocr_provider",
+        "media_processor"
+      ],
+      "InputSchemaRef": "../../schemas/v1/video-reference-creation.schema.json#/$defs/input",
+      "ConfigSchemaRefs": {
+        "creation": "../../schemas/v1/video-reference-creation.schema.json#/$defs/creationConfig",
+        "extraction": "../../schemas/v1/video-reference-creation.schema.json#/$defs/extractionConfig"
+      },
+      "EntryPolicy": {
+        "explicit_invocation": true,
+        "auto_route": true,
+        "requires_user_confirmation": true,
+        "input_collection_modes": [
+          "fixed"
+        ]
+      },
+      "Routing": {
+        "explicit_aliases": [
+          "视频参考创作",
+          "video_reference_creation"
+        ],
+        "intent_examples": [
+          "解析这部漫剧并参考它创作新剧本",
+          "把这些视频转成剧本后做分析和改编"
+        ],
+        "ambiguity_policy": "ask_user"
+      },
+      "Commands": [
+        "inspect",
+        "start",
+        "pause",
+        "resume",
+        "cancel",
+        "retry_failed",
+        "approve",
+        "edit_artifact",
+        "request_ai_revision",
+        "regenerate_artifact",
+        "inspect_impact",
+        "set_episode_execution_mode"
+      ],
+      "UI": {
+        "icon_key": "clapperboard",
+        "sort_order": 30,
+        "entry_view_key": "video_asset_set",
+        "config_view_key": "video_extraction",
+        "default_prompt": "请解析我提供的参考视频，并基于解析结果改编生成新的短剧剧本。"
+      },
+      "Completion": {
+        "terminal_step_ids": [
+          "aggregate_scripts"
+        ],
+        "required_artifacts": [
+          {
+            "artifact_type": "script_unit",
+            "required_status": "confirmed",
+            "coverage": "target_episode_count"
+          },
+          {
+            "artifact_type": "scripts",
+            "required_status": "confirmed",
+            "coverage": "one"
+          }
+        ],
+        "requires_terminal_approval": false
+      },
+      "StateContract": {
+        "scope": "run",
+        "snapshot_schema_ref": "../../schemas/v1/structured-run-state.schema.json",
+        "reducer_ref": "structured_state_reducer.v1",
+        "max_snapshot_characters": 100000
+      },
+      "Steps": [
+        {
+          "ID": "ingest_source",
+          "Kind": "system",
+          "ExecutorRef": "runtime.ingest_source",
+          "ConfigRef": "extraction",
+          "InputRefs": [],
+          "OutputRefs": [
+            {
+              "artifact_type": "source_input",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/common.schema.json#/$defs/sourceInput"
+            }
+          ],
+          "PromptRef": null,
+          "RuleRefs": [],
+          "ResponseAdapterRef": null,
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "asset_snapshot",
+            "config_snapshot"
+          ],
+          "ContextPolicyRef": "context.video_reference_creation.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "MEDIA_PROCESSING_FAILED",
+              "MEDIA_PROBE_FAILED",
+              "SUBTITLE_OCR_TIMEOUT",
+              "SUBTITLE_OCR_UPLOAD_FAILED",
+              "SUBTITLE_OCR_QUERY_FAILED",
+              "SUBTITLE_OCR_TASK_FAILED",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "checkpoint",
+            "Scope": "artifact",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve"
+            ]
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "extract_video_scripts"
+            }
+          ]
+        },
+        {
+          "ID": "extract_video_scripts",
+          "Kind": "batch",
+          "ExecutorRef": "workflow.video_script_extract",
+          "ConfigRef": "extraction",
+          "InputRefs": [
+            {
+              "artifact_type": "source_input",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "sealed_input_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "video_script_unit",
+              "cardinality": "many",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/videoScriptUnit"
+            }
+          ],
+          "PromptRef": "../../design/prompts/video-reference-creation/video-script-extract.v1.md",
+          "RuleRefs": [
+            "../../design/rules/video-reference-creation/video-high-fidelity-script-extraction.v1.md",
+            "../../design/rules/shared/transition-flashback-continuity-format.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.legacy_video_script_unit_to_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "asset_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.video_reference_creation.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "MEDIA_PROCESSING_FAILED",
+              "MEDIA_PROBE_FAILED",
+              "SUBTITLE_OCR_TIMEOUT",
+              "SUBTITLE_OCR_UPLOAD_FAILED",
+              "SUBTITLE_OCR_QUERY_FAILED",
+              "SUBTITLE_OCR_TASK_FAILED",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "batch_checkpoint",
+            "Scope": "batch",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": {
+            "item_key": "asset_id",
+            "execution": "sequential",
+            "failure_policy": "preserve_success_retry_failed",
+            "ordering": "natural_episode_order",
+            "max_items_per_task": 1,
+            "concurrency_policy": "project_serial_global_parallel"
+          },
+          "StateTransition": {
+            "mode": "read_write",
+            "delta_artifact_type": "video_script_unit",
+            "delta_pointer": "/continuity_delta",
+            "previous_output_policy": "adjacent",
+            "field_mappings": [
+              {
+                "delta_field": "new_facts",
+                "state_field": "facts",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "character_state_changes",
+                "state_field": "character_state",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "relationship_changes",
+                "state_field": "relationship_state",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "hooks_opened",
+                "state_field": "open_hooks",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "hooks_resolved",
+                "state_field": "open_hooks",
+                "operation": "remove"
+              },
+              {
+                "delta_field": "hooks_resolved",
+                "state_field": "resolved_hooks",
+                "operation": "append_unique"
+              }
+            ]
+          },
+          "Next": [
+            {
+              "When": "completed",
+              "To": "aggregate_reference_scripts"
+            }
+          ]
+        },
+        {
+          "ID": "aggregate_reference_scripts",
+          "Kind": "aggregate",
+          "ExecutorRef": "runtime.aggregate_reference_scripts",
+          "ConfigRef": "extraction",
+          "InputRefs": [
+            {
+              "artifact_type": "video_script_unit",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "reference_scripts",
+              "cardinality": "one",
+              "initial_status": "confirmed",
+              "schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/referenceScripts"
+            }
+          ],
+          "PromptRef": null,
+          "RuleRefs": [],
+          "ResponseAdapterRef": null,
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": null,
+          "ContextPolicyRef": "context.video_reference_creation.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "MEDIA_PROCESSING_FAILED",
+              "MEDIA_PROBE_FAILED",
+              "SUBTITLE_OCR_TIMEOUT",
+              "SUBTITLE_OCR_UPLOAD_FAILED",
+              "SUBTITLE_OCR_QUERY_FAILED",
+              "SUBTITLE_OCR_TASK_FAILED",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "none",
+            "Scope": "none",
+            "Required": false,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": false,
+            "Condition": null,
+            "AllowedActions": []
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "analyze_reference_scripts"
+            }
+          ]
+        },
+        {
+          "ID": "analyze_reference_scripts",
+          "Kind": "model",
+          "ExecutorRef": "worker.structured_content",
+          "ConfigRef": "extraction",
+          "InputRefs": [
+            {
+              "artifact_type": "reference_scripts",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "video_script_unit",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "script_analysis",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/scriptAnalysis"
+            }
+          ],
+          "PromptRef": "../../design/prompts/video-reference-creation/script-analysis.v1.md",
+          "RuleRefs": [
+            "../../design/rules/video-reference-creation/script-analysis.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.video_script_analysis_identity_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": [
+            "source_analysis"
+          ],
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.video_reference_creation.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "MEDIA_PROCESSING_FAILED",
+              "MEDIA_PROBE_FAILED",
+              "SUBTITLE_OCR_TIMEOUT",
+              "SUBTITLE_OCR_UPLOAD_FAILED",
+              "SUBTITLE_OCR_QUERY_FAILED",
+              "SUBTITLE_OCR_TASK_FAILED",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "checkpoint",
+            "Scope": "artifact",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "propose_adaptation_options"
+            }
+          ]
+        },
+        {
+          "ID": "propose_adaptation_options",
+          "Kind": "model",
+          "ExecutorRef": "worker.structured_content",
+          "ConfigRef": null,
+          "InputRefs": [
+            {
+              "artifact_type": "script_analysis",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "adaptation_options",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/adaptationOptions"
+            }
+          ],
+          "PromptRef": "../../design/prompts/video-reference-creation/adaptation-options.v1.md",
+          "RuleRefs": [
+            "../../design/rules/video-reference-creation/no-copy-adaptation.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.video_adaptation_options_identity_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "approval_snapshot",
+            "user_instruction"
+          ],
+          "ContextPolicyRef": "context.video_reference_creation.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "MEDIA_PROCESSING_FAILED",
+              "MEDIA_PROBE_FAILED",
+              "SUBTITLE_OCR_TIMEOUT",
+              "SUBTITLE_OCR_UPLOAD_FAILED",
+              "SUBTITLE_OCR_QUERY_FAILED",
+              "SUBTITLE_OCR_TASK_FAILED",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "transition_checkpoint",
+            "Scope": "transition",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "select_adaptation_strategy",
+              "request_ai_revision"
+            ]
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "adaptation_selection_and_creation_config_confirmed",
+              "To": "build_adaptation_brief"
+            }
+          ]
+        },
+        {
+          "ID": "build_adaptation_brief",
+          "Kind": "model",
+          "ExecutorRef": "worker.structured_content",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "script_analysis",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "adaptation_options",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "adaptation_brief",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/adaptationBrief"
+            }
+          ],
+          "PromptRef": "../../design/prompts/video-reference-creation/adaptation-brief.v1.md",
+          "RuleRefs": [
+            "../../design/rules/video-reference-creation/no-copy-adaptation.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.video_adaptation_brief_identity_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "decision_snapshot",
+            "user_instruction",
+            "approval_snapshot",
+            "config_snapshot"
+          ],
+          "ContextPolicyRef": "context.video_reference_creation.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "MEDIA_PROCESSING_FAILED",
+              "MEDIA_PROBE_FAILED",
+              "SUBTITLE_OCR_TIMEOUT",
+              "SUBTITLE_OCR_UPLOAD_FAILED",
+              "SUBTITLE_OCR_QUERY_FAILED",
+              "SUBTITLE_OCR_TASK_FAILED",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "checkpoint",
+            "Scope": "artifact",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "build_story_seed"
+            }
+          ]
+        },
+        {
+          "ID": "build_story_seed",
+          "Kind": "shared_workflow",
+          "ExecutorRef": "workflow.non_novel_story_seed",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "adaptation_brief",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "script_analysis",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "story_seed",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/storySeed"
+            }
+          ],
+          "PromptRef": "../../design/prompts/video-reference-creation/story-seed.v1.md",
+          "RuleRefs": [
+            "../../design/rules/shared/character-relationships-voice.v1.md",
+            "../../design/rules/shared/structure-hook-conflict-payoff-cliffhanger.v1.md",
+            "../../design/rules/shared/non-novel-material-story-seed.v1.md",
+            "../../design/rules/video-reference-creation/no-copy-adaptation.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.legacy_video_story_seed_to_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": [
+            "story_bible"
+          ],
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.video_reference_creation.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "MEDIA_PROCESSING_FAILED",
+              "MEDIA_PROBE_FAILED",
+              "SUBTITLE_OCR_TIMEOUT",
+              "SUBTITLE_OCR_UPLOAD_FAILED",
+              "SUBTITLE_OCR_QUERY_FAILED",
+              "SUBTITLE_OCR_TASK_FAILED",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "checkpoint",
+            "Scope": "artifact",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "build_series_blueprint"
+            }
+          ]
+        },
+        {
+          "ID": "build_series_blueprint",
+          "Kind": "shared_workflow",
+          "ExecutorRef": "workflow.non_novel_series_blueprint",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "story_seed",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "adaptation_brief",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "series_blueprint",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/seriesBlueprint"
+            }
+          ],
+          "PromptRef": "../../design/prompts/non-novel-to-script/series-blueprint.v1.md",
+          "RuleRefs": [
+            "../../design/rules/shared/structure-hook-conflict-payoff-cliffhanger.v1.md",
+            "../../design/rules/shared/miniprogram-short-drama.v1.md",
+            "../../design/rules/video-reference-creation/no-copy-adaptation.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.legacy_video_series_blueprint_to_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.video_reference_creation.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "MEDIA_PROCESSING_FAILED",
+              "MEDIA_PROBE_FAILED",
+              "SUBTITLE_OCR_TIMEOUT",
+              "SUBTITLE_OCR_UPLOAD_FAILED",
+              "SUBTITLE_OCR_QUERY_FAILED",
+              "SUBTITLE_OCR_TASK_FAILED",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "checkpoint",
+            "Scope": "artifact",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "build_episode_cards"
+            }
+          ]
+        },
+        {
+          "ID": "build_episode_cards",
+          "Kind": "batch",
+          "ExecutorRef": "workflow.episode_cards",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "series_blueprint",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "adaptation_brief",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "episode_cards",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/episodeCards"
+            }
+          ],
+          "PromptRef": "../../design/prompts/non-novel-to-script/episode-cards.v1.md",
+          "RuleRefs": [
+            "../../design/rules/shared/structure-hook-conflict-payoff-cliffhanger.v1.md",
+            "../../design/rules/shared/transition-flashback-continuity-format.v1.md",
+            "../../design/rules/shared/miniprogram-short-drama.v1.md",
+            "../../design/rules/video-reference-creation/no-copy-adaptation.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.legacy_video_episode_cards_to_v1",
+          "ProviderResultSchemaRef": "../../schemas/v1/non-novel-to-script.schema.json#/$defs/episodeCardsProviderResult",
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": [
+            "episode_plan"
+          ],
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.video_reference_creation.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "MEDIA_PROCESSING_FAILED",
+              "MEDIA_PROBE_FAILED",
+              "SUBTITLE_OCR_TIMEOUT",
+              "SUBTITLE_OCR_UPLOAD_FAILED",
+              "SUBTITLE_OCR_QUERY_FAILED",
+              "SUBTITLE_OCR_TASK_FAILED",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "batch_checkpoint",
+            "Scope": "batch",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": {
+            "item_key": "episode_no",
+            "execution": "sequential",
+            "failure_policy": "preserve_success_retry_failed",
+            "ordering": "natural_episode_order",
+            "max_items_per_task": 5,
+            "concurrency_policy": "episode_cards_default"
+          },
+          "StateTransition": {
+            "mode": "read_write",
+            "delta_artifact_type": "episode_cards",
+            "delta_pointer": "/continuity_delta",
+            "previous_output_policy": "adjacent",
+            "field_mappings": [
+              {
+                "delta_field": "new_facts",
+                "state_field": "facts",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "character_state_changes",
+                "state_field": "character_state",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "relationship_changes",
+                "state_field": "relationship_state",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "hooks_opened",
+                "state_field": "open_hooks",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "hooks_resolved",
+                "state_field": "open_hooks",
+                "operation": "remove"
+              },
+              {
+                "delta_field": "hooks_resolved",
+                "state_field": "resolved_hooks",
+                "operation": "append_unique"
+              }
+            ]
+          },
+          "Next": [
+            {
+              "When": "completed",
+              "To": "build_script_contexts"
+            }
+          ]
+        },
+        {
+          "ID": "build_script_contexts",
+          "Kind": "system",
+          "ExecutorRef": "runtime.build_script_contexts",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "adaptation_brief",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "story_seed",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "series_blueprint",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "episode_cards",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "script_context",
+              "cardinality": "many",
+              "initial_status": "confirmed",
+              "schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/scriptContext"
+            }
+          ],
+          "PromptRef": null,
+          "RuleRefs": [],
+          "ResponseAdapterRef": "adapter.video_script_context_to_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.video_reference_creation.v1",
+          "Visibility": "internal",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "MEDIA_PROCESSING_FAILED",
+              "MEDIA_PROBE_FAILED",
+              "SUBTITLE_OCR_TIMEOUT",
+              "SUBTITLE_OCR_UPLOAD_FAILED",
+              "SUBTITLE_OCR_QUERY_FAILED",
+              "SUBTITLE_OCR_TASK_FAILED",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "none",
+            "Scope": "none",
+            "Required": false,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": false,
+            "Condition": null,
+            "AllowedActions": []
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "generate_script_units"
+            }
+          ]
+        },
+        {
+          "ID": "generate_script_units",
+          "Kind": "shared_workflow",
+          "ExecutorRef": "workflow.shared_script_generation",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "episode_cards",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "adaptation_brief",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "script_context",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "exact"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "script_unit",
+              "cardinality": "many",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/common.schema.json#/$defs/scriptUnit"
+            },
+            {
+              "artifact_type": "script_handoff",
+              "cardinality": "many",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/common.schema.json#/$defs/scriptHandoff"
+            }
+          ],
+          "PromptRef": "../../design/prompts/shared/script-generate.v1.md",
+          "RuleRefs": [
+            "../../design/rules/shared/script-writing.v1.md",
+            "../../design/rules/shared/dialogue.v1.md",
+            "../../design/rules/shared/transition-flashback-continuity-format.v1.md",
+            "../../design/rules/shared/miniprogram-short-drama.v1.md",
+            "../../design/rules/video-reference-creation/no-copy-adaptation.v1.md"
+          ],
+          "ResponseAdapterRef": "adapter.legacy_script_unit_to_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": [
+            "script_generation",
+            "user"
+          ],
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.video_reference_creation.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "MEDIA_PROCESSING_FAILED",
+              "MEDIA_PROBE_FAILED",
+              "SUBTITLE_OCR_TIMEOUT",
+              "SUBTITLE_OCR_UPLOAD_FAILED",
+              "SUBTITLE_OCR_QUERY_FAILED",
+              "SUBTITLE_OCR_TASK_FAILED",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "batch_checkpoint",
+            "Scope": "batch",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": {
+            "item_key": "episode_no",
+            "execution": "sequential",
+            "failure_policy": "preserve_success_retry_failed",
+            "ordering": "natural_episode_order",
+            "max_items_per_task": 1,
+            "concurrency_policy": "script_continuity_sequential"
+          },
+          "StateTransition": {
+            "mode": "read_write",
+            "delta_artifact_type": "script_handoff",
+            "delta_pointer": "/continuity_delta",
+            "previous_output_policy": "adjacent",
+            "field_mappings": [
+              {
+                "delta_field": "new_facts",
+                "state_field": "facts",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "character_state_changes",
+                "state_field": "character_state",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "relationship_changes",
+                "state_field": "relationship_state",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "hooks_opened",
+                "state_field": "open_hooks",
+                "operation": "append_unique"
+              },
+              {
+                "delta_field": "hooks_resolved",
+                "state_field": "open_hooks",
+                "operation": "remove"
+              },
+              {
+                "delta_field": "hooks_resolved",
+                "state_field": "resolved_hooks",
+                "operation": "append_unique"
+              }
+            ]
+          },
+          "Next": [
+            {
+              "When": "completed",
+              "To": "review_script_set"
+            }
+          ]
+        },
+        {
+          "ID": "review_script_set",
+          "Kind": "review",
+          "ExecutorRef": "workflow.shared_script_quality_review",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "script_unit",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "script_handoff",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "script_context",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "exact"
+            }
+          ],
+          "OutputRefs": [],
+          "PromptRef": "../../design/prompts/shared/quality-review-batch.v1.md",
+          "RuleRefs": [
+            "../../design/rules/shared/quality-review.v1.md"
+          ],
+          "ResponseAdapterRef": null,
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": "../../schemas/v1/quality-review.schema.json",
+          "GatePolicyRef": "quality.script.v1",
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "continuity_context"
+          ],
+          "ContextPolicyRef": "context.video_reference_creation.v1",
+          "Visibility": "internal",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "MEDIA_PROCESSING_FAILED",
+              "MEDIA_PROBE_FAILED",
+              "SUBTITLE_OCR_TIMEOUT",
+              "SUBTITLE_OCR_UPLOAD_FAILED",
+              "SUBTITLE_OCR_QUERY_FAILED",
+              "SUBTITLE_OCR_TASK_FAILED",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "conditional_review",
+            "Scope": "quality_review",
+            "Required": true,
+            "RequiredWhen": "action_required",
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "ai_revise",
+              "manual_edit",
+              "confirm_change",
+              "accept_with_risk"
+            ]
+          },
+          "Batch": {
+            "item_key": "episode_range",
+            "execution": "parallel",
+            "failure_policy": "preserve_success_retry_failed",
+            "ordering": "natural_episode_order",
+            "max_items_per_task": 5,
+            "concurrency_policy": "quality_review_bounded_parallel"
+          },
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "aggregate_scripts"
+            }
+          ]
+        },
+        {
+          "ID": "aggregate_scripts",
+          "Kind": "aggregate",
+          "ExecutorRef": "runtime.aggregate_scripts",
+          "ConfigRef": "creation",
+          "InputRefs": [
+            {
+              "artifact_type": "script_unit",
+              "cardinality": "many",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "scripts",
+              "cardinality": "one",
+              "initial_status": "confirmed",
+              "schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/scripts"
+            }
+          ],
+          "PromptRef": null,
+          "RuleRefs": [],
+          "ResponseAdapterRef": null,
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": null,
+          "ContextPolicyRef": "context.video_reference_creation.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": true,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "MEDIA_PROCESSING_FAILED",
+              "MEDIA_PROBE_FAILED",
+              "SUBTITLE_OCR_TIMEOUT",
+              "SUBTITLE_OCR_UPLOAD_FAILED",
+              "SUBTITLE_OCR_QUERY_FAILED",
+              "SUBTITLE_OCR_TASK_FAILED",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "none",
+            "Scope": "none",
+            "Required": false,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": false,
+            "Condition": null,
+            "AllowedActions": []
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": []
+        }
+      ]
+    },
+    {
+      "ID": "script_continuation",
+      "Version": "1.0.0",
+      "Label": "剧本续写",
+      "Description": "解析已有剧本，先生成 5 个续写方向供单选，再按选定方向续写完整剧本。",
+      "Kind": "domain_workflow",
+      "ExecutionMode": "stateful_workflow",
+      "InputBinding": {
+        "source_type": "script",
+        "asset_role": "primary_source"
+      },
+      "AcceptedAssetKinds": [
+        "text",
+        "document"
+      ],
+      "RequiredProviders": [
+        "content_model_provider",
+        "document_parser"
+      ],
+      "InputSchemaRef": "../../schemas/v1/script-continuation.schema.json#/$defs/input",
+      "ConfigSchemaRefs": {
+        "continuation": "../../schemas/v1/script-continuation.schema.json#/$defs/config"
+      },
+      "EntryPolicy": {
+        "explicit_invocation": true,
+        "auto_route": true,
+        "requires_user_confirmation": true,
+        "input_collection_modes": [
+          "fixed"
+        ]
+      },
+      "Routing": {
+        "explicit_aliases": [
+          "剧本续写",
+          "续写剧本",
+          "script_continuation"
+        ],
+        "intent_examples": [
+          "基于这个剧本给我五个续写方向",
+          "续写这个剧本",
+          "从当前结尾继续写剧本"
+        ],
+        "ambiguity_policy": "ask_user"
+      },
+      "Commands": [
+        "inspect",
+        "start",
+        "pause",
+        "resume",
+        "cancel",
+        "retry_failed",
+        "approve",
+        "request_ai_revision",
+        "regenerate_artifact",
+        "edit_artifact"
+      ],
+      "UI": {
+        "icon_key": "file_text",
+        "sort_order": 40,
+        "entry_view_key": "source_materials",
+        "config_view_key": "script_continuation",
+        "default_prompt": "请分析我提供的已有剧本，先给出 5 个续写方向供我选择，再按选定方向续写完整剧本。"
+      },
+      "Completion": {
+        "terminal_step_ids": [
+          "generate_continuation_script"
+        ],
+        "required_artifacts": [
+          {
+            "artifact_type": "continuation_script",
+            "required_status": "confirmed",
+            "coverage": "one"
+          }
+        ],
+        "requires_terminal_approval": false
+      },
+      "StateContract": null,
+      "Steps": [
+        {
+          "ID": "ingest_source",
+          "Kind": "system",
+          "ExecutorRef": "runtime.ingest_source",
+          "ConfigRef": "continuation",
+          "InputRefs": [],
+          "OutputRefs": [
+            {
+              "artifact_type": "source_input",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/common.schema.json#/$defs/sourceInput"
+            }
+          ],
+          "PromptRef": null,
+          "RuleRefs": [],
+          "ResponseAdapterRef": null,
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "asset_snapshot",
+            "config_snapshot"
+          ],
+          "ContextPolicyRef": "context.script_continuation.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": false,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "transition_checkpoint",
+            "Scope": "transition",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve"
+            ]
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "generate_continuation_options"
+            }
+          ]
+        },
+        {
+          "ID": "generate_continuation_options",
+          "Kind": "model",
+          "ExecutorRef": "worker.structured_content",
+          "ConfigRef": "continuation",
+          "InputRefs": [
+            {
+              "artifact_type": "source_input",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "continuation_options",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/script-continuation.schema.json#/$defs/continuationOptions"
+            }
+          ],
+          "PromptRef": "../../design/prompts/script-continuation/options.v1.md",
+          "RuleRefs": [],
+          "ResponseAdapterRef": "adapter.script_continuation_options_identity_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "user_instruction"
+          ],
+          "ContextPolicyRef": "context.script_continuation.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": false,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "transition_checkpoint",
+            "Scope": "transition",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "select_single_option",
+              "request_ai_revision"
+            ]
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": [
+            {
+              "When": "completed",
+              "To": "generate_continuation_script"
+            }
+          ]
+        },
+        {
+          "ID": "generate_continuation_script",
+          "Kind": "model",
+          "ExecutorRef": "worker.structured_content",
+          "ConfigRef": "continuation",
+          "InputRefs": [
+            {
+              "artifact_type": "source_input",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            },
+            {
+              "artifact_type": "continuation_options",
+              "cardinality": "one",
+              "required_status": "confirmed",
+              "version_policy": "approval_snapshot"
+            }
+          ],
+          "OutputRefs": [
+            {
+              "artifact_type": "continuation_script",
+              "cardinality": "one",
+              "initial_status": "pending_approval",
+              "schema_ref": "../../schemas/v1/script-continuation.schema.json#/$defs/continuationScript"
+            }
+          ],
+          "PromptRef": "../../design/prompts/script-continuation/script.v1.md",
+          "RuleRefs": [],
+          "ResponseAdapterRef": "adapter.script_continuation_script_identity_v1",
+          "ProviderResultSchemaRef": null,
+          "ResultSchemaRef": null,
+          "GatePolicyRef": null,
+          "QualityReviewRoutes": null,
+          "RequiredContext": [
+            "approval_snapshot",
+            "config_snapshot",
+            "decision_snapshot",
+            "user_instruction"
+          ],
+          "ContextPolicyRef": "context.script_continuation.v1",
+          "Visibility": "user",
+          "Retry": {
+            "automatic_attempts": 1,
+            "user_retry_allowed": true,
+            "resume_from_cursor": false,
+            "retryable_errors": [
+              "MODEL_TIMEOUT",
+              "MODEL_RATE_LIMIT",
+              "PROVIDER_TEMPORARY_FAILURE",
+              "PROVIDER_RESPONSE_INVALID",
+              "OUTPUT_REPAIR_FAILED"
+            ]
+          },
+          "Approval": {
+            "Type": "checkpoint",
+            "Scope": "artifact",
+            "Required": true,
+            "RequiredWhen": null,
+            "InvalidateOnNewVersion": true,
+            "Condition": null,
+            "AllowedActions": [
+              "approve",
+              "edit_artifact",
+              "request_ai_revision",
+              "regenerate_artifact"
+            ]
+          },
+          "Batch": null,
+          "StateTransition": null,
+          "Next": []
+        }
+      ]
+    }
+  ],
+  "artifact_presentations": [
+    {
+      "artifact_type": "source_input",
+      "label": "来源材料",
+      "description": "本次生成使用的文件、素材批次和用户要求。",
+      "renderer": "document",
+      "editable": false,
+      "preferred_fields": [
+        "assets",
+        "source_kind",
+        "collection_state"
+      ],
+      "navigation": {
+        "order": 10,
+        "group_mode": "single",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "inspect",
+        "version_history"
+      ]
+    },
+    {
+      "artifact_type": "source_manifest",
+      "label": "来源清单",
+      "description": "系统读取到的材料范围与完整性检查。",
+      "renderer": "document",
+      "editable": false,
+      "preferred_fields": [
+        "source_kind",
+        "units",
+        "covered_source_unit_ids",
+        "missing_or_unread_scope",
+        "truncation_risk"
+      ],
+      "navigation": {
+        "order": 20,
+        "group_mode": "single",
+        "visibility": "internal"
+      },
+      "available_actions": [
+        "inspect"
+      ]
+    },
+    {
+      "artifact_type": "story_bible",
+      "label": "故事圣经",
+      "description": "稳定约束人物、世界观、关系和关键情节。",
+      "renderer": "document",
+      "editable": true,
+      "preferred_fields": [
+        "story_overview",
+        "major_plotline",
+        "characters",
+        "relationships",
+        "world_rules",
+        "must_keep_facts",
+        "climax_map",
+        "foreshadowing_and_payoff",
+        "short_drama_assets",
+        "adaptation_risks"
+      ],
+      "navigation": {
+        "order": 30,
+        "group_mode": "single",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "manual_edit",
+        "agent_revision",
+        "regenerate",
+        "version_history"
+      ]
+    },
+    {
+      "artifact_type": "episode_split",
+      "label": "拆集方案",
+      "description": "原文覆盖、分集边界和每集剧情目标。",
+      "renderer": "document",
+      "editable": true,
+      "preferred_fields": [
+        "split_strategy",
+        "target_episode_count",
+        "actual_episode_count",
+        "episodes",
+        "coverage_check",
+        "global_risks"
+      ],
+      "navigation": {
+        "order": 40,
+        "group_mode": "single",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "manual_edit",
+        "agent_revision",
+        "regenerate",
+        "version_history"
+      ]
+    },
+    {
+      "artifact_type": "material_bank",
+      "label": "素材库",
+      "description": "从非小说材料中整理的事实、冲突、情绪和可用桥段。",
+      "renderer": "document",
+      "editable": true,
+      "preferred_fields": [
+        "user_supplied_facts",
+        "input_type_tags",
+        "emotional_drives",
+        "conflict_materials",
+        "hook_candidates",
+        "payoff_candidates",
+        "visual_scene_candidates",
+        "gaps_and_questions",
+        "most_promising_direction",
+        "volume_fit_notes",
+        "discard_or_later"
+      ],
+      "navigation": {
+        "order": 50,
+        "group_mode": "single",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "manual_edit",
+        "agent_revision",
+        "regenerate",
+        "version_history"
+      ]
+    },
+    {
+      "artifact_type": "story_seed",
+      "label": "故事种子",
+      "description": "生成剧本前确认的核心故事方向。",
+      "renderer": "document",
+      "editable": true,
+      "preferred_fields": [
+        "logline",
+        "genre_tags",
+        "core_premise",
+        "protagonist",
+        "main_characters",
+        "central_conflict",
+        "main_plotline",
+        "relationship_engine",
+        "hook_engine",
+        "payoff_chain",
+        "world_rules",
+        "risks",
+        "development_notes",
+        "volume_plan_notes"
+      ],
+      "navigation": {
+        "order": 60,
+        "group_mode": "single",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "manual_edit",
+        "agent_revision",
+        "regenerate",
+        "version_history"
+      ]
+    },
+    {
+      "artifact_type": "series_blueprint",
+      "label": "系列蓝图",
+      "description": "全剧阶段、人物推进、钩子和爽点分布。",
+      "renderer": "document",
+      "editable": true,
+      "preferred_fields": [
+        "series_promise",
+        "recommended_episode_count",
+        "resolved_episode_count",
+        "episode_count_reason",
+        "phase_plan",
+        "character_progression",
+        "relationship_progression",
+        "hook_distribution",
+        "payoff_distribution",
+        "pacing_density_plan",
+        "first_major_climax_plan",
+        "continuity_rules",
+        "fit_risks"
+      ],
+      "navigation": {
+        "order": 70,
+        "group_mode": "single",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "manual_edit",
+        "agent_revision",
+        "regenerate",
+        "version_history"
+      ]
+    },
+    {
+      "artifact_type": "episode_cards",
+      "label": "分集规划",
+      "description": "逐集目标、冲突、转折和结尾钩子。",
+      "renderer": "episode_plan",
+      "editable": true,
+      "preferred_fields": [
+        "episodes",
+        "continuity_delta"
+      ],
+      "navigation": {
+        "order": 80,
+        "group_mode": "single",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "manual_edit",
+        "agent_revision",
+        "regenerate",
+        "version_history"
+      ]
+    },
+    {
+      "artifact_type": "video_script_unit",
+      "label": "视频还原剧本",
+      "description": "单集视频解析得到的剧情概要和逐场剧本。",
+      "renderer": "video_script",
+      "editable": true,
+      "preferred_fields": [
+        "episode_no",
+        "title",
+        "source_file_name",
+        "extraction_completeness",
+        "plot_summary",
+        "script_text",
+        "scenes",
+        "uncertainty_flags"
+      ],
+      "navigation": {
+        "order": 90,
+        "group_mode": "episode_directory",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "manual_edit",
+        "agent_revision",
+        "regenerate",
+        "version_history"
+      ]
+    },
+    {
+      "artifact_type": "reference_scripts",
+      "label": "参考剧本合集",
+      "description": "已确认逐集剧本的排序与完整度。",
+      "renderer": "script_collection",
+      "editable": false,
+      "preferred_fields": [
+        "episode_count",
+        "episode_order",
+        "completeness",
+        "missing_episode_nos",
+        "failed_episode_nos",
+        "duplicate_episode_nos",
+        "unit_refs"
+      ],
+      "navigation": {
+        "order": 100,
+        "group_mode": "single",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "inspect",
+        "version_history",
+        "export"
+      ],
+      "collection_member_type": "video_script_unit"
+    },
+    {
+      "artifact_type": "script_analysis",
+      "label": "剧本分析",
+      "description": "参考剧的结构、人设、钩子、情绪和可迁移方法。",
+      "renderer": "document",
+      "editable": true,
+      "preferred_fields": [
+        "basic_information",
+        "overall_judgment",
+        "opening_strategy",
+        "characters_and_relationships",
+        "plot_and_emotion_curve",
+        "payoff_and_emotion",
+        "hook_system",
+        "differentiation",
+        "transferable_methods",
+        "optimization_actions",
+        "marketing_material_directions",
+        "final_conclusion",
+        "risks"
+      ],
+      "navigation": {
+        "order": 110,
+        "group_mode": "single",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "manual_edit",
+        "agent_revision",
+        "regenerate",
+        "version_history"
+      ]
+    },
+    {
+      "artifact_type": "adaptation_options",
+      "label": "改编方案",
+      "description": "可组合选择的改编方法与风险。",
+      "renderer": "form",
+      "editable": false,
+      "preferred_fields": [
+        "selection_instructions",
+        "options"
+      ],
+      "navigation": {
+        "order": 120,
+        "group_mode": "single",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "inspect",
+        "regenerate",
+        "version_history"
+      ]
+    },
+    {
+      "artifact_type": "adaptation_brief",
+      "label": "改编 Brief",
+      "description": "用户确认后用于约束后续生成的改编方法。",
+      "renderer": "document",
+      "editable": true,
+      "preferred_fields": [
+        "adaptation_goal",
+        "patterns_to_keep",
+        "content_to_replace",
+        "selected_methods",
+        "new_elements",
+        "character_and_relationship_adjustments",
+        "genre_style_worldview_direction",
+        "target_episode_count",
+        "episode_duration_minutes",
+        "user_requirements",
+        "forbidden_copying",
+        "compliance_boundary",
+        "unresolved_questions"
+      ],
+      "navigation": {
+        "order": 130,
+        "group_mode": "single",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "manual_edit",
+        "agent_revision",
+        "regenerate",
+        "version_history"
+      ]
+    },
+    {
+      "artifact_type": "continuation_options",
+      "label": "续写方向",
+      "description": "基于剧本当前结尾生成的 5 个互斥续写方向。",
+      "renderer": "form",
+      "editable": false,
+      "preferred_fields": [
+        "selection_instructions",
+        "options",
+        "core_settings"
+      ],
+      "navigation": {
+        "order": 135,
+        "group_mode": "single",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "inspect",
+        "regenerate",
+        "version_history"
+      ]
+    },
+    {
+      "artifact_type": "continuation_script",
+      "label": "续写剧本",
+      "description": "根据用户选定方向生成的完整续写剧本。",
+      "renderer": "script",
+      "editable": true,
+      "preferred_fields": [
+        "title",
+        "script_text",
+        "selected_option_id"
+      ],
+      "navigation": {
+        "order": 136,
+        "group_mode": "single",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "manual_edit",
+        "agent_revision",
+        "regenerate",
+        "version_history",
+        "export"
+      ]
+    },
+    {
+      "artifact_type": "script_context",
+      "label": "剧本上下文",
+      "description": "单集生成时使用的事实、连续性和改编边界。",
+      "renderer": "document",
+      "editable": false,
+      "preferred_fields": [
+        "episode_no",
+        "must_follow_facts",
+        "character_state",
+        "relationship_state",
+        "continuity_state",
+        "allowed_additions",
+        "forbidden_changes",
+        "style_constraints",
+        "user_notes",
+        "source_material"
+      ],
+      "navigation": {
+        "order": 140,
+        "group_mode": "single",
+        "visibility": "internal"
+      },
+      "available_actions": [
+        "inspect"
+      ]
+    },
+    {
+      "artifact_type": "script_unit",
+      "label": "单集剧本",
+      "description": "可编辑的单集剧本文稿。",
+      "renderer": "script",
+      "editable": true,
+      "preferred_fields": [
+        "episode_no",
+        "title",
+        "script_text",
+        "scenes"
+      ],
+      "navigation": {
+        "order": 150,
+        "group_mode": "episode_directory",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "manual_edit",
+        "agent_revision",
+        "regenerate",
+        "version_history"
+      ]
+    },
+    {
+      "artifact_type": "script_handoff",
+      "label": "剧本交接",
+      "description": "本集生成后的连续性变化与下集约束。",
+      "renderer": "document",
+      "editable": false,
+      "preferred_fields": [
+        "episode_no",
+        "continuity_delta",
+        "next_episode_must_address",
+        "critical_presentation_constraints",
+        "review_focus",
+        "self_check"
+      ],
+      "navigation": {
+        "order": 160,
+        "group_mode": "single",
+        "visibility": "internal"
+      },
+      "available_actions": [
+        "inspect"
+      ]
+    },
+    {
+      "artifact_type": "structured_run_state",
+      "label": "运行连续性状态",
+      "description": "Harness 在同一 Run 内维护并传递给 Worker 的内部连续性状态。",
+      "renderer": "document",
+      "editable": false,
+      "preferred_fields": [],
+      "navigation": {
+        "order": 165,
+        "group_mode": "single",
+        "visibility": "internal"
+      },
+      "available_actions": [
+        "inspect"
+      ]
+    },
+    {
+      "artifact_type": "scripts",
+      "label": "完整剧本",
+      "description": "全部单集剧本的聚合结果与完整性。",
+      "renderer": "script_collection",
+      "editable": false,
+      "preferred_fields": [
+        "episode_count",
+        "completeness",
+        "quality_flags",
+        "global_continuity_state",
+        "unit_refs"
+      ],
+      "navigation": {
+        "order": 170,
+        "group_mode": "single",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "inspect",
+        "version_history",
+        "export"
+      ],
+      "collection_member_type": "script_unit"
+    },
+    {
+      "artifact_type": "generic_document",
+      "label": "文档",
+      "description": "由 Agent 根据当前请求创建的通用文档。",
+      "renderer": "document",
+      "editable": true,
+      "preferred_fields": [
+        "title",
+        "summary",
+        "content",
+        "items"
+      ],
+      "navigation": {
+        "order": 900,
+        "group_mode": "single",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "manual_edit",
+        "agent_revision",
+        "version_history"
+      ]
+    },
+    {
+      "artifact_type": "generic_table",
+      "label": "表格",
+      "description": "由 Agent 根据当前请求创建的结构化表格。",
+      "renderer": "table",
+      "editable": true,
+      "preferred_fields": [
+        "title",
+        "columns",
+        "rows"
+      ],
+      "navigation": {
+        "order": 910,
+        "group_mode": "single",
+        "visibility": "user"
+      },
+      "available_actions": [
+        "manual_edit",
+        "agent_revision",
+        "version_history",
+        "export"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "schema_version": "agent_platform_release_matrix.v1",
+  "sdk_versions": {
+    "openai_agents": "0.21.1",
+    "openai": "3.3.1"
+  },
+  "local_gates": [
+    {"id":"release_evidence","required":true,"command":"PowerShell report fixtures and Python rollback-data unittest suite"},
+    {"id":"capability_contracts","required":true,"command":"node acceptance/validate-capability-contracts.mjs followed by node --test --test-concurrency=1 acceptance/validate-capability-contracts.test.mjs","coverage":"Static contracts for all four original workflows and mutation fixtures; not runtime or user E2E acceptance."},
+    {"id":"acceptance_plan","required":true,"command":"node acceptance/validate-stage-8-plan.mjs"},
+    {"id":"legacy_agent_path_absent","required":true,"command":"repository source scan"},
+    {"id":"sdk_compatibility_local","required":true,"command":"compatibility_probe.py without --live"},
+    {"id":"go_test","required":true,"command":"go test -p 1 ./... -count=1 -timeout=10m"},
+    {"id":"go_vet","required":true,"command":"go vet ./..."},
+    {"id":"sidecar_test","required":true,"command":"pytest -q"},
+    {"id":"frontend_test","required":true,"command":"npm test"},
+    {"id":"frontend_build","required":true,"command":"tsc --noEmit and Vite build into current run .tmp directory"},
+    {"id":"frontend_approval_visual","required":true,"command":"scripts/run-agent-tool-approval-ui-smoke.ps1"},
+    {"id":"rollback_drill","required":true,"command":"scripts/run-agent-platform-rollback-drill.ps1","coverage":"Baseline business-data, asset and read-only API fixture. Actual Go execution is required; helper tests alone do not attest full rollback or deployment readiness."}
+  ],
+  "external_gates": [
+    {
+      "id": "gateway_live_responses_tools_skills_compact",
+      "required_for_release": true,
+      "status": "pending_explicit_authorization",
+      "reason": "Live provider and gateway requests are remote operations."
+    },
+    {
+      "id": "pre_release_full_e2e",
+      "required_for_release": true,
+      "status": "pending_explicit_authorization",
+      "reason": "The user prohibited deployment or changes to the test machine before approval. Same-version acceptance must cover original business flows, all three execution modes, conversational Skill author/install/call/upgrade, user UI, permissions, recovery and business-data rollback; final global review is still required."
+    },
+    {
+      "id": "oci_sandbox_attack_suite",
+      "required_for_release": true,
+      "status": "pending_local_oci_runtime",
+      "reason": "Docker and Podman are unavailable on this workstation."
+    }
+  ]
+}

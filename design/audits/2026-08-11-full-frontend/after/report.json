@@ -1,0 +1,22 @@
+{
+  "editor": {
+    "controls": 7,
+    "saveVisibleAfterScroll": true
+  },
+  "novel": {
+    "nestedEpisodes": 12,
+    "collectionEpisodes": 12
+  },
+  "nonNovel": {
+    "status": "已完成"
+  },
+  "video": {
+    "nestedEpisodes": 1,
+    "collectionEpisodes": 1,
+    "runContextVisible": false
+  },
+  "layout": {
+    "viewport": "1280x800",
+    "horizontalOverflow": false
+  }
+}

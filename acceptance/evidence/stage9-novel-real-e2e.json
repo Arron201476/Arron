@@ -1,0 +1,260 @@
+{
+  "execution_id": "bb038787-1edc-41c8-b832-dfffaafab730",
+  "started_at": "2026-08-06T13:43:37.747Z",
+  "finished_at": "2026-08-06T13:59:53.646Z",
+  "environment": "real_provider_demo_via_ssh_tunnel",
+  "capability": {
+    "id": "novel_to_script",
+    "version": "1.4.0"
+  },
+  "fixture": {
+    "name": "stable-source-sample.txt",
+    "extension": ".txt",
+    "bytes": 5702,
+    "sha256": "16a74ef2be2bed00efe323c117c61b288cc2e0ad14730c8127201a104e34e53f"
+  },
+  "project_id": "prj_d7f34049f6c417e770752541398ace69",
+  "run_id": "run_b4b499b50fb5833030bd9cace357444c",
+  "final_status": "completed",
+  "artifact_types": [
+    "episode_cards",
+    "episode_split",
+    "script_context",
+    "script_handoff",
+    "script_unit",
+    "scripts",
+    "source_input",
+    "source_manifest",
+    "story_bible"
+  ],
+  "candidate_count": 1,
+  "timeline": [
+    {
+      "at": "2026-08-06T13:43:37.829Z",
+      "event": "project_created",
+      "project_id": "prj_d7f34049f6c417e770752541398ace69"
+    },
+    {
+      "at": "2026-08-06T13:43:37.870Z",
+      "event": "source_uploaded",
+      "asset_id": "ast_151f5db0cc7deab01c7c862fd84d9384",
+      "asset_snapshot_id": "ass_39a4c25d7a69a6e731bf9dbe6ea117bc"
+    },
+    {
+      "at": "2026-08-06T13:43:37.886Z",
+      "event": "proposed_action_created",
+      "proposed_action_id": "pac_afb9d0a25d16b7785fee796ed8aa52c1",
+      "intent": "propose_capability"
+    },
+    {
+      "at": "2026-08-06T13:43:37.905Z",
+      "event": "proposed_action_configured",
+      "version": 2
+    },
+    {
+      "at": "2026-08-06T13:43:37.924Z",
+      "event": "run_started",
+      "run_id": "run_b4b499b50fb5833030bd9cace357444c",
+      "status": "waiting_approval"
+    },
+    {
+      "at": "2026-08-06T13:43:37.933Z",
+      "event": "run_state",
+      "status": "waiting_approval",
+      "step": "ingest_source",
+      "approval": "apr_8cf5d3786c662bad59c3950ce1102efb",
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:43:37.947Z",
+      "event": "approval_resolved",
+      "approval_request_id": "apr_8cf5d3786c662bad59c3950ce1102efb",
+      "scope": "transition",
+      "subject_kind": "artifact_version",
+      "subject_ref_id": "av_605ef9a5c69cbd9a4d14d66715c84a2b"
+    },
+    {
+      "at": "2026-08-06T13:43:39.963Z",
+      "event": "run_state",
+      "status": "paused",
+      "step": "build_source_manifest",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:43:39.981Z",
+      "event": "run_resumed",
+      "run_id": "run_b4b499b50fb5833030bd9cace357444c"
+    },
+    {
+      "at": "2026-08-06T13:43:42.006Z",
+      "event": "run_state",
+      "status": "running",
+      "step": "build_story_bible",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:53:31.816Z",
+      "event": "run_state",
+      "status": "waiting_approval",
+      "step": "build_story_bible",
+      "approval": "apr_b2ca7afc4b35fad89913b3add628ac8a",
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:53:31.850Z",
+      "event": "approval_resolved",
+      "approval_request_id": "apr_b2ca7afc4b35fad89913b3add628ac8a",
+      "scope": "artifact",
+      "subject_kind": "artifact_version",
+      "subject_ref_id": "av_f060c9bcd47bfba46106332459c429f5"
+    },
+    {
+      "at": "2026-08-06T13:53:33.872Z",
+      "event": "run_state",
+      "status": "paused",
+      "step": "review_volume_fit",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:53:33.894Z",
+      "event": "run_resumed",
+      "run_id": "run_b4b499b50fb5833030bd9cace357444c"
+    },
+    {
+      "at": "2026-08-06T13:53:35.921Z",
+      "event": "run_state",
+      "status": "running",
+      "step": "split_episodes",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:55:07.199Z",
+      "event": "run_state",
+      "status": "waiting_approval",
+      "step": "split_episodes",
+      "approval": "apr_f22abdf24b34cae479b7f3bcc188a7c3",
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:55:07.232Z",
+      "event": "approval_resolved",
+      "approval_request_id": "apr_f22abdf24b34cae479b7f3bcc188a7c3",
+      "scope": "artifact",
+      "subject_kind": "artifact_version",
+      "subject_ref_id": "av_1e514cb430377f7bb10244be0f93db27"
+    },
+    {
+      "at": "2026-08-06T13:55:09.273Z",
+      "event": "run_state",
+      "status": "paused",
+      "step": "build_episode_cards",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:55:09.295Z",
+      "event": "run_resumed",
+      "run_id": "run_b4b499b50fb5833030bd9cace357444c"
+    },
+    {
+      "at": "2026-08-06T13:55:11.321Z",
+      "event": "run_state",
+      "status": "running",
+      "step": "build_episode_cards",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:56:18.246Z",
+      "event": "run_state",
+      "status": "waiting_approval",
+      "step": "build_episode_cards",
+      "approval": "apr_4bcc01f8d7c91e90fe3efe073c9a7578",
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:56:18.278Z",
+      "event": "approval_resolved",
+      "approval_request_id": "apr_4bcc01f8d7c91e90fe3efe073c9a7578",
+      "scope": "batch",
+      "subject_kind": "artifact_version",
+      "subject_ref_id": "av_4309486f60f3761ed331622dc5ae356d"
+    },
+    {
+      "at": "2026-08-06T13:56:20.302Z",
+      "event": "run_state",
+      "status": "paused",
+      "step": "build_script_contexts",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:56:20.331Z",
+      "event": "run_resumed",
+      "run_id": "run_b4b499b50fb5833030bd9cace357444c"
+    },
+    {
+      "at": "2026-08-06T13:56:22.357Z",
+      "event": "run_state",
+      "status": "running",
+      "step": "generate_script_units",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:58:05.812Z",
+      "event": "run_state",
+      "status": "waiting_approval",
+      "step": "generate_script_units",
+      "approval": "apr_00432ff4b18af044776c8bbf840379ee",
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:58:05.854Z",
+      "event": "approval_resolved",
+      "approval_request_id": "apr_00432ff4b18af044776c8bbf840379ee",
+      "scope": "batch",
+      "subject_kind": "artifact_version_set",
+      "subject_ref_id": "step_9075beb5da509cc15f8a894d81cff008"
+    },
+    {
+      "at": "2026-08-06T13:58:07.889Z",
+      "event": "run_state",
+      "status": "running",
+      "step": "review_script_set",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:59:51.560Z",
+      "event": "run_state",
+      "status": "waiting_approval",
+      "step": "review_script_set",
+      "approval": "apr_f796491af740603060a9edb65d5fc23d",
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:59:51.591Z",
+      "event": "quality_review_accepted",
+      "approval_request_id": "apr_f796491af740603060a9edb65d5fc23d",
+      "issue_counts": {
+        "blocker": 0,
+        "high": 0,
+        "medium": 2,
+        "low": 1
+      }
+    },
+    {
+      "at": "2026-08-06T13:59:53.622Z",
+      "event": "run_state",
+      "status": "completed",
+      "step": "aggregate_scripts",
+      "approval": null,
+      "tasks": []
+    }
+  ]
+}

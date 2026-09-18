@@ -1,0 +1,104 @@
+{
+  "schema_version": "agent_sdk_compatibility.v1",
+  "endpoint": "https://api.example.com/v1",
+  "model": "gpt-5p6-terra",
+  "versions": {
+    "openai_agents": "0.21.1",
+    "openai": "3.7.0"
+  },
+  "live_requested": true,
+  "checks": [
+    {
+      "capability": "responses.create",
+      "layer": "python_sdk",
+      "status": "supported"
+    },
+    {
+      "capability": "responses.stream",
+      "layer": "python_sdk",
+      "status": "supported"
+    },
+    {
+      "capability": "responses.compact",
+      "layer": "python_sdk",
+      "status": "supported"
+    },
+    {
+      "capability": "skills.list",
+      "layer": "python_sdk",
+      "status": "supported"
+    },
+    {
+      "capability": "session.responses_compaction",
+      "layer": "agents_sdk",
+      "status": "supported"
+    },
+    {
+      "capability": "mcp.streamable_http",
+      "layer": "agents_sdk",
+      "status": "supported"
+    },
+    {
+      "capability": "responses.create",
+      "layer": "gateway_live",
+      "status": "supported",
+      "latency_ms": 4219,
+      "evidence": [
+        "response_status=completed"
+      ]
+    },
+    {
+      "capability": "responses.stream",
+      "layer": "gateway_live",
+      "status": "supported",
+      "latency_ms": 1890,
+      "evidence": [
+        "event=response.completed",
+        "event=response.content_part.added",
+        "event=response.content_part.done",
+        "event=response.created",
+        "event=response.in_progress",
+        "event=response.output_item.added",
+        "event=response.output_item.done",
+        "event=response.output_text.delta",
+        "event=response.output_text.done"
+      ]
+    },
+    {
+      "capability": "responses.function_tool",
+      "layer": "gateway_live",
+      "status": "supported",
+      "latency_ms": 2246,
+      "evidence": [
+        "function_calls=1"
+      ]
+    },
+    {
+      "capability": "responses.compact",
+      "layer": "gateway_live",
+      "status": "supported",
+      "latency_ms": 7910,
+      "evidence": [
+        "object=response.compaction",
+        "output_items=1"
+      ]
+    },
+    {
+      "capability": "skills.list",
+      "layer": "gateway_live",
+      "status": "unsupported",
+      "reason": "endpoint_unavailable",
+      "latency_ms": 26,
+      "http_status": 404,
+      "evidence": [
+        "NotFoundError"
+      ]
+    },
+    {
+      "capability": "mcp.remote_tool_call",
+      "layer": "gateway_live",
+      "status": "not_tested",
+      "reason": "no_local_mcp_fixture"
+    }
+  ]
+}

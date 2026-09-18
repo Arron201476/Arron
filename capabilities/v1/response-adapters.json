@@ -1,0 +1,111 @@
+{
+  "contract_version": "1.0.0",
+  "definition_status": "design_contract",
+  "adapters": [
+    {
+      "id": "adapter.legacy_story_bible_to_v1",
+      "target_schema_ref": "../../schemas/v1/novel-to-script.schema.json#/$defs/storyBible",
+      "behavior": "legacy_response_wrapper_to_artifact_payload"
+    },
+    {
+      "id": "adapter.legacy_episode_split_to_v1",
+      "target_schema_ref": "../../schemas/v1/novel-to-script.schema.json#/$defs/episodeSplit",
+      "behavior": "legacy_response_wrapper_to_artifact_payload"
+    },
+    {
+      "id": "adapter.legacy_material_bank_to_v1",
+      "target_schema_ref": "../../schemas/v1/non-novel-to-script.schema.json#/$defs/materialBank",
+      "behavior": "legacy_response_wrapper_to_artifact_payload"
+    },
+    {
+      "id": "adapter.legacy_story_seed_to_v1",
+      "target_schema_ref": "../../schemas/v1/non-novel-to-script.schema.json#/$defs/storySeed",
+      "behavior": "legacy_response_wrapper_to_artifact_payload"
+    },
+    {
+      "id": "adapter.legacy_series_blueprint_to_v1",
+      "target_schema_ref": "../../schemas/v1/non-novel-to-script.schema.json#/$defs/seriesBlueprint",
+      "behavior": "legacy_response_wrapper_to_artifact_payload"
+    },
+    {
+      "id": "adapter.legacy_episode_cards_to_v1",
+      "target_schema_ref": "../../schemas/v1/non-novel-to-script.schema.json#/$defs/episodeCards",
+      "behavior": "legacy_response_wrapper_to_artifact_payload"
+    },
+    {
+      "id": "adapter.legacy_novel_episode_cards_to_v1",
+      "target_schema_ref": "../../schemas/v1/novel-to-script.schema.json#/$defs/episodeCards",
+      "behavior": "legacy_response_wrapper_to_artifact_payload"
+    },
+    {
+      "id": "adapter.legacy_video_episode_cards_to_v1",
+      "target_schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/episodeCards",
+      "behavior": "legacy_response_wrapper_to_artifact_payload"
+    },
+    {
+      "id": "adapter.legacy_script_unit_to_v1",
+      "target_schema_ref": "../../schemas/v1/common.schema.json#/$defs/scriptUnit",
+      "behavior": "legacy_response_wrapper_to_artifact_payload"
+    },
+    {
+      "id": "adapter.legacy_script_handoff_to_v1",
+      "target_schema_ref": "../../schemas/v1/common.schema.json#/$defs/scriptHandoff",
+      "behavior": "legacy_response_wrapper_to_artifact_payload"
+    },
+    {
+      "id": "adapter.novel_script_context_to_v1",
+      "target_schema_ref": "../../schemas/v1/novel-to-script.schema.json#/$defs/scriptContext",
+      "behavior": "legacy_response_wrapper_to_artifact_payload"
+    },
+    {
+      "id": "adapter.non_novel_script_context_to_v1",
+      "target_schema_ref": "../../schemas/v1/non-novel-to-script.schema.json#/$defs/scriptContext",
+      "behavior": "legacy_response_wrapper_to_artifact_payload"
+    },
+    {
+      "id": "adapter.video_script_context_to_v1",
+      "target_schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/scriptContext",
+      "behavior": "legacy_response_wrapper_to_artifact_payload"
+    },
+    {
+      "id": "adapter.legacy_video_script_unit_to_v1",
+      "target_schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/videoScriptUnit",
+      "behavior": "legacy_response_wrapper_to_artifact_payload"
+    },
+    {
+      "id": "adapter.video_script_analysis_identity_v1",
+      "target_schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/scriptAnalysis",
+      "behavior": "artifact_payload_identity"
+    },
+    {
+      "id": "adapter.video_adaptation_options_identity_v1",
+      "target_schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/adaptationOptions",
+      "behavior": "artifact_payload_identity"
+    },
+    {
+      "id": "adapter.video_adaptation_brief_identity_v1",
+      "target_schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/adaptationBrief",
+      "behavior": "artifact_payload_identity"
+    },
+    {
+      "id": "adapter.script_continuation_options_identity_v1",
+      "target_schema_ref": "../../schemas/v1/script-continuation.schema.json#/$defs/continuationOptions",
+      "behavior": "artifact_payload_identity"
+    },
+    {
+      "id": "adapter.script_continuation_script_identity_v1",
+      "target_schema_ref": "../../schemas/v1/script-continuation.schema.json#/$defs/continuationScript",
+      "behavior": "artifact_payload_identity"
+    },
+    {
+      "id": "adapter.legacy_video_story_seed_to_v1",
+      "target_schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/storySeed",
+      "behavior": "legacy_response_wrapper_to_artifact_payload"
+    },
+    {
+      "id": "adapter.legacy_video_series_blueprint_to_v1",
+      "target_schema_ref": "../../schemas/v1/video-reference-creation.schema.json#/$defs/seriesBlueprint",
+      "behavior": "legacy_response_wrapper_to_artifact_payload"
+    }
+  ]
+}

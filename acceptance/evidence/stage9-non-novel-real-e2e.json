@@ -1,0 +1,298 @@
+{
+  "execution_id": "b1dd052e-2b0b-49a0-83fe-d637cacff8a1",
+  "started_at": "2026-08-06T12:47:04.961Z",
+  "finished_at": "2026-08-06T13:00:40.985Z",
+  "environment": "real_provider_demo_via_ssh_tunnel",
+  "capability": {
+    "id": "non_novel_to_script",
+    "version": "1.3.0"
+  },
+  "fixture": {
+    "name": "brief-synopsis.txt",
+    "extension": ".txt",
+    "bytes": 770,
+    "sha256": "2de46488f53e9503f59b9c6e572eaa4adf27b4628afd343e2cd9cd76e05b7e3c"
+  },
+  "project_id": "prj_8f472aa884031c63d36314b8704ef60f",
+  "run_id": "run_8db56b02ddd712cb3faae7c2cdec4ed2",
+  "final_status": "completed",
+  "artifact_types": [
+    "episode_cards",
+    "material_bank",
+    "script_context",
+    "script_handoff",
+    "script_unit",
+    "scripts",
+    "series_blueprint",
+    "source_input",
+    "source_manifest",
+    "story_seed"
+  ],
+  "candidate_count": 1,
+  "timeline": [
+    {
+      "at": "2026-08-06T12:47:05.092Z",
+      "event": "project_created",
+      "project_id": "prj_8f472aa884031c63d36314b8704ef60f"
+    },
+    {
+      "at": "2026-08-06T12:47:05.135Z",
+      "event": "source_uploaded",
+      "asset_id": "ast_f1df90f7c7127a93cd75adc96e50859b",
+      "asset_snapshot_id": "ass_640ba15d0fe07647b2afb553e9f13513"
+    },
+    {
+      "at": "2026-08-06T12:47:05.153Z",
+      "event": "proposed_action_created",
+      "proposed_action_id": "pac_545865793fa4b3b68dd92028b9c27a9c",
+      "intent": "propose_capability"
+    },
+    {
+      "at": "2026-08-06T12:47:05.165Z",
+      "event": "proposed_action_configured",
+      "version": 2
+    },
+    {
+      "at": "2026-08-06T12:47:05.181Z",
+      "event": "run_started",
+      "run_id": "run_8db56b02ddd712cb3faae7c2cdec4ed2",
+      "status": "waiting_approval"
+    },
+    {
+      "at": "2026-08-06T12:47:05.191Z",
+      "event": "run_state",
+      "status": "waiting_approval",
+      "step": "ingest_source",
+      "approval": "apr_454759943638116a51acda03fcfd3444",
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:47:05.205Z",
+      "event": "approval_resolved",
+      "approval_request_id": "apr_454759943638116a51acda03fcfd3444",
+      "scope": "transition",
+      "subject_kind": "artifact_version",
+      "subject_ref_id": "av_a282e96b8b7988eb041686dab4b24158"
+    },
+    {
+      "at": "2026-08-06T12:47:07.239Z",
+      "event": "run_state",
+      "status": "paused",
+      "step": "build_source_manifest",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:47:07.269Z",
+      "event": "run_resumed",
+      "run_id": "run_8db56b02ddd712cb3faae7c2cdec4ed2"
+    },
+    {
+      "at": "2026-08-06T12:47:09.289Z",
+      "event": "run_state",
+      "status": "running",
+      "step": "build_material_bank",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:52:41.176Z",
+      "event": "run_state",
+      "status": "waiting_approval",
+      "step": "build_material_bank",
+      "approval": "apr_463b5e62202672eba4d490ea08eb8913",
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:52:41.210Z",
+      "event": "approval_resolved",
+      "approval_request_id": "apr_463b5e62202672eba4d490ea08eb8913",
+      "scope": "artifact",
+      "subject_kind": "artifact_version",
+      "subject_ref_id": "av_8de918fc115c3201fca2c50db7083903"
+    },
+    {
+      "at": "2026-08-06T12:52:43.362Z",
+      "event": "run_state",
+      "status": "paused",
+      "step": "review_volume_fit",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:52:43.427Z",
+      "event": "run_resumed",
+      "run_id": "run_8db56b02ddd712cb3faae7c2cdec4ed2"
+    },
+    {
+      "at": "2026-08-06T12:52:45.452Z",
+      "event": "run_state",
+      "status": "running",
+      "step": "build_story_seed",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:54:53.318Z",
+      "event": "run_state",
+      "status": "waiting_approval",
+      "step": "build_story_seed",
+      "approval": "apr_da98da1b2e99f65801b7a1e7faac64ae",
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:54:53.355Z",
+      "event": "approval_resolved",
+      "approval_request_id": "apr_da98da1b2e99f65801b7a1e7faac64ae",
+      "scope": "artifact",
+      "subject_kind": "artifact_version",
+      "subject_ref_id": "av_a7a100e7558560269fc3ec3ea8deccc8"
+    },
+    {
+      "at": "2026-08-06T12:54:55.376Z",
+      "event": "run_state",
+      "status": "paused",
+      "step": "build_series_blueprint",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:54:55.396Z",
+      "event": "run_resumed",
+      "run_id": "run_8db56b02ddd712cb3faae7c2cdec4ed2"
+    },
+    {
+      "at": "2026-08-06T12:54:57.416Z",
+      "event": "run_state",
+      "status": "running",
+      "step": "build_series_blueprint",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:56:18.963Z",
+      "event": "run_state",
+      "status": "waiting_approval",
+      "step": "build_series_blueprint",
+      "approval": "apr_bef0cb597f043b6ba2cfacfe45dd2da4",
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:56:19.009Z",
+      "event": "approval_resolved",
+      "approval_request_id": "apr_bef0cb597f043b6ba2cfacfe45dd2da4",
+      "scope": "artifact",
+      "subject_kind": "artifact_version",
+      "subject_ref_id": "av_5711310bb6a4313f3fabc8191fb7e2e5"
+    },
+    {
+      "at": "2026-08-06T12:56:21.047Z",
+      "event": "run_state",
+      "status": "paused",
+      "step": "build_episode_cards",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:56:21.068Z",
+      "event": "run_resumed",
+      "run_id": "run_8db56b02ddd712cb3faae7c2cdec4ed2"
+    },
+    {
+      "at": "2026-08-06T12:56:23.098Z",
+      "event": "run_state",
+      "status": "running",
+      "step": "build_episode_cards",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:58:10.688Z",
+      "event": "run_state",
+      "status": "waiting_approval",
+      "step": "build_episode_cards",
+      "approval": "apr_156604b585abdc649c0b35faf911466a",
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:58:10.729Z",
+      "event": "approval_resolved",
+      "approval_request_id": "apr_156604b585abdc649c0b35faf911466a",
+      "scope": "batch",
+      "subject_kind": "artifact_version",
+      "subject_ref_id": "av_1fd49a227bede9d602b245d92e1ec381"
+    },
+    {
+      "at": "2026-08-06T12:58:12.761Z",
+      "event": "run_state",
+      "status": "paused",
+      "step": "build_script_contexts",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:58:12.788Z",
+      "event": "run_resumed",
+      "run_id": "run_8db56b02ddd712cb3faae7c2cdec4ed2"
+    },
+    {
+      "at": "2026-08-06T12:58:14.823Z",
+      "event": "run_state",
+      "status": "running",
+      "step": "generate_script_units",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:59:31.890Z",
+      "event": "run_state",
+      "status": "waiting_approval",
+      "step": "generate_script_units",
+      "approval": "apr_3e274097bf12d82e2b0b5814ca3f09bf",
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T12:59:31.929Z",
+      "event": "approval_resolved",
+      "approval_request_id": "apr_3e274097bf12d82e2b0b5814ca3f09bf",
+      "scope": "batch",
+      "subject_kind": "artifact_version_set",
+      "subject_ref_id": "step_2ed5279756d0caeee0450525c5f5caa9"
+    },
+    {
+      "at": "2026-08-06T12:59:33.959Z",
+      "event": "run_state",
+      "status": "running",
+      "step": "review_script_set",
+      "approval": null,
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:00:38.896Z",
+      "event": "run_state",
+      "status": "waiting_approval",
+      "step": "review_script_set",
+      "approval": "apr_08d733785ebb0a2a4c0ab4210bfe515e",
+      "tasks": []
+    },
+    {
+      "at": "2026-08-06T13:00:38.937Z",
+      "event": "quality_review_accepted",
+      "approval_request_id": "apr_08d733785ebb0a2a4c0ab4210bfe515e",
+      "issue_counts": {
+        "blocker": 0,
+        "high": 0,
+        "medium": 1,
+        "low": 0
+      }
+    },
+    {
+      "at": "2026-08-06T13:00:40.954Z",
+      "event": "run_state",
+      "status": "completed",
+      "step": "aggregate_scripts",
+      "approval": null,
+      "tasks": []
+    }
+  ]
+}

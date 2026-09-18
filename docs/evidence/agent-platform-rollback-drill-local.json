@@ -1,0 +1,33 @@
+{
+  "schema_version": "agent_platform_rollback_drill.v1",
+  "status": "passed",
+  "executed_at": "2026-09-05T06:56:56.1784298+00:00",
+  "local_only": true,
+  "baseline_ref": "pre-agent-convergence-20260904",
+  "baseline_commit": "0e841cc3a346ac9c8292977ae76cbfc3a474360f",
+  "target_schema_version": 32,
+  "baseline_schema_version": 24,
+  "observed_schema_versions": {
+    "baseline_created": 24,
+    "migrated": 32,
+    "restored": 24
+  },
+  "checks": {
+    "baseline_created_database": "passed",
+    "baseline_schema_verified": "passed",
+    "current_migrated_database": "passed",
+    "migrated_schema_verified": "passed",
+    "automatic_migration_backup_created": "passed",
+    "baseline_rejected_newer_schema": "passed",
+    "backup_checksum_verified": "passed",
+    "restored_schema_verified": "passed",
+    "baseline_started_after_restore": "passed"
+  },
+  "sha256": {
+    "pre_migration_database": "D405FBC2DF562FCE249630E4CE77BEEBFB8BFD930B23DB6660D919028115B515",
+    "migrated_database": "D405FBC2DF562FCE249630E4CE77BEEBFB8BFD930B23DB6660D919028115B515",
+    "migration_backup": "913C508DCAB693CB8EE959541CA0C4711D939832E8FDF61D7EC1A611A6278237",
+    "restored_before_start": "913C508DCAB693CB8EE959541CA0C4711D939832E8FDF61D7EC1A611A6278237"
+  },
+  "remote_operations": []
+}

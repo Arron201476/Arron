@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["episode_no", "title", "content"],
+  "properties": {
+    "episode_no": {"type": "integer", "minimum": 1, "maximum": 10000},
+    "title": {"type": "string", "minLength": 1},
+    "content": {"type": "string", "minLength": 1}
+  }
+}

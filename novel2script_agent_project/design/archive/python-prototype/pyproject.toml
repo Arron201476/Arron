@@ -1,0 +1,10 @@
+[project]
+name = "novel2script-agent"
+version = "0.1.0"
+description = "Agent-first Novel2Script prototype with prompt/skill/artifact orchestration."
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

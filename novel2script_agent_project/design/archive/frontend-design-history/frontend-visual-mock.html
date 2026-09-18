@@ -1,0 +1,1225 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Novel2Script Agent - Frontend Visual Mock</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f5f7fa;
+        --surface: #ffffff;
+        --surface-2: #f8fafc;
+        --surface-3: #eef3f8;
+        --ink: #101828;
+        --text: #243043;
+        --muted: #697586;
+        --faint: #98a2b3;
+        --line: #dbe4ef;
+        --line-soft: #e8eef5;
+        --primary: #0f172a;
+        --blue: #1d4ed8;
+        --blue-soft: #eaf2ff;
+        --teal: #0f766e;
+        --teal-soft: #e6f5f2;
+        --amber: #b45309;
+        --amber-soft: #fff7ed;
+        --danger: #b42318;
+        --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+        --shadow-md: 0 12px 28px rgba(16, 24, 40, 0.10);
+        --radius: 8px;
+        --font: "Inter", "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+        --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font);
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      button,
+      textarea,
+      input {
+        font: inherit;
+      }
+
+      button {
+        min-height: 36px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: var(--surface);
+        color: var(--text);
+        cursor: pointer;
+        transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+      }
+
+      button:hover {
+        border-color: #bfccda;
+        box-shadow: var(--shadow-sm);
+      }
+
+      button:focus-visible,
+      textarea:focus-visible,
+      input:focus-visible {
+        outline: 3px solid rgba(29, 78, 216, 0.18);
+        outline-offset: 2px;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #c7d2df;
+        border: 2px solid transparent;
+        border-radius: 999px;
+        background-clip: content-box;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .app {
+        height: 100vh;
+        min-height: 760px;
+        display: grid;
+        grid-template-rows: 56px minmax(0, 1fr);
+        overflow: hidden;
+      }
+
+      .topbar {
+        display: grid;
+        grid-template-columns: 280px minmax(0, 1fr) 380px;
+        align-items: center;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(10px);
+      }
+
+      .brand,
+      .top-center,
+      .run-meta {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+      }
+
+      .brand {
+        gap: 11px;
+        border-right: 1px solid var(--line-soft);
+        color: var(--ink);
+        font-weight: 800;
+      }
+
+      .brand-mark {
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+        background: var(--primary);
+        color: #fff;
+        font-weight: 900;
+        letter-spacing: 0;
+      }
+
+      .top-center {
+        min-width: 0;
+        justify-content: space-between;
+        border-right: 1px solid var(--line-soft);
+      }
+
+      .project-title {
+        min-width: 0;
+      }
+
+      .project-title strong {
+        display: block;
+        color: var(--ink);
+        font-size: 15px;
+        line-height: 1.25;
+      }
+
+      .project-title span {
+        display: block;
+        margin-top: 2px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .view-switch {
+        display: flex;
+        gap: 4px;
+        padding: 3px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface-2);
+      }
+
+      .view-switch button {
+        min-height: 28px;
+        border: 0;
+        border-radius: 999px;
+        padding: 0 11px;
+        background: transparent;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .view-switch .active {
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow: var(--shadow-sm);
+        font-weight: 700;
+      }
+
+      .run-meta {
+        justify-content: space-between;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-height: 28px;
+        padding: 0 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--muted);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: var(--teal);
+      }
+
+      .workspace {
+        min-height: 0;
+        display: grid;
+        grid-template-columns: 280px minmax(560px, 1fr) 380px;
+      }
+
+      .sidebar,
+      .agent {
+        min-height: 0;
+        background: var(--surface);
+      }
+
+      .sidebar {
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        border-right: 1px solid var(--line);
+      }
+
+      .side-head {
+        padding: 18px 18px 14px;
+        border-bottom: 1px solid var(--line-soft);
+      }
+
+      .side-head h1 {
+        margin: 0;
+        color: var(--ink);
+        font-size: 16px;
+        line-height: 1.25;
+      }
+
+      .side-head p {
+        margin: 5px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .mode-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 14px;
+        gap: 8px;
+      }
+
+      .mode-row .mode {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--ink);
+        font-weight: 700;
+      }
+
+      .small-select {
+        min-height: 30px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: var(--surface-2);
+        color: var(--muted);
+        padding: 0 9px;
+        font-size: 12px;
+      }
+
+      .nav-scroll {
+        min-height: 0;
+        overflow: auto;
+        padding: 14px 10px 18px;
+      }
+
+      .nav-group {
+        margin-bottom: 18px;
+      }
+
+      .nav-group-title {
+        padding: 0 9px 7px;
+        color: var(--faint);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+      }
+
+      .nav-item {
+        display: grid;
+        grid-template-columns: 24px minmax(0, 1fr) auto;
+        gap: 8px;
+        align-items: center;
+        min-height: 42px;
+        padding: 8px 9px;
+        border-radius: 8px;
+        color: var(--text);
+      }
+
+      .nav-item.active {
+        background: var(--blue-soft);
+        color: #123a7a;
+        box-shadow: inset 3px 0 0 var(--blue);
+      }
+
+      .nav-item.disabled {
+        color: var(--faint);
+      }
+
+      .icon {
+        width: 22px;
+        height: 22px;
+        display: grid;
+        place-items: center;
+        color: currentColor;
+      }
+
+      .nav-label {
+        min-width: 0;
+      }
+
+      .nav-label strong {
+        display: block;
+        color: inherit;
+        font-size: 13px;
+        line-height: 1.2;
+      }
+
+      .nav-label span {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .status {
+        border-radius: 999px;
+        padding: 2px 8px;
+        background: var(--surface-3);
+        color: var(--muted);
+        font-size: 11px;
+        white-space: nowrap;
+      }
+
+      .status.ready {
+        background: var(--teal-soft);
+        color: var(--teal);
+      }
+
+      .status.wait {
+        background: var(--amber-soft);
+        color: var(--amber);
+      }
+
+      .status.run {
+        background: #eef4ff;
+        color: var(--blue);
+      }
+
+      .side-foot {
+        padding: 12px;
+        border-top: 1px solid var(--line-soft);
+        background: var(--surface-2);
+      }
+
+      .source-box {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        padding: 11px;
+      }
+
+      .source-box strong {
+        display: block;
+        color: var(--ink);
+        font-size: 12px;
+      }
+
+      .source-box p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .main {
+        min-height: 0;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
+        background: var(--surface-2);
+      }
+
+      .main-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 64px;
+        padding: 0 22px;
+        border-bottom: 1px solid var(--line);
+        background: var(--surface);
+      }
+
+      .main-title h2 {
+        margin: 0;
+        color: var(--ink);
+        font-size: 17px;
+        line-height: 1.25;
+      }
+
+      .main-title p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .content-state {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .primary {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: #fff;
+        padding: 0 13px;
+        font-weight: 750;
+      }
+
+      .secondary {
+        padding: 0 12px;
+      }
+
+      .canvas {
+        min-height: 0;
+        overflow: auto;
+        padding: 20px 22px 28px;
+      }
+
+      .document-layout {
+        display: block;
+        max-width: 1160px;
+        margin: 0 auto;
+      }
+
+      .doc-panel {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--surface);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .doc-panel {
+        min-width: 0;
+      }
+
+      .doc-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 50px;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--line-soft);
+      }
+
+      .crumbs {
+        min-width: 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .crumbs strong {
+        color: var(--ink);
+      }
+
+      .icon-button {
+        width: 34px;
+        min-height: 34px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+      }
+
+      .structured-editor {
+        padding: 18px;
+      }
+
+      .episode-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+
+      .episode-head h3 {
+        margin: 0;
+        color: var(--ink);
+        font-size: 21px;
+        line-height: 1.25;
+        letter-spacing: 0;
+      }
+
+      .episode-head p {
+        margin: 7px 0 0;
+        color: var(--muted);
+        max-width: 620px;
+      }
+
+      .field-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .field,
+      .scene {
+        border: 1px solid var(--line-soft);
+        border-radius: 8px;
+        background: #fff;
+        padding: 13px;
+      }
+
+      .field.wide {
+        grid-column: 1 / -1;
+      }
+
+      .field label,
+      .scene label {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 850;
+        letter-spacing: 0.04em;
+      }
+
+      .field p,
+      .scene p {
+        margin: 0;
+        color: var(--text);
+      }
+
+      .tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 26px;
+        border-radius: 999px;
+        padding: 0 9px;
+        background: var(--surface-3);
+        color: #415064;
+        font-size: 12px;
+      }
+
+      .scene-stack {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .scene {
+        display: grid;
+        grid-template-columns: 70px minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .scene-num {
+        color: var(--blue);
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .mini-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .mini-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .mini-row strong {
+        color: var(--text);
+      }
+
+      .agent {
+        min-height: 0;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        border-left: 1px solid var(--line);
+      }
+
+      .agent-head {
+        min-height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .agent-head h2 {
+        margin: 0;
+        color: var(--ink);
+        font-size: 16px;
+      }
+
+      .agent-stream {
+        min-height: 0;
+        overflow: auto;
+        padding: 16px;
+        background: linear-gradient(#fff, #fbfcfe);
+      }
+
+      .message {
+        display: grid;
+        gap: 7px;
+        margin-bottom: 14px;
+      }
+
+      .message.user {
+        justify-items: end;
+      }
+
+      .bubble {
+        max-width: 310px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--surface);
+        padding: 11px 12px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .user .bubble {
+        border-color: #bfdbfe;
+        background: #eff6ff;
+      }
+
+      .speaker {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 850;
+      }
+
+      .bubble p {
+        margin: 0;
+      }
+
+      .task-list {
+        display: grid;
+        gap: 6px;
+        margin: 10px 0 0;
+        padding: 10px 0 0;
+        border-top: 1px solid var(--line-soft);
+      }
+
+      .task-step {
+        display: grid;
+        grid-template-columns: 14px minmax(0, 1fr) auto;
+        gap: 8px;
+        align-items: center;
+        min-height: 22px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .step-dot {
+        width: 6px;
+        height: 6px;
+        justify-self: center;
+        border-radius: 999px;
+        background: #aab7c6;
+      }
+
+      .task-step.done .step-dot {
+        background: #7c8a9a;
+      }
+
+      .task-step.running .step-dot {
+        width: 12px;
+        height: 12px;
+        border: 2px solid #c7d2df;
+        border-top-color: var(--teal);
+        background: transparent;
+        animation: spin 900ms linear infinite;
+      }
+
+      .step-state {
+        color: var(--faint);
+        font-family: var(--mono);
+        font-size: 11px;
+      }
+
+      .thinking {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--teal);
+        font-size: 13px;
+      }
+
+      .spinner {
+        width: 15px;
+        height: 15px;
+        border: 2px solid #b7eadf;
+        border-top-color: var(--teal);
+        border-radius: 999px;
+        animation: spin 900ms linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .approval {
+        margin-top: 9px;
+        border: 1px solid #f2b461;
+        border-radius: 9px;
+        background: var(--amber-soft);
+        padding: 12px;
+      }
+
+      .approval strong {
+        display: block;
+        color: #7c2d12;
+        margin-bottom: 5px;
+      }
+
+      .approval p {
+        color: #7c4a03;
+      }
+
+      .approval-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .approval-actions .primary {
+        background: var(--teal);
+        border-color: var(--teal);
+      }
+
+      .composer {
+        border-top: 1px solid var(--line);
+        padding: 12px;
+        background: var(--surface);
+      }
+
+      .attachment-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-bottom: 8px;
+      }
+
+      .file-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-height: 30px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface-2);
+        padding: 0 10px;
+        color: var(--text);
+        font-size: 12px;
+      }
+
+      .composer-box {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+        overflow: hidden;
+      }
+
+      .composer-box textarea {
+        width: 100%;
+        min-height: 78px;
+        resize: none;
+        border: 0;
+        padding: 12px;
+        color: var(--text);
+      }
+
+      .composer-box textarea::placeholder {
+        color: var(--faint);
+      }
+
+      .composer-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        padding: 8px;
+        border-top: 1px solid var(--line-soft);
+        background: var(--surface-2);
+      }
+
+      .composer-left,
+      .composer-right {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      .mode-indicator {
+        min-height: 30px;
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        padding: 0 10px;
+        color: var(--muted);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .send-button {
+        min-width: 72px;
+        white-space: nowrap;
+      }
+
+      .kbd {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      @media (max-width: 1120px) {
+        .topbar {
+          grid-template-columns: 250px minmax(0, 1fr) 330px;
+        }
+
+        .workspace {
+          grid-template-columns: 250px minmax(480px, 1fr) 330px;
+        }
+
+      }
+
+      @media (max-width: 860px) {
+        .app {
+          min-height: 900px;
+          overflow: auto;
+        }
+
+        .topbar,
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+
+        .brand,
+        .top-center,
+        .run-meta,
+        .sidebar,
+        .agent {
+          border-right: 0;
+          border-left: 0;
+        }
+
+        .sidebar,
+        .agent {
+          min-height: 420px;
+        }
+
+        .field-grid,
+        .scene {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">N</div>
+          <span>Novel2Script Agent</span>
+        </div>
+        <div class="top-center">
+          <div class="project-title">
+            <strong>短剧项目：宫斗复仇灵感</strong>
+            <span>非小说素材生成链路 · 当前停在分集卡确认</span>
+          </div>
+          <div class="view-switch" aria-label="主视图">
+            <button class="active">写作台</button>
+            <button>产物</button>
+            <button>版本</button>
+          </div>
+        </div>
+        <div class="run-meta">
+          <span class="pill"><span class="dot"></span>Agent 正在等待确认</span>
+          <span class="pill">Backend: model</span>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="sidebar" aria-label="项目目录">
+          <div class="side-head">
+            <h1>项目目录</h1>
+            <p>只显示当前链路需要的材料与产物，未进入的链路不占位置。</p>
+            <div class="mode-row">
+              <span class="mode">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M5 4h9l5 5v11H5V4Z" stroke="currentColor" stroke-width="1.8" />
+                  <path d="M14 4v5h5" stroke="currentColor" stroke-width="1.8" />
+                </svg>
+                非小说生成
+              </span>
+              <button class="small-select">切换</button>
+            </div>
+          </div>
+
+          <div class="nav-scroll">
+            <section class="nav-group">
+              <div class="nav-group-title">输入</div>
+              <div class="nav-item">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M4 6h16M4 12h11M4 18h8" stroke="currentColor" stroke-width="1.8" />
+                </svg>
+                <div class="nav-label">
+                  <strong>输入材料</strong>
+                  <span>灵感、梗概、本地文件</span>
+                </div>
+                <span class="status ready">已生成</span>
+              </div>
+            </section>
+
+            <section class="nav-group">
+              <div class="nav-group-title">理解与规划</div>
+              <div class="nav-item">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M6 5h12v14H6zM9 9h6M9 13h6" stroke="currentColor" stroke-width="1.8" />
+                </svg>
+                <div class="nav-label">
+                  <strong>素材库</strong>
+                  <span>人物、设定、冲突来源</span>
+                </div>
+                <span class="status ready">已生成</span>
+              </div>
+              <div class="nav-item">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 4v16M5 9h14M7 15h10" stroke="currentColor" stroke-width="1.8" />
+                </svg>
+                <div class="nav-label">
+                  <strong>故事种子</strong>
+                  <span>主欲望、反击点、爽感</span>
+                </div>
+                <span class="status ready">已生成</span>
+              </div>
+              <div class="nav-item">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" stroke-width="1.8" />
+                </svg>
+                <div class="nav-label">
+                  <strong>剧集蓝图</strong>
+                  <span>集群节奏与关键反转</span>
+                </div>
+                <span class="status ready">已生成</span>
+              </div>
+              <div class="nav-item active">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 4h10v16H7zM10 8h4M10 12h4M10 16h3" stroke="currentColor" stroke-width="1.8" />
+                </svg>
+                <div class="nav-label">
+                  <strong>分集卡</strong>
+                  <span>结构确认后再写剧本</span>
+                </div>
+                <span class="status wait">待确认</span>
+              </div>
+            </section>
+
+            <section class="nav-group">
+              <div class="nav-group-title">成稿</div>
+              <div class="nav-item disabled">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M6 4h8l4 4v12H6zM14 4v4h4M9 13h6M9 17h4" stroke="currentColor" stroke-width="1.8" />
+                </svg>
+                <div class="nav-label">
+                  <strong>剧本</strong>
+                  <span>分集卡确认后生成</span>
+                </div>
+                <span class="status">待生成</span>
+              </div>
+            </section>
+
+            <section class="nav-group">
+              <div class="nav-group-title">系统</div>
+              <div class="nav-item">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 7h10M7 12h10M7 17h7" stroke="currentColor" stroke-width="1.8" />
+                </svg>
+                <div class="nav-label">
+                  <strong>运行记录</strong>
+                  <span>工具调用、模型输入输出</span>
+                </div>
+                <span class="status run">8</span>
+              </div>
+            </section>
+          </div>
+
+          <div class="side-foot">
+            <div class="source-box">
+              <strong>当前素材</strong>
+              <p>1 段灵感文本 · 1 个本地附件 · 自动识别为非小说素材。</p>
+            </div>
+          </div>
+        </aside>
+
+        <section class="main" aria-label="文档编辑区">
+          <div class="main-head">
+            <div class="main-title">
+              <h2>分集卡</h2>
+              <p>中间只承载当前生成内容和内容增删改；AI 指令、审批、重生成都从右侧 Agent 发起。</p>
+            </div>
+            <div class="content-state" aria-label="当前产物状态">
+              <span class="status wait">待确认</span>
+              <span class="status">v1</span>
+            </div>
+          </div>
+
+          <div class="canvas">
+            <div class="document-layout">
+              <article class="doc-panel">
+                <div class="doc-toolbar">
+                  <div class="crumbs"><strong>非小说链路</strong> / 剧集蓝图 / 分集卡 v1</div>
+                  <span class="status">已保存草稿</span>
+                </div>
+
+                <div class="structured-editor">
+                  <div class="episode-head">
+                    <div>
+                      <h3>第 1 集：被弃贵女重回白昼</h3>
+                      <p>开场用身份坠落制造压力，让女主在公开羞辱中发现前世线索，尾钩落在她主动设局反击。</p>
+                    </div>
+                    <span class="status wait">待确认</span>
+                  </div>
+
+                  <div class="field-grid">
+                    <div class="field">
+                      <label>本集目标</label>
+                      <p>建立女主被抛弃后的处境，并让观众相信她有反击能力。</p>
+                    </div>
+                    <div class="field">
+                      <label>核心冲突</label>
+                      <p>贵妃一党逼她认罪，她必须在不暴露重生记忆的情况下自救。</p>
+                    </div>
+                    <div class="field">
+                      <label>人物状态</label>
+                      <p>女主：隐忍但清醒；反派：轻敌；男主：暂时旁观。</p>
+                    </div>
+                    <div class="field">
+                      <label>尾钩</label>
+                      <p>女主把证物交给最不该出现的人，暗示她已开始反控局面。</p>
+                    </div>
+                    <div class="field wide">
+                      <label>爽点与注意事项</label>
+                      <div class="tag-list">
+                        <span class="tag">公开反杀</span>
+                        <span class="tag">身份落差</span>
+                        <span class="tag">证据反转</span>
+                        <span class="tag">避免拖长解释</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="scene-stack">
+                    <div class="scene">
+                      <div class="scene-num">Scene 01</div>
+                      <div>
+                        <label>场景段落</label>
+                        <p>宫门外，女主被迫跪迎旧敌。旁白不解释前世，只用她对每个人动作的提前反应表现记忆。</p>
+                      </div>
+                    </div>
+                    <div class="scene">
+                      <div class="scene-num">Scene 02</div>
+                      <div>
+                        <label>冲突推进</label>
+                        <p>反派拿出伪证逼认罪，女主先退一步，诱使对方说出只有真凶才知道的细节。</p>
+                      </div>
+                    </div>
+                    <div class="scene">
+                      <div class="scene-num">Scene 03</div>
+                      <div>
+                        <label>集尾钩子</label>
+                        <p>她抬头看向屏风后的男主，说出一句只有前世两人才懂的话，画面切黑。</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <aside class="agent" aria-label="Agent 对话">
+          <div class="agent-head">
+            <h2>Agent</h2>
+            <span class="pill"><span class="dot"></span>Waiting approval</span>
+          </div>
+
+          <div class="agent-stream">
+            <div class="message user">
+              <div class="bubble">
+                <span class="speaker">你</span>
+                <p>把这个灵感生成短剧，先别直接写剧本。</p>
+              </div>
+            </div>
+
+            <div class="message">
+              <div class="bubble">
+                <span class="speaker">Agent</span>
+                <p>我会先判断素材类型，再整理素材库、故事种子和剧集蓝图。到分集卡时暂停，请你确认结构后再进入剧本生成。</p>
+                <div class="task-list" aria-label="执行步骤">
+                  <div class="task-step done">
+                    <span class="step-dot"></span>
+                    <span>理解请求</span>
+                    <span class="step-state">done</span>
+                  </div>
+                  <div class="task-step done">
+                    <span class="step-dot"></span>
+                    <span>识别意图</span>
+                    <span class="step-state">done</span>
+                  </div>
+                  <div class="task-step done">
+                    <span class="step-dot"></span>
+                    <span>整理素材库</span>
+                    <span class="step-state">done</span>
+                  </div>
+                  <div class="task-step running">
+                    <span class="step-dot"></span>
+                    <span>等待确认分集卡</span>
+                    <span class="step-state">paused</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="message">
+              <div class="bubble">
+                <span class="speaker">Agent</span>
+                <p>分集卡已经生成。我建议先确认前三集的开局节奏，确认后再生成剧本。</p>
+                <div class="approval">
+                  <strong>确认分集卡后继续生成剧本</strong>
+                  <p>当前分集卡把素材切为 3 集开局剧情。继续后，剧本会继承这些冲突、人物状态和尾钩。</p>
+                  <div class="approval-actions">
+                    <button class="primary">确认继续</button>
+                    <button class="secondary">补充说明</button>
+                    <button class="secondary">暂停</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="message">
+              <div class="thinking"><span class="spinner"></span>等待你确认或补充修改要求 ..</div>
+            </div>
+          </div>
+
+          <div class="composer">
+            <div class="attachment-row">
+              <span class="file-pill">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.8" />
+                  <path d="M14 3v5h5" stroke="currentColor" stroke-width="1.8" />
+                </svg>
+                测试用书.txt
+              </span>
+            </div>
+            <div class="composer-box">
+              <textarea placeholder="给 Agent 补充说明，或直接回车发送"></textarea>
+              <div class="composer-actions">
+                <div class="composer-left">
+                  <button class="icon-button" aria-label="添加文件">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" />
+                    </svg>
+                  </button>
+                  <span class="kbd">Enter 发送 · Shift Enter 换行</span>
+                </div>
+                <div class="composer-right">
+                  <span class="mode-indicator">模式：自动识别</span>
+                  <button class="primary send-button">发送</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </main>
+    </div>
+  </body>
+</html>

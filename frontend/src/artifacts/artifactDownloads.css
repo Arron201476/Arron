@@ -1,0 +1,11 @@
+.artifact-download-dialog { width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); box-sizing: border-box; overflow: auto; padding: 20px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: var(--paper); }
+.artifact-download-dialog::backdrop { background: rgb(0 0 0 / 30%); }
+.artifact-download-dialog header, .artifact-download-dialog footer { display: flex; align-items: center; gap: 12px; }
+.artifact-download-dialog header { justify-content: space-between; }
+.artifact-download-dialog h2 { margin: 0; font-size: 16px; }
+.artifact-download-dialog p { overflow-wrap: anywhere; font-size: 13px; line-height: 1.6; }
+.artifact-download-name { font-weight: 600; }
+.artifact-download-format { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 16px; font-size: 13px; }
+.artifact-download-format select { min-width: 0; width: 100%; height: 36px; padding: 0 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); color: inherit; }
+.artifact-download-warning { color: var(--secondary); }
+.artifact-download-dialog footer { justify-content: flex-end; margin-top: 20px; }

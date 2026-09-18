@@ -1,0 +1,8 @@
+interface:
+  display_name: "大纲诊断"
+  short_description: "定位大纲结构、动机、冲突和钩子问题"
+  default_prompt: "请诊断这份大纲，并按优先级给出修改建议。"
+policy:
+  allow_implicit_invocation: true
+dependencies:
+  tools: []

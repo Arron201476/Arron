@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>编剧反馈二次归类：按 Agent 版落点整理</title>
+<style>
+:root{--bg:#f6f7fb;--panel:#fff;--line:#d9e2ef;--text:#101828;--muted:#667085;--blue:#2563eb;--green:#059669;--amber:#d97706;--red:#dc2626;--purple:#7c3aed}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Segoe UI,Microsoft YaHei,Arial,sans-serif;line-height:1.65}header{padding:28px 36px;background:#111827;color:#fff}header h1{margin:0 0 8px;font-size:28px}header p{margin:0;color:#cbd5e1}main{padding:26px 36px;max-width:1480px;margin:0 auto}section{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 1px 2px rgba(16,24,40,.04)}h2{margin:0 0 12px;font-size:22px}h3{margin:16px 0 8px;font-size:16px}.muted{color:var(--muted)}.grid{display:grid;gap:14px}.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}.card{border:1px solid var(--line);border-radius:14px;background:#fff;padding:14px}.card h3{margin-top:0}.tag{display:inline-block;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:800;background:#eef4ff;color:#1d4ed8}.tag.green{background:#ecfdf3;color:#047857}.tag.amber{background:#fffbeb;color:#b45309}.tag.red{background:#fef2f2;color:#b91c1c}.tag.purple{background:#f5f3ff;color:#6d28d9}.tag.gray{background:#f2f4f7;color:#475467}table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}th,td{border:1px solid var(--line);padding:9px 10px;vertical-align:top;text-align:left}th{background:#f8fafc;font-size:12px;color:#475467}tr:nth-child(even) td{background:#fcfcfd}.priority{font-weight:900}.p0{color:var(--red)}.p1{color:var(--amber)}.p2{color:var(--blue)}.defer{color:#667085;font-weight:900}.code{background:#0b1220;color:#d1e7ff;border-radius:12px;padding:14px;font-family:Consolas,Menlo,monospace;font-size:13px;white-space:pre-wrap;overflow:auto}.note{border-left:4px solid var(--blue);background:#eff6ff;padding:10px 12px;border-radius:10px;margin:10px 0}.warn{border-left:4px solid var(--amber);background:#fffbeb;padding:10px 12px;border-radius:10px;margin:10px 0}ul{margin:8px 0 0 22px;padding:0}li{margin:4px 0}@media(max-width:980px){.grid-2,.grid-3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>编剧反馈二次归类：按 Agent 版落点整理</h1>
+  <p>基于用户逐条判断更新：不把所有问题都做成前端功能，优先区分 generation profile、agent 修改能力、prompt/artifact 字段、skills 准则、延期项。</p>
+</header>
+<main>
+  <section>
+    <h2>总判断</h2>
+    <div class="grid grid-3">
+      <div class="card"><span class="tag green">合理</span><h3>用户判断整体成立</h3><p>多数反馈不是前端按钮问题，而是 agent 运行策略、全局生成配置、局部修改能力、规划/剧本 skills 准则的问题。</p></div>
+      <div class="card"><span class="tag amber">边界</span><h3>参数不进 skill</h3><p>选项、用户要求、是否保留原文、是否有字幕等是 `generation_profile` 参数；skill 只沉淀准则，不放输入输出。</p></div>
+      <div class="card"><span class="tag purple">核心</span><h3>局部修改是主能力</h3><p>第 2 和第 11 条本质一致：Agent 必须识别用户修改的是哪个 artifact、哪个位置、哪个局部范围，并只重跑受影响部分。</p></div>
+    </div>
+    <div class="warn"><strong>延期项：</strong>第 9、10、15 条先标记，不进入当前落地范围；第 14 条现有声口 skill 没明确覆盖方言/地域口音，需要后续补一条准则。</div>
+  </section>
+
+  <section>
+    <h2>归类总表</h2>
+    <table>
+      <thead><tr><th>类别</th><th>包含问题</th><th>落点</th><th>现在怎么处理</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag gray">生成前配置 / 审批</span></td><td>1、13</td><td>`generation_profile` + Agent 审批卡</td><td>未处理：需要 agent 审批/配置协议，当前 prompts/skills 未落地。</td></tr>
+        <tr><td><span class="tag gray">局部修改能力</span></td><td>2、11</td><td>`change_router` + selection/artifact 定位 + 局部重跑</td><td>未处理：需要前端选区、artifact 定位、agent 路由和局部重跑协议。</td></tr>
+        <tr><td><span class="tag green">Skills 准则</span></td><td>3、6、7、8、12、14</td><td>对白、结构节奏、转场、视觉表达、声口 skills</td><td>已处理可落地部分：补充对应 skill 准则；6、7 只处理单集内部节奏和风险标记，自动改集数/合并拆分仍未处理。</td></tr>
+        <tr><td><span class="tag green">Prompt / Artifact 字段</span></td><td>4、5、12</td><td>`story_bible`、`episode_cards`、`script_unit` 字段</td><td>已处理设计稿：补 `climax_map`、`information_density/pacing_risk`、`pacing_plan`、`visual_strategy`、执行记录字段。</td></tr>
+        <tr><td><span class="tag gray">未处理 / Backlog</span></td><td>1、2、9、10、11、13、15，以及 6/7 的自动改集数/合并拆分部分</td><td>记入后续 agent/workflow/前端协议</td><td>当前只标记，不混进 prompts/skills。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>15 条逐条决策</h2>
+    <table>
+      <thead><tr><th>#</th><th>反馈</th><th>用户判断</th><th>我的补充判断</th><th>落点</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>生成前可选：原文全保留、固定语气、参考原文微调、有无字幕、自定义要求。</td><td>像 Claude Code/Codex 一样，必要点请求确认；最后允许用户自由输入。</td><td>合理。不是每个选项都变成一个 skill，而是进入 `generation_profile`；对应全局准则由 prompts 消费。</td><td>未处理：需要 `generation_profile` 协议和 Agent 审批卡。</td><td class="defer">未处理</td></tr>
+        <tr><td>2</td><td>单集调整、单集重生成。</td><td>这是核心策略：承接生成、修改过程产物和结果产物；需要识别前端位置和具体修改部分。</td><td>合理。需要 selection/artifact 定位协议：artifact_type、artifact_id、node_id/offset、scope、affected_artifacts。</td><td>未处理：需要前端选区、change_router、patch/edit_batch。</td><td class="defer">未处理</td></tr>
+        <tr><td>3</td><td>单角色台词过长。</td><td>可放 skill，角色台词放哪里再判断，不需要前端。</td><td>已处理。`05_对白规则` 已补长台词与独白控制；`script_generate` 已补执行规则。</td><td>Skill：对白规则；Prompt：script_generate。</td><td class="priority p0">已处理</td></tr>
+        <tr><td>4</td><td>场景单一，闪回/蒙太奇少。</td><td>可以放 prompt 或 skill，适合规划步骤。</td><td>已处理设计稿。准则进转场/结构 skill；具体选择由 episode_cards 输出 `visual_strategy`。</td><td>Skill：结构/转场；Artifact：episode_card.visual_strategy。</td><td class="priority p1">已处理</td></tr>
+        <tr><td>5</td><td>全集剧情卡点，一卡在哪。</td><td>全文理解时分析小说第一个全剧高潮点；一般短剧一卡在第 10 集，需要考虑高潮点位置。</td><td>已处理设计稿。Step1 输出 `climax_map.first_major_climax_candidate`；Step3 消费并承接。</td><td>story_bible.climax_map；episode_cards 消费。</td><td class="priority p0">已处理</td></tr>
+        <tr><td>6</td><td>节奏慢。</td><td>先用 skill 解决，看放哪一步哪个 skill。</td><td>部分处理。已补 skill 准则和 prompt 风险字段；但自动改集数、合并拆分、重排剧情需要 agent/workflow 审批，当前未处理。</td><td>已处理：skill + episode_split/episode_cards 风险字段；未处理：自动结构调整。</td><td class="priority p0">部分处理</td></tr>
+        <tr><td>7</td><td>原文一个场景变成 2-4 集。</td><td>本质还是节奏慢，和 6 一起解决。</td><td>部分处理。已用 `information_density/pacing_risk/weak_episode_reason` 标记风险；真正合并/拆分/改集数仍需后续审批链。</td><td>已处理：风险标记；未处理：自动合并拆分。</td><td class="priority p0">部分处理</td></tr>
+        <tr><td>8</td><td>转场拖节奏。</td><td>用现有转场 skill，强调干净利落。</td><td>已处理。`06_转场_闪回_连续性_格式` 已补干净转场与视听表达；Step4 已补消费规则。</td><td>Skill：转场规则；Prompt：script_generate。</td><td class="priority p1">已处理</td></tr>
+        <tr><td>9</td><td>功能相同人物合并。</td><td>先不解决，记着。</td><td>已标记 backlog。后续可进 `character_function_map`，但当前不动。</td><td>Backlog。</td><td class="defer">暂不处理</td></tr>
+        <tr><td>10</td><td>根据场景增加人物，通过人物说话展示信息。</td><td>和 9 一样，先记着。</td><td>已标记 backlog。后续涉及“新增功能角色”审批，当前不展开。</td><td>Backlog。</td><td class="defer">暂不处理</td></tr>
+        <tr><td>11</td><td>情绪不够时局部增强。</td><td>和 2 一样，都是局部修改。</td><td>合理。属于 selection edit，不单独做前端按钮；Agent 根据选区/当前 artifact 执行局部增强。</td><td>未处理：归入局部修改能力，需要 selection context。</td><td class="defer">未处理</td></tr>
+        <tr><td>12</td><td>补充场景、光影、音效设计。</td><td>用 skill 解决，和 4 类似；看是 skill 准则还是 prompt 参数。</td><td>已处理设计稿。准则进 skill，规划阶段输出 `visual_strategy`，剧本生成阶段执行并记录。</td><td>Skill：视听表达；Artifact：visual_strategy / applied_visual_strategy。</td><td class="priority p1">已处理</td></tr>
+        <tr><td>13</td><td>导语集换为第 1 集，后续顺延。</td><td>先把导语按第一集开始计数。</td><td>未处理。应进入 `generation_profile` 或项目级 numbering policy；当前 prompts/skills 未落地。</td><td>未处理：episode_numbering_policy。</td><td class="defer">未处理</td></tr>
+        <tr><td>14</td><td>背景地区、人物口音。</td><td>放人物 skill；如果明确人物是哪的人且场景适合说方言，则可用。</td><td>已处理。`02_人物关系与声口` 已补地域/方言声口边界；Step1 人物信息可记录 `speech_profile`。</td><td>Skill：人物关系与声口；Artifact：speech_profile。</td><td class="priority p1">已处理</td></tr>
+        <tr><td>15</td><td>手动切割全集入口。</td><td>先不管。</td><td>已标记 backlog。当前通过 episode_split artifact editor 的概念保留可能性，不进入当前改动。</td><td>Backlog。</td><td class="defer">暂不处理</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>落地分组</h2>
+    <div class="grid grid-3">
+      <div class="card"><span class="tag gray">A. 生成前配置</span><h3>第 1、13 未处理；第 14 已进声口准则</h3><ul><li>未处理：Agent 根据用户输入追问/确认</li><li>未处理：`generation_profile` 和导语计数规则</li><li>已处理：方言/地域声口边界进入人物声口 skill</li></ul></div>
+      <div class="card"><span class="tag gray">B. 局部修改能力</span><h3>第 2、11 未处理</h3><ul><li>需要前端 selection context</li><li>需要 artifact / 节点 / 选区定位</li><li>需要 agent change_router 和局部重跑协议</li><li>当前不混进 prompts/skills</li></ul></div>
+      <div class="card"><span class="tag green">C. Skills 准则</span><h3>第 3、6、7、8、12、14</h3><ul><li>对白避免长独白</li><li>节奏压缩与膨胀检查</li><li>转场干净利落</li><li>视觉/音效/光影表达</li><li>方言口音适用边界</li></ul></div>
+      <div class="card"><span class="tag amber">D. Prompt / Artifact</span><h3>第 4、5、12</h3><ul><li>story_bible 输出高潮点候选</li><li>episode_cards 输出 visual_strategy</li><li>script_unit 可附 visual_audio_notes</li><li>不把制作提示混入剧本正文</li></ul></div>
+      <div class="card"><span class="tag gray">E. 未处理 / Backlog</span><h3>第 1、2、9、10、11、13、15；第 6/7 的硬流程部分</h3><ul><li>生成前确认与导语计数规则</li><li>局部修改、选区定位、局部重跑</li><li>人物功能合并、新增功能角色、手动全集切割入口</li><li>自动改集数、合并拆分、重排剧情</li></ul></div>
+      <div class="card"><span class="tag red">F. 不做成前端按钮</span><h3>重要边界</h3><ul><li>多数问题由 Agent 能力和 skills 承接</li><li>前端只展示必要配置、过程状态、审批和局部编辑入口</li><li>不要把每条反馈变成单独按钮</li></ul></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>处理状态更新</h2>
+    <table>
+      <thead><tr><th>文件/模块</th><th>要改什么</th><th>原因</th></tr></thead>
+      <tbody>
+        <tr><td>`agents/main_agent_router.md`</td><td>加入生成前确认、审批策略、局部修改路由。</td><td>承接第 1、2、11。</td></tr>
+        <tr><td>`schemas/artifacts.md`</td><td>新增 `generation_profile`、`selection_context`、`edit_batch`、`climax_map`、`visual_audio_notes`。</td><td>让 Agent 和前端有稳定协议。</td></tr>
+        <tr><td>`skills/05_对白规则.md`</td><td>已补长台词与独白控制准则。</td><td>已处理第 3。</td></tr>
+        <tr><td>`skills/03_结构规划...md`</td><td>已补一卡高潮与节奏密度准则；硬流程调整仍未处理。</td><td>已处理第 5、部分 6/7。</td></tr>
+        <tr><td>`skills/06_转场...md`</td><td>已补干净转场与视听表达准则。</td><td>已处理第 8、12。</td></tr>
+        <tr><td>`skills/02_人物关系与声口.md`</td><td>已补地域/方言声口边界。</td><td>已处理第 14。</td></tr>
+        <tr><td>`小说-prompts/step1_story_bible.md`</td><td>已补 `climax_map` 和人物 `speech_profile`。</td><td>已处理第 5、14 的字段承接。</td></tr>
+        <tr><td>`小说-prompts/step2/3/4`、`非小说-prompts/step3/4`</td><td>已补节奏风险、表现策略、一卡承接与执行记录字段。</td><td>已处理第 4、5、12，部分处理第 6、7。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>结论</h2>
+    <p>当前已先处理 <strong>skills 准则强化 + 一卡/高潮点 + 节奏风险 + 视觉策略 artifact 字段</strong>。未处理项明确保留：第 1、2、9、10、11、13、15，以及第 6/7 中涉及自动改集数、合并拆分、重排剧情的硬流程部分。前端只承接配置、定位、审批、过程状态和 artifact 编辑，不要把每个反馈变成按钮。</p>
+  </section>
+</main>
+</body>
+</html>

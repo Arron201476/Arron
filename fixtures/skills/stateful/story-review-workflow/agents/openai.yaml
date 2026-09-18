@@ -1,0 +1,6 @@
+interface:
+  display_name: Story Review Workflow
+  short_description: Review a premise through a durable approval workflow.
+  default_prompt: Review this story premise and prepare an approval-ready report.
+policy:
+  allow_implicit_invocation: false
